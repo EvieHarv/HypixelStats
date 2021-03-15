@@ -1,0 +1,23 @@
+{
+  "name": "hypixelstats",
+  "version": "1.0.0",
+  "description": "I've made a statstracker before using WPF, but using electron should make cross-platform use easier.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EthanHarv/HypixelStats.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/EthanHarv/HypixelStats/issues"
+  },
+  "homepage": "https://github.com/EthanHarv/HypixelStats#readme",
+  "dependencies": {
+    "electron": "^12.0.1"
+  }
+}
