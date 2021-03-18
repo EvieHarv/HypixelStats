@@ -111,9 +111,7 @@
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
-                    <div>
-                        Logged in as: <div class='myPlayerName'></div>
-                    </div>
+                    <div>Logged in as: <span class='myPlayerName'></span></div>
                 </nav>
                 <!-- End of Topbar -->
 
@@ -122,23 +120,16 @@
 
                     <!-- Page Heading -->
 
-                    <div class="card shadow mb-4 d-md-none">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-success">API Key</h6>
-                        </div>
-                        <div class="card-body text-success py-3">
-                            <p class="mb-0">API Key set!</p>
-                        </div>
-                    </div>
-
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">API Settings:</h1>
+                    <div id='infoBarHolder'>
                     </div>
                     <div>
                         Versions: 
                         Node <script>document.write(process.versions.node)</script>,
                         Chrome <script>document.write(process.versions.chrome)</script>,
                         and Electron <script>document.write(process.versions.electron)</script>.                
+                    </div>
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">API Settings:</h1>
                     </div>
                     <!-- Content Row -->
                     <div class="row" style='padding-left: 10px;'>
@@ -184,16 +175,88 @@
     <script src="js/demo/chart-pie-demo.js"></script>
 -->
 <script>
+    function infoBarMessage(textType, heading, message, timeMs)
+    {
+        $("#infoBarHolder").append('\
+                    <div class="card shadow mb-4" id="infoBar" style="display: none;"">\
+                        <div class="card-header py-3">\
+                            <h6 class="m-0 font-weight-bold '+textType+'" id="infoHeading">'+ heading +'</h6>\
+                        </div>\
+                        <div class="card-body py-3">\
+                            <p class="mb-0 '+textType+'" id="infoMessage">'+ message +'</p>\
+                        </div>\
+                    </div>');
+        var div = $("#infoBarHolder").children().last();
+        div.fadeIn(500).delay(timeMs);
+        div.fadeOut(500);
+        setTimeout(function(){div.remove()}, timeMs+1000);
+    }
+
+
     $('#setKeyButton').click(function()
     { 
         console.log("Setting " + $('#inputApiKey').val() + " as new API key.");
         localStorage.setItem('hypixel_key', $('#inputApiKey').val());
 
+        var uuid = null;
+        $.ajax({
+            url: "https://api.hypixel.net/key?key=" + $('#inputApiKey').val(),
+            async: false,
+            contentType: "application/json",
+            dataType: 'json',
+            success: function(result){
+                uuid = result.record.owner;
+            },
+            error: function(jqXHR, textStatus, errorThrown)
+            {
+                // Handle?
+            }
+        });
+        if (uuid == null)
+        {
+            localStorage.setItem("key_owner", "N/A");
+            $('.myPlayerName').html(localStorage.getItem("key_owner"));
+            infoBarMessage('text-danger', "API Key Error", "The API Key could not be verified. Please ensure you're using the right key, and try again in a moment.", 7500);
+            return;
+        }
+        else
+        {
+            $.ajax({
+                url: "https://api.mojang.com/user/profile/" + uuid,
+                async: false,
+                contentType: "application/json",
+                dataType: 'json',
+                success: function(result){
+                    localStorage.setItem("key_owner", result.name);
+                    $('.myPlayerName').html(localStorage.getItem("key_owner"));
+                    infoBarMessage('text-success', "API Key Success", "API Key Set Successfully!", 5000);
+                },
+                error: function(jqXHR, textStatus, errorThrown)
+                {
+                    localStorage.setItem("key_owner", "N/A");
+                    $('.myPlayerName').html(localStorage.getItem("key_owner"));
+                    infoBarMessage('text-danger', "API Key Error", "The API Key could not be verified. Please ensure you're using the right key, and try again in a moment.", 7500);
+                },
+            })
+            .fail(function(jqXHR, textStatus, errorThrown)
+            {
+                localStorage.setItem("key_owner", "N/A");
+                $('.myPlayerName').html(localStorage.getItem("key_owner"));
+                infoBarMessage('text-danger', "API Key Error", "The API Key could not be verified. Please ensure you're using the right key, and try again in a moment.", 7500);
+            });
+        }
     });
 
     $(document).ready(function()
     {
         $('#inputApiKey').val(localStorage.getItem("hypixel_key"));
+    });
+</script>
+
+<script>
+    $(document).ready(function()
+    {
+        $('.myPlayerName').html(localStorage.getItem("key_owner"));
     });
 </script>
 

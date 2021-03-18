@@ -111,9 +111,7 @@
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                         <i class="fa fa-bars"></i>
                     </button>
-                    <div>
-                        Logged in as: <div class='myPlayerName'></div>
-                    </div>
+                    <div>Logged in as: <span class='myPlayerName'></span></div>
                 </nav>
                 <!-- End of Topbar -->
 
@@ -181,6 +179,12 @@
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
 -->
+<script>
+    $(document).ready(function()
+    {
+        $('.myPlayerName').html(localStorage.getItem("key_owner"));
+    });
+</script>
 
 
 </body></html>

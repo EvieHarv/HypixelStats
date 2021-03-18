@@ -8,7 +8,7 @@ self.addEventListener("message", function(e) {
 async function callApis(player, key)
 {
     var uuidUrl = "https://api.mojang.com/users/profiles/minecraft/" + player;
-    var hypxUrl = "https://api.hypixel.net/player?key=" + key + "&uuid="; // TODO Dynamic REMOVE THIS ZONEE
+    var hypxUrl = "https://api.hypixel.net/player?key=" + key + "&uuid=";
 
     var uuid = null;
 

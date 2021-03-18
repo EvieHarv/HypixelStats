@@ -63,7 +63,7 @@ const mainMenuTemplate =
 ];
 
 // TODO: DON'T HARDCODE THIS PATH
-const watcher = chokidar.watch('/home/zonee/.lunarclient/logs/launcher/renderer.log', 
+const watcher = chokidar.watch('/home/zonee/.lunarclient/logs/launcher/renderer.log',  // TODO: Make Dynamic Path!
 {
   persistent: true,
   usePolling: true // Unfortunately higher CPU usage, but seems reqiored to get it to work consistently
@@ -94,12 +94,12 @@ const arrayEquals = (a, b) =>
 function checkForPlayer(lines)// This function is so incredibly inefficent, but it's the best I've got right now, so it's what we're using.
 {
   playerListTemp = [...playerList];
-  const newMatchCheck = "[Client thread/INFO]: [CHAT] Zonee has joined"; // TODO: MAKE DYNAMIC
+  const newMatchCheck = "[Client thread/INFO]: [CHAT] "+localStorage.getItem("key_owner")+" has joined"; // TODO: MAKE DYNAMIC
   lines.forEach(function(line)
   {
     if (line.includes(newMatchCheck)) // When self joins, re-start array and /who
     {
-      playerList = ['Zonee']; // TODO: MAKE DYNAMIC
+      playerList = [localStorage.getItem("key_owner")]; // TODO: MAKE DYNAMIC
     }
     else if (line.includes('[Client thread/INFO]: [CHAT] ') && line.includes('has joined')) // Another Player joins, add them to playerList
     {
@@ -130,7 +130,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
   // Detect if array just changed AND it's only one player.
   // There is an edgecase here where you join a new match and other people join too quickly for it to parse it out
   // I'll deal with it if it becomes a problem
-  if (arrayEquals(playerList, ['Zonee']) && (!arrayEquals(playerList, playerListTemp))) // TODO: MAKE DYNAMIC 
+  if (arrayEquals(playerList, [localStorage.getItem("key_owner")]) && (!arrayEquals(playerList, playerListTemp))) // TODO: MAKE DYNAMIC 
   {
     //console.log("You just gotta type /who ig");
     mainWindow.webContents.send('clearList');
