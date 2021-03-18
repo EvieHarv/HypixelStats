@@ -1,11 +1,11 @@
 {
   "name": "hypixelstats",
-  "version": "1.0.0",
+  "version": "Alpha 1.0.0",
   "description": "Standalone Cross-platform and open-source Hypixel Stattracker",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "package": "electron-packager .",
+    "publish": "electron-builder -wl -p always",
     "rebuild": "electron-rebuild"
   },
   "repository": {
@@ -13,7 +13,7 @@
     "url": "git+https://github.com/EthanHarv/HypixelStats.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Ethanharv",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/EthanHarv/HypixelStats/issues"
@@ -21,12 +21,33 @@
   "homepage": "https://github.com/EthanHarv/HypixelStats#readme",
   "devDependencies": {
     "electron": "^12.0.1",
-    "electron-packager": "^15.2.0",
+    "electron-builder": "^22.10.5",
     "electron-rebuild": "^2.3.5"
   },
   "dependencies": {
     "chokidar": "^3.5.1",
     "electron-store": "^7.0.2",
+    "electron-updater": "^4.3.8",
     "read-last-lines": "^1.8.0"
+  },
+  "build": {
+    "productName": "Hypixel Stats",
+    "artifactName": "HypixelStats-${version}.${ext}",
+    "appId": "com.ethanharv.hypixelstats",
+    "directories": {
+      "app": "./",
+      "output": "./dist"
+    },
+    "publish": [{
+      "provider": "github",
+      "owner": "EthanHarv",
+      "repo": "HypixelStats"
+    }],
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
   }
 }

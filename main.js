@@ -17,7 +17,8 @@ app.on('ready', function()
     webPreferences: {
       contextIsolation: false,
       nodeIntegration: true,
-      devTools: true
+      devTools: true,
+      enableRemoteModule: true
     }
   });
 
@@ -66,13 +67,15 @@ const mainMenuTemplate =
 ];
 
 // TODO: DON'T HARDCODE THIS PATH
-const watcher = chokidar.watch('/home/zonee/.lunarclient/logs/launcher/renderer.log',
+if (store.get('logPath') !== undefined)
 {
-  persistent: true,
-  usePolling: true // Unfortunately higher CPU usage, but seems reqiored to get it to work consistently
-});
-
-watcher.on('change', path => fileUpdated(path));
+  const watcher = chokidar.watch(store.get('logPath'),
+  {
+    persistent: true,
+    usePolling: true // Unfortunately higher CPU usage, but seems reqiored to get it to work consistently
+  });
+  watcher.on('change', path => fileUpdated(path));
+}
 
 function fileUpdated(path)
 {

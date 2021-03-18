@@ -13,6 +13,10 @@ ipcRenderer.on('clearList', function (event)
 
 function updatePlayerArea(playerList)
 {
+    if (sessionStorage.getItem('seenPlayers') == null)
+    {
+        sessionStorage.setItem('seenPlayers', []);
+    }
     sessionStorage.setItem('seenPlayers', [...new Set([...sessionStorage.getItem('seenPlayers').split(','),...playerList])]); // Should be O(n)? I think
     $(".playerCard").each(function(card) // Keep old card data if player still in, delete data if card is no longer relevent
     {
@@ -36,11 +40,11 @@ function updatePlayerArea(playerList)
     {
         $(".playerList").append('\
             <div class="col-xl-3 col-md-6 mb-4 playerCard" player="' + player + '" uuid="">\
-                <div class="card border-left-success shadow h-100 py-2">\
+                <div class="card border-left-primary shadow h-100 py-2">\
                     <div class="card-body">\
                         <div class="row no-gutters align-items-center">\
                             <div class="col mr-2">\
-                                <div class="font-weight-bold text-success mb-1">' + player + '</div>\
+                                <div class="font-weight-bold text-primary mb-1 name">' + player + '</div>\
                                 <div class="h5 mb-0 font-weight-bold text-gray-800 fkdr-div">FKDR: <span class="fkdr">Loading...</span></div>\
                                 <div class="h5 mb-0 font-weight-bold text-gray-800 winstreak-div">Winstreak: <span class="winstreak">Loading...</span></div>\
                             </div>\
@@ -65,9 +69,58 @@ function updatePlayerArea(playerList)
             var fkdr = e.data[2]
             var winstreak = e.data[3]
 
+            var color = getColor(player, fkdr, winstreak);
+            if (color !== "primary")
+            {
+                $("[player='" + player + "'] > .card").removeClass('border-left-primary');
+                $("[player='" + player + "'] > .card").addClass('border-left-' + color);
+                $("[player='" + player + "'] .name").removeClass('text-primary');
+                $("[player='" + player + "'] .name").addClass('text-' + color);
+            }
             $("[player='" + player + "']").attr('uuid', uuid);
             $("[player='" + player + "']").find('.fkdr').html(fkdr);
             $("[player='" + player + "']").find('.winstreak').html(winstreak);
+
+            // Re-order divs based on FKDR
+            var divList = $(".playerCard");
+            divList.sort(function(a, b){
+                aNum = $(a).find(".fkdr").html();
+                bNum = $(b).find(".fkdr").html();
+                console.log("ayo aNum is : " + aNum + " and bNum is : " + bNum);
+                if (!Number.isFinite((aNum + 1 - 1))) // This is JANK but it works
+                {
+                    // If it's not a number, its 0
+                    aNum = 0;
+                }
+                if (!Number.isFinite((bNum + 1 - 1)))
+                {
+                    bNum = 0;
+                }
+                return bNum-aNum;
+            });
+            $(".playerList").html(divList);
+            //$("[player='" + list[0].getAttribute('player') + "'] .fkdr").html()
         }
     });
+}
+
+function getColor(player, fkdr, winstreak)
+{
+    var blacklist = store.get('blacklist')
+    var whitelist = store.get('whitelist')
+    if (blacklist !== undefined)
+    {
+        if (blacklist.includes(player))
+        {
+            return "danger";
+        };
+    }
+    if (whitelist !== undefined)
+    {
+        if (whitelist.includes(player))
+        {
+            return "success";
+        };
+    }
+    return "primary"; // Neither
 }

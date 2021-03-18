@@ -121,6 +121,7 @@
                     <!-- Page Heading -->
                     <div>
                         Versions: 
+                        HypixelStats <script>document.write(require("electron").remote.app.getVersion());</script>,
                         Node <script>document.write(process.versions.node)</script>,
                         Chrome <script>document.write(process.versions.chrome)</script>,
                         and Electron <script>document.write(process.versions.electron)</script>.                
@@ -213,6 +214,7 @@
     $('#blacklistPlayerButton').click(function()
     {
         console.log("Blacklisting " + $('#inputPlayer').val() + ".");
+        if ($('#inputPlayer').val() == "") { return; }
         store.set('blacklist', [...new Set([...store.get("blacklist"),...[$('#inputPlayer').val()]])]);
         var array = store.get('whitelist');
         const index = array.indexOf($('#inputPlayer').val()); // Remove from whitelist, player is blacklisted

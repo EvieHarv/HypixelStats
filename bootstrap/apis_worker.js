@@ -86,15 +86,15 @@ async function callApis(player, key)
                     console.error("Nick Detected! Name: " + player);
                 }
                 // Store FKDR in playerCard
-                else if (result.player.stats.Bedwars.four_four_final_deaths_bedwars == undefined) // No Deaths (nice)
-                {
-                    //$("[player='" + player + "']").find('.fkdr').html(result.player.stats.Bedwars.four_four_final_kills_bedwars);
-                    fkdr = result.player.stats.Bedwars.four_four_final_kills_bedwars;
-                }
                 else if (result.player.stats.Bedwars.four_four_final_kills_bedwars == undefined) // No kills (rough)
                 {
                     //$("[player='" + player + "']").find('.fkdr').html("0");
                     fkdr = 0;
+                }
+                else if (result.player.stats.Bedwars.four_four_final_deaths_bedwars == undefined) // No Deaths (nice)
+                {
+                    //$("[player='" + player + "']").find('.fkdr').html(result.player.stats.Bedwars.four_four_final_kills_bedwars);
+                    fkdr = result.player.stats.Bedwars.four_four_final_kills_bedwars;
                 }
                 else // Normal Human with both kills & deaths
                 {
@@ -105,7 +105,7 @@ async function callApis(player, key)
     
                 // Store winstreak in playerCard
                 //$("[player='" + player + "']").find('.winstreak').html(result.player.stats.Bedwars.winstreak);
-                if (result.player.stats.Bedwars.winstreak !== undefined){ winstreak = result.player.stats.Bedwars.winstreak; }
+                if (result.player !== null && result.player.stats.Bedwars.winstreak !== undefined){ winstreak = result.player.stats.Bedwars.winstreak; }
                 else {winstreak = "N/A (Never Won?)"};
             }
         })

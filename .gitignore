@@ -1,2 +1,6 @@
 *.ignore
 node_modules/
+.yarn/*
+.yarn/
+dist/*
+dist/

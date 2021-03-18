@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Seen Players</title>
+    <title>Settings</title>
     <base href="../">
 
     <!-- Custom fonts for this template-->
@@ -119,35 +119,30 @@
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Players Seen:</h1>
+                    <div id='infoBarHolder'>
                     </div>
                     <div>
                         Versions: 
+                        HypixelStats <script>document.write(require("electron").remote.app.getVersion());</script>,
                         Node <script>document.write(process.versions.node)</script>,
                         Chrome <script>document.write(process.versions.chrome)</script>,
                         and Electron <script>document.write(process.versions.electron)</script>.                
                     </div>
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Settings:</h1>
+                    </div>
                     <!-- Content Row -->
-                    <div class="row">
-
-                        <!-- Player Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="font-weight-bold text-primary mb-1">Gamer</div>
-                                            <div class="h6 mb-0 font-weight-bold text-gray-800">Last Seen: March 16 2021, 22:31 EST</div>
-                                            <div class="h6 mb-0 font-weight-bold text-gray-800">FKDR: .254</div>
-                                            <div class="h6 mb-0 font-weight-bold text-gray-800">Winstreak: 3</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="row" style='padding-left: 10px;'>
+                        <input style='width: 500px;' type="text" class="form-control form-control-user" id="inputPath" placeholder="./../renderer.log">
+                        <div style="padding-left: 5px;">
+                            <button class="btn btn-primary mb-4" type="button" id="setPathButton">
+                                Set Log Path
+                            </button>
                         </div>
-
-                </div>
+                        <div style='padding-left: 10px;'>
+                            <p class='text-danger' style="margin-top: 7px;">Requires a restart!</p>
+                        </div>
+                    </div>
                 <!-- /.container-fluid -->
             </div>
             <!-- End of Main Content -->
@@ -156,7 +151,7 @@
 
     </div>
     <!-- End of Page Wrapper -->
-
+    </div>
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top" style="display: none;">
         <i class="fas fa-angle-up"></i>
@@ -180,5 +175,31 @@
     <script src="js/demo/chart-pie-demo.js"></script>
 -->
 <script src='./bootstrap/logged_in.js'></script>
-
+<script>
+    function infoBarMessage(textType, heading, message, timeMs)
+    {
+        $("#infoBarHolder").append('\
+                    <div class="card shadow mb-4" id="infoBar" style="display: none;">\
+                        <div class="card-header py-3">\
+                            <h6 class="m-0 font-weight-bold '+textType+'" id="infoHeading">'+ heading +'</h6>\
+                        </div>\
+                        <div class="card-body py-3">\
+                            <p class="mb-0 '+textType+'" id="infoMessage">'+ message +'</p>\
+                        </div>\
+                    </div>');
+        var div = $("#infoBarHolder").children().last();
+        div.fadeIn(500).delay(timeMs);
+        div.fadeOut(500);
+        setTimeout(function(){div.remove()}, timeMs+1000);
+    }
+    $('#setPathButton').click(function()
+    {
+        store.set('logPath', $('#inputPath').val());
+        infoBarMessage('text-success', "API Key Success", "Path Set Successfully!", 5000);
+    });
+    $(function()
+    {
+        $('#inputPath').val(store.get("logPath"));
+    });
+</script>
 </body></html>

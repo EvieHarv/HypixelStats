@@ -121,6 +121,7 @@
                     <!-- Page Heading -->
                     <div>
                         Versions: 
+                        HypixelStats <script>document.write(require("electron").remote.app.getVersion());</script>,
                         Node <script>document.write(process.versions.node)</script>,
                         Chrome <script>document.write(process.versions.chrome)</script>,
                         and Electron <script>document.write(process.versions.electron)</script>.                
@@ -186,6 +187,7 @@
     $(function()
     {
         sessionStorage.getItem('seenPlayers').split(',').reverse().forEach(function(player){
+        if (player !== ""){
         $(".playerList").append('\
             <div class="col-xl-3 col-md-6 mb-4 playerCard" player="' + player + '" uuid="">\
                 <div class="card border-left-primary shadow h-100 py-2">\
@@ -200,7 +202,7 @@
                     </div>\
                 </div>\
             </div>\
-        ')});
+        ')}});
         if (store.get('whitelist') == undefined) // Really should do this on like, inital startup. Dunno, it's good to check here, ig? If that would fail somehow?
         {
             store.set('whitelist', [])

@@ -118,6 +118,7 @@
 
                     <div>
                         Versions: 
+                        HypixelStats <script>document.write(require("electron").remote.app.getVersion());</script>,
                         Node <script>document.write(process.versions.node)</script>,
                         Chrome <script>document.write(process.versions.chrome)</script>,
                         and Electron <script>document.write(process.versions.electron)</script>.                
@@ -129,7 +130,6 @@
                     </div>
                     <!-- Content Row -->
                     <div class="row playerList">
-
                         <!-- Player Card Example 
                         <div class="col-xl-3 col-md-6 mb-4 playercard" player="Friend" uuid="">
                             <div class="card border-left-success shadow h-100 py-2">
@@ -179,6 +179,31 @@
 -->
     <script src='./bootstrap/logged_in.js'></script>
     <script src="./bootstrap/handlePlayers.js"></script>
-
-
+<script>
+    $(function()
+    {
+        if ((store.get('hypixel_key') == undefined) || (store.get('logPath') == undefined)) // User not set up yet! Show them what they need
+        $('.playerList').html('\
+            <div style="padding-left: 12px;">\
+            <div class="card shadow mb-4" id="infoBar">\
+                <div class="card-header py-3">\
+                    <h2 class="m-0 font-weight-bold text-danger" id="infoHeading">Getting set up: (important!)</h2>\
+                </div>\
+                <div class="card-body py-3">\
+                    <p>\
+                        Make sure you have your API key set in <code>Settings -> <a href="./bootstrap/api_settings.html">API Settings</a></code>,\
+                        <b class="text-danger">AND</b> you have your path set in \
+                        <code>Settings -> <a href="./bootstrap/settings.html">Application Settings.</a></code>\
+                        <br>\
+                        Once both are set, and you restart the app, you can start joining games!\
+                        <br>\
+                        (At the moment, you must do /who whenever you join a game. It will pick up joins/leaves automatically.\
+                        I plan to add a feature eventually to type /who automatically for you.)\
+                    </p>\
+                </div>\
+            </div>\
+            </div>'
+        )
+    });
+</script>
 </body></html>
