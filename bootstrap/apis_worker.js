@@ -77,7 +77,7 @@ async function callApis(player, key)
             async: false,
             contentType: "application/json",
             dataType: 'json',
-            success: function(result){
+            success: function(result){ // TODO: Make dynamic for which stats are chosen
                 if (result.player == null)
                 {
                     uuid = 'Nick';
@@ -106,7 +106,7 @@ async function callApis(player, key)
                 // Store winstreak in playerCard
                 //$("[player='" + player + "']").find('.winstreak').html(result.player.stats.Bedwars.winstreak);
                 if (result.player.stats.Bedwars.winstreak !== undefined){ winstreak = result.player.stats.Bedwars.winstreak; }
-                else {winstreak = "N/A"};
+                else {winstreak = "N/A (Never Won?)"};
             }
         })
         .fail(function(jqXHR, textStatus, errorThrown)

@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Seen Players</title>
+    <title>Whitelisted</title>
     <base href="../">
 
     <!-- Custom fonts for this template-->
@@ -119,44 +119,27 @@
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Players Seen:</h1>
-                    </div>
                     <div>
                         Versions: 
                         Node <script>document.write(process.versions.node)</script>,
                         Chrome <script>document.write(process.versions.chrome)</script>,
                         and Electron <script>document.write(process.versions.electron)</script>.                
                     </div>
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Whitelist:</h1>
+                    </div>
                     <!-- Content Row -->
-                    <div class="row">
+                    <div class="row playerList">
 
-                        <!-- Player Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="font-weight-bold text-primary mb-1">Gamer</div>
-                                            <div class="h6 mb-0 font-weight-bold text-gray-800">Last Seen: March 16 2021, 22:31 EST</div>
-                                            <div class="h6 mb-0 font-weight-bold text-gray-800">FKDR: .254</div>
-                                            <div class="h6 mb-0 font-weight-bold text-gray-800">Winstreak: 3</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
+                    </div>
+                    <!-- /.container-fluid -->
                 </div>
-                <!-- /.container-fluid -->
+                <!-- End of Main Content -->
             </div>
-            <!-- End of Main Content -->
+            <!-- End of Content Wrapper -->
         </div>
-        <!-- End of Content Wrapper -->
-
     </div>
     <!-- End of Page Wrapper -->
-
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top" style="display: none;">
         <i class="fas fa-angle-up"></i>
@@ -180,6 +163,41 @@
     <script src="js/demo/chart-pie-demo.js"></script>
 -->
 <script src='./bootstrap/logged_in.js'></script>
+<script>
+    $(function()
+    {
+        if (store.get('whitelist') == undefined)
+        {
+            store.set('whitelist', []);
+        };
+        store.get('whitelist').forEach(function(player){
+        $(".playerList").append('\
+            <div class="col-xl-3 col-md-6 mb-4 playerCard" player="' + player + '" uuid="">\
+                <div class="card border-left-success shadow h-100 py-2">\
+                    <div class="card-body">\
+                        <div class="row no-gutters align-items-center">\
+                            <div class="col mr-2">\
+                                <div class="font-weight-bold text-success mb-1">' + player + '</div>\
+                                <button class="btn btn-danger mb-0 removeWhitelist" type="button" player="' + player + '">Remove From Whitelist</button>\
+                            </div>\
+                        </div>\
+                    </div>\
+                </div>\
+            </div>\
+        ')});
+        $('.removeWhitelist').click(function(player)
+        {
+            const playerName = player.target.getAttribute('player');
+            var array = store.get('whitelist');
+            const index = array.indexOf(playerName); // Remove from blacklist, player is whitelisted
+            if (index > -1) {
+                array.splice(index, 1);
+            }
+            store.set('whitelist', array);
+            $("[player='" + playerName + "']").remove();
+        });
+    });
+</script>
 
 
 </body></html>

@@ -13,6 +13,7 @@ ipcRenderer.on('clearList', function (event)
 
 function updatePlayerArea(playerList)
 {
+    sessionStorage.setItem('seenPlayers', [...new Set([...sessionStorage.getItem('seenPlayers').split(','),...playerList])]); // Should be O(n)? I think
     $(".playerCard").each(function(card) // Keep old card data if player still in, delete data if card is no longer relevent
     {
         if ($(".playerCard")[card] == undefined) // Honestly not 100% sure where this comes from but handle it anyways. I'm tired don't judge me.

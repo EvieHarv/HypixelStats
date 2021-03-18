@@ -1,7 +1,7 @@
 {
   "name": "hypixelstats",
   "version": "1.0.0",
-  "description": "I've made a statstracker before using WPF, but using electron should make cross-platform use easier.",
+  "description": "Standalone Cross-platform and open-source Hypixel Stattracker",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
