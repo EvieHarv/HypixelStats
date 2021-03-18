@@ -3,6 +3,7 @@ const process = require('process');
 const chokidar = require('chokidar');
 const readLastLines = require('read-last-lines');
 const console = require('console');
+const { localStorage, sessionStorage } = require('electron-browser-storage');
 
 let mainWindow;
 
@@ -29,16 +30,9 @@ app.on('ready', function()
   // Build & Apply Menu 
   const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
   Menu.setApplicationMenu(mainMenu);
+
 });
 
-function getLocalStorage(key) 
-{
-  mainWindow.webContents
-  .executeJavaScript('localStorage.getItem("'+ key +'");', true)
-  .then(result => {
-    return result;
-  });
-}
 
 // Menu Template
 const mainMenuTemplate = 
@@ -99,15 +93,16 @@ const arrayEquals = (a, b) =>
   a.length === b.length &&
   a.every((v, i) => v === b[i])
 
-function checkForPlayer(lines)// This function is so incredibly inefficent, but it's the best I've got right now, so it's what we're using.
+async function checkForPlayer(lines)// This function is so incredibly inefficent, but it's the best I've got right now, so it's what we're using.
 {
+  key_owner = await localStorage.getItem('key_owner'); // I feel like there must be a much better way to do this but this is what I'm going with
   playerListTemp = [...playerList];
-  const newMatchCheck = "[Client thread/INFO]: [CHAT] "+getLocalStorage("key_owner")+" has joined"; // TODO: MAKE DYNAMIC
+  const newMatchCheck = "[Client thread/INFO]: [CHAT] "+key_owner+" has joined"; // TODO: MAKE DYNAMIC
   lines.forEach(function(line)
   {
     if (line.includes(newMatchCheck)) // When self joins, re-start array and /who
     {
-      playerList = [getLocalStorage("key_owner")]; // TODO: MAKE DYNAMIC
+      playerList = [key_owner]; // TODO: MAKE DYNAMIC
     }
     else if (line.includes('[Client thread/INFO]: [CHAT] ') && line.includes('has joined')) // Another Player joins, add them to playerList
     {
@@ -138,7 +133,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
   // Detect if array just changed AND it's only one player.
   // There is an edgecase here where you join a new match and other people join too quickly for it to parse it out
   // I'll deal with it if it becomes a problem
-  if (arrayEquals(playerList, [getLocalStorage("key_owner")]) && (!arrayEquals(playerList, playerListTemp))) // TODO: MAKE DYNAMIC 
+  if (arrayEquals(playerList, [key_owner]) && (!arrayEquals(playerList, playerListTemp))) // TODO: MAKE DYNAMIC 
   {
     //console.log("You just gotta type /who ig");
     mainWindow.webContents.send('clearList');
