@@ -1,7 +1,4 @@
-const Store = require('electron-store');
-
-const store = new Store();
-
+//store should already be set
 function infoBarMessage(textType, heading, message, timeMs)
 {
     $("#infoBarHolder").append('\

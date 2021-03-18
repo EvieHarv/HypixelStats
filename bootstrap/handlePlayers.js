@@ -1,7 +1,4 @@
-const Store = require('electron-store');
-
-const store = new Store();
-
+// store already defined by this point
 var ipcRenderer = require('electron').ipcRenderer;
 
 ipcRenderer.on('playerList', function (event,playerList) 
