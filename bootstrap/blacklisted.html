@@ -129,6 +129,14 @@
                         <h1 class="h3 mb-0 text-gray-800">Blacklist:</h1>
                     </div>
                     <!-- Content Row -->
+                    <div class="row mt-0 pt-0" style="padding-left: 10px;">
+                        <input style="width: 375px;" type="text" class="form-control form-control-user" id="inputPlayer" placeholder="Name">
+                        <div style="padding-left: 5px;">
+                            <button class="btn btn-danger mb-4" type="button" id="blacklistPlayerButton">
+                                Blacklist Player
+                            </button>
+                        </div>
+                    </div>
                     <div class="row playerList">
 
                     </div>
@@ -166,6 +174,11 @@
 <script>
     $(function()
     {
+        updateBlacklist();
+    });
+    function updateBlacklist()
+    {
+        $(".playerList").html("");
         if (store.get('blacklist') == undefined)
         {
             store.set('blacklist', []);
@@ -196,6 +209,18 @@
             store.set('blacklist', array);
             $("[player='" + playerName + "']").remove();
         });
+    };
+    $('#blacklistPlayerButton').click(function()
+    {
+        console.log("Blacklisting " + $('#inputPlayer').val() + ".");
+        store.set('blacklist', [...new Set([...store.get("blacklist"),...[$('#inputPlayer').val()]])]);
+        var array = store.get('whitelist');
+        const index = array.indexOf($('#inputPlayer').val()); // Remove from whitelist, player is blacklisted
+        if (index > -1) {
+            array.splice(index, 1);
+        }
+        store.set('whitelist', array);
+        updateBlacklist();
     });
 </script>
 
