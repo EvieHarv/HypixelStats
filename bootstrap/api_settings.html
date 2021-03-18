@@ -11,12 +11,12 @@
     <base href="../">
 
     <!-- Custom fonts for this template-->
-    <link href="bootstrap/all.css" rel="stylesheet" type="text/css">
-    <link href="bootstrap/css.css" rel="stylesheet">
-    <script src="bootstrap/jquery.js"></script>
+    <link href="./bootstrap/all.css" rel="stylesheet" type="text/css">
+    <link href="./bootstrap/css.css" rel="stylesheet">
+    <script src="./bootstrap/jquery.js"></script>
 
     <!-- Custom styles for this template-->
-    <link href="bootstrap/sb-admin-2.css" rel="stylesheet">
+    <link href="./bootstrap/sb-admin-2.css" rel="stylesheet">
     <script src="https://kit.fontawesome.com/ffba1c6df7.js" crossorigin="anonymous"></script>
 
 
@@ -121,8 +121,18 @@
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
+
+                    <div class="card shadow mb-4 d-md-none">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-success">API Key</h6>
+                        </div>
+                        <div class="card-body text-success py-3">
+                            <p class="mb-0">API Key set!</p>
+                        </div>
+                    </div>
+
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Players Seen:</h1>
+                        <h1 class="h3 mb-0 text-gray-800">API Settings:</h1>
                     </div>
                     <div>
                         Versions: 
@@ -131,25 +141,17 @@
                         and Electron <script>document.write(process.versions.electron)</script>.                
                     </div>
                     <!-- Content Row -->
-                    <div class="row">
-
-                        <!-- Player Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="font-weight-bold text-primary mb-1">Gamer</div>
-                                            <div class="h6 mb-0 font-weight-bold text-gray-800">Last Seen: March 16 2021, 22:31 EST</div>
-                                            <div class="h6 mb-0 font-weight-bold text-gray-800">FKDR: .254</div>
-                                            <div class="h6 mb-0 font-weight-bold text-gray-800">Winstreak: 3</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="row" style='padding-left: 10px;'>
+                        <input style='width: 375px;' type="text" class="form-control form-control-user" id="inputApiKey" placeholder="Enter API Key">
+                        <div style="padding-left: 5px;">
+                            <button class="btn btn-primary mb-4" type="button" id="setKeyButton">
+                                Set Hypixel Key
+                            </button>
                         </div>
-
-                </div>
+                        <div style='padding-left: 10px;'>
+                            <p class='text-secondary' style="margin-top: 7px;">Do <code>/api key</code> in hypixel.</p>
+                        </div>
+                    </div>
                 <!-- /.container-fluid -->
             </div>
             <!-- End of Main Content -->
@@ -181,6 +183,18 @@
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
 -->
+<script>
+    $('#setKeyButton').click(function()
+    { 
+        console.log("Setting " + $('#inputApiKey').val() + " as new API key.");
+        localStorage.setItem('hypixel_key', $('#inputApiKey').val());
 
+    });
+
+    $(document).ready(function()
+    {
+        $('#inputApiKey').val(localStorage.getItem("hypixel_key"));
+    });
+</script>
 
 </body></html>

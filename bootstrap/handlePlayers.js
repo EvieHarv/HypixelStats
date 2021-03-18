@@ -1,10 +1,12 @@
 var ipcRenderer = require('electron').ipcRenderer;
 
-ipcRenderer.on('playerList', function (event,playerList) {
+ipcRenderer.on('playerList', function (event,playerList) 
+{
     updatePlayerArea(playerList);
 });
 
-ipcRenderer.on('clearList', function (event) {
+ipcRenderer.on('clearList', function (event) 
+{
     $(".playerList").html("");
 });
 
@@ -49,7 +51,11 @@ function updatePlayerArea(playerList)
     var worker = new Worker('./bootstrap/apis_worker.js'); // Seperate this from the main thread (I think that's how this works here, I'm too used to C#)
     playerList.forEach(function(player) 
     {
-        worker.postMessage(player);
+        if (localStorage.getItem('hypixel_key') == undefined)
+        {
+            $(".playerList").html("Please set your hypixel API key in Settings -> API Settings -> Hypixel Key");
+        };
+        worker.postMessage([player, localStorage.getItem('hypixel_key')]);
         worker.onmessage = function (e) 
         {
             var player = e.data[0]

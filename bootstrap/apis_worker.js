@@ -2,13 +2,13 @@ importScripts("./fakeDom.js");
 importScripts('./jquery.js');
 
 self.addEventListener("message", function(e) {
-    callApis(e.data)
+    callApis(e.data[0], e.data[1])
 }, false);
 
-async function callApis(player)
+async function callApis(player, key)
 {
     var uuidUrl = "https://api.mojang.com/users/profiles/minecraft/" + player;
-    var hypxUrl = "https://api.hypixel.net/player?key=" + "YOUR-API-KEY-HERE" + "&uuid="; // TODO Dynamic
+    var hypxUrl = "https://api.hypixel.net/player?key=" + key + "&uuid="; // TODO Dynamic REMOVE THIS ZONEE
 
     var uuid = null;
 
@@ -24,7 +24,8 @@ async function callApis(player)
         dataType: 'json',
         success : function(result){
             // $("[player='" + player + "']").attr('uuid', result.data.player.id); // Store UUID in playerCard -- Can't access DOM over worker with new method
-            uuid = result.id;
+            if (result.id !== undefined){ uuid = result.id; }
+            else { uuid = "Nick"; }
         },
         error : function(xhr, textStatus, errorThrown) {
             this.tryCount++;
@@ -50,7 +51,14 @@ async function callApis(player)
                 console.error("MOJANG LOOKUP FAILED! Trying again for " + player + " err: " + errorThrown);
                 $.ajax(this);
                 return;
-            };
+            }
+            else
+            {
+                uuid = "Nick";
+                fkdr = "N/A";
+                winstreak = "N/A";
+                console.error("Nick Detected! Name: " + player);        
+            }
     }
     })
     .fail(function(err)
@@ -101,10 +109,13 @@ async function callApis(player)
                 else {winstreak = "N/A"};
             }
         })
-        .fail(function()
+        .fail(function(jqXHR, textStatus, errorThrown)
         {
-            $("[player='" + player + "']").attr('uuid', "Nick");
-            console.error("Nick Detected! Name: " + player);
+            console.log(jqXHR.cause + " : " + textStatus + " : " + errorThrown);
+            uuid = 'Nick';
+            fkdr = 'N/A';
+            winstreak = 'N/A';
+            console.error("API Failed. Nick Detected! Name: " + player);
         });
     }
     workerResult = [player, uuid, fkdr, winstreak]; // TODO:  Make some dynamic system for user-decided stats
