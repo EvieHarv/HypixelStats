@@ -1,9 +1,15 @@
-const { app, webContents, BrowserWindow, Menu, MessageChannelMain } = require('electron');
+const { app, webContents, BrowserWindow, Menu, MessageChannelMain, ipcMain } = require('electron');
 const process = require('process');
 const chokidar = require('chokidar');
 const readLastLines = require('read-last-lines');
 const console = require('console');
 const Store = require('electron-store');
+const log = require('electron-log');
+const {autoUpdater} = require("electron-updater");
+
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+log.info('App starting...');
 
 let mainWindow;
 
@@ -35,6 +41,24 @@ app.on('ready', function()
   Menu.setApplicationMenu(mainMenu);
 });
 
+ipcMain.on('updateCheck', function(){ // Check update like this to make sure page is fully loaded before checking
+  log.info('Checking for update... (from render process)')
+  autoUpdater.checkForUpdates();
+});
+
+autoUpdater.on('update-available', (info) => {
+  mainWindow.webContents.send('updateAvailable');
+});
+
+ipcMain.once('updateConfirmed', function()
+{
+  log.info("Downloading Update");
+  autoUpdater.downloadUpdate();
+});
+
+autoUpdater.on('update-downloaded', (info) => {
+  autoUpdater.quitAndInstall();
+})
 
 // Menu Template
 const mainMenuTemplate = 

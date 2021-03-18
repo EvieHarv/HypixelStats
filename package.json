@@ -1,11 +1,11 @@
 {
   "name": "hypixelstats",
-  "version": "Alpha 1.0.0",
+  "version": "1.0.0",
   "description": "Standalone Cross-platform and open-source Hypixel Stattracker",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "publish": "electron-builder -wl -p always",
+    "publish": "build -wl -p always",
     "rebuild": "electron-rebuild"
   },
   "repository": {
@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "chokidar": "^3.5.1",
+    "electron-log": "^4.3.2",
     "electron-store": "^7.0.2",
     "electron-updater": "^4.3.8",
     "read-last-lines": "^1.8.0"
@@ -38,11 +39,13 @@
       "app": "./",
       "output": "./dist"
     },
-    "publish": [{
-      "provider": "github",
-      "owner": "EthanHarv",
-      "repo": "HypixelStats"
-    }],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "EthanHarv",
+        "repo": "HypixelStats"
+      }
+    ],
     "win": {
       "target": "nsis"
     },
