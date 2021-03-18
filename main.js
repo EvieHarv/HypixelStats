@@ -3,9 +3,11 @@ const process = require('process');
 const chokidar = require('chokidar');
 const readLastLines = require('read-last-lines');
 const console = require('console');
-const { localStorage, sessionStorage } = require('electron-browser-storage');
+const Store = require('electron-store');
 
 let mainWindow;
+
+const store = new Store();
 
 // Start when app ready
 app.on('ready', function()
@@ -30,7 +32,6 @@ app.on('ready', function()
   // Build & Apply Menu 
   const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
   Menu.setApplicationMenu(mainMenu);
-
 });
 
 
@@ -65,7 +66,7 @@ const mainMenuTemplate =
 ];
 
 // TODO: DON'T HARDCODE THIS PATH
-const watcher = chokidar.watch('/home/zonee/.lunarclient/logs/launcher/renderer.log',  // TODO: Make Dynamic Path!
+const watcher = chokidar.watch('/home/zonee/.lunarclient/logs/launcher/renderer.log',
 {
   persistent: true,
   usePolling: true // Unfortunately higher CPU usage, but seems reqiored to get it to work consistently
@@ -93,9 +94,9 @@ const arrayEquals = (a, b) =>
   a.length === b.length &&
   a.every((v, i) => v === b[i])
 
-async function checkForPlayer(lines)// This function is so incredibly inefficent, but it's the best I've got right now, so it's what we're using.
+function checkForPlayer(lines)// This function is so incredibly inefficent, but it's the best I've got right now, so it's what we're using. (It also just really does not matter at this scale)
 {
-  key_owner = await localStorage.getItem('key_owner'); // I feel like there must be a much better way to do this but this is what I'm going with
+  key_owner = store.get("key_owner"); // Only call storage once. Doesn't really matter, but technically more efficent
   playerListTemp = [...playerList];
   const newMatchCheck = "[Client thread/INFO]: [CHAT] "+key_owner+" has joined"; // TODO: MAKE DYNAMIC
   lines.forEach(function(line)
