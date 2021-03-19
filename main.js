@@ -129,10 +129,12 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
   const newMatchCheck = "[Client thread/INFO]: [CHAT] "+key_owner+" has joined"; // TODO: MAKE DYNAMIC
   lines.forEach(function(line)
   {
+    // Detection through [Client thread/INFO]: [CHAT] [key_owner] has joined
     if (line.includes(newMatchCheck)) // When self joins, re-start array and /who
     {
       playerList = [key_owner]; // TODO: MAKE DYNAMIC
     }
+    // Detection through [PLAYER] has joined!
     else if (line.includes('[Client thread/INFO]: [CHAT] ') && line.includes('has joined')) // Another Player joins, add them to playerList
     {
       var playerName = line.split("[Client thread/INFO]: [CHAT] ")[1].split(" ")[0];
@@ -141,6 +143,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
         playerList.push(playerName);
       }
     }
+    // Detection through [PLAYER] has quit!
     else if (line.includes('[Client thread/INFO]: [CHAT] ') && line.includes('has quit!')) // Another Player leaves, remove them from playerList
     {
       var playerName = line.split("[Client thread/INFO]: [CHAT] ")[1].split(" ")[0];
@@ -149,12 +152,13 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
         playerList.splice(index, 1);
       }
     }
+    // Detection through /who
     else if (line.includes('[Client thread/INFO]: [CHAT] ONLINE: '))
     {
       var playerNames = line.split("[Client thread/INFO]: [CHAT] ONLINE: ")[1].split(" "); // TODO: Add all to player list (without doubles)
       for(var i = 0; i < playerNames.length; i++)
       {
-        playerNames[i] = playerNames[i].replace(",", "");
+        playerNames[i] = playerNames[i].replace(",", "").trim(); // It works fine on linux without the .trim(), but windows sneaks in a newline character
       };
       playerList = playerList.concat(playerNames.filter((name) => playerList.indexOf(name) < 0));
     };
@@ -162,7 +166,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
   // Detect if array just changed AND it's only one player.
   // There is an edgecase here where you join a new match and other people join too quickly for it to parse it out
   // I'll deal with it if it becomes a problem
-  if (arrayEquals(playerList, [key_owner]) && (!arrayEquals(playerList, playerListTemp))) // TODO: MAKE DYNAMIC 
+  if (arrayEquals(playerList, [key_owner]) && (!arrayEquals(playerList, playerListTemp))) 
   {
     //console.log("You just gotta type /who ig");
     mainWindow.webContents.send('clearList');
