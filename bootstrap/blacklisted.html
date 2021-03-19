@@ -180,11 +180,8 @@
     });
     function updateBlacklist()
     {
+        ensureListsExist();
         $(".playerList").html("");
-        if (store.get('blacklist') == undefined)
-        {
-            store.set('blacklist', []);
-        };
         store.get('blacklist').forEach(function(player){
         $(".playerList").append('\
             <div class="col-xl-3 col-md-6 mb-4 playerCard" player="' + player + '" uuid="">\
@@ -214,6 +211,7 @@
     };
     $('#blacklistPlayerButton').click(function()
     {
+        ensureListsExist();
         console.log("Blacklisting " + $('#inputPlayer').val() + ".");
         if ($('#inputPlayer').val() == "") { return; }
         store.set('blacklist', [...new Set([...store.get("blacklist"),...[$('#inputPlayer').val()]])]);
@@ -225,6 +223,17 @@
         store.set('whitelist', array);
         updateBlacklist();
     });
+    function ensureListsExist()
+    {
+        if (store.get('blacklist') == undefined)
+        {
+            store.set('blacklist', []);
+        };
+        if (store.get('whitelist') == undefined)
+        {
+            store.set('whitelist', []);
+        };
+    }
 </script>
 
 
