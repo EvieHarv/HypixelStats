@@ -69,7 +69,7 @@ function updatePlayerArea(playerList)
             var fkdr = e.data[2]
             var winstreak = e.data[3]
 
-            var color = getColor(player, fkdr, winstreak);
+            var color = getColor(player, fkdr, winstreak, uuid);
             if (color !== "primary")
             {
                 $("[player='" + player + "'] > .card").removeClass('border-left-primary');
@@ -86,7 +86,6 @@ function updatePlayerArea(playerList)
             divList.sort(function(a, b){
                 aNum = $(a).find(".fkdr").html();
                 bNum = $(b).find(".fkdr").html();
-                console.log("ayo aNum is : " + aNum + " and bNum is : " + bNum);
                 if (!Number.isFinite((aNum + 1 - 1))) // This is JANK but it works
                 {
                     // If it's not a number, its 0
@@ -104,7 +103,7 @@ function updatePlayerArea(playerList)
     });
 }
 
-function getColor(player, fkdr, winstreak)
+function getColor(player, fkdr, winstreak, uuid)
 {
     var blacklist = store.get('blacklist')
     var whitelist = store.get('whitelist')
@@ -121,6 +120,10 @@ function getColor(player, fkdr, winstreak)
         {
             return "success";
         };
+    }
+    if (uuid == "Nick" || uuid == undefined || uuid == "") // Really it should only be the first one, but I dont trust myself so we're doing all 3
+    {
+        return "warning";
     }
     return "primary"; // Neither
 }

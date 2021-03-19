@@ -24,7 +24,8 @@ app.on('ready', function()
       contextIsolation: false,
       nodeIntegration: true,
       devTools: true,
-      enableRemoteModule: true
+      enableRemoteModule: true,
+      webviewTag: true // Is this a bad thing to do? I needed it in playerLookup, but ngl thats nonessential so if somone tells me that's bad I'll remove it.
     }
   });
 

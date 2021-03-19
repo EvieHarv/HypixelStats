@@ -71,6 +71,7 @@
                         <a class="collapse-item" href="./bootstrap/seen.html">Seen</a>
                         <a class="collapse-item" href="./bootstrap/whitelisted.html">Whitelisted</a>
                         <a class="collapse-item" href="./bootstrap/blacklisted.html">Blacklisted</a>
+                        <a class="collapse-item" href="./bootstrap/lookup.html">Stat Lookup</a>
                     </div>
                 </div>
             </li>
@@ -140,7 +141,7 @@
                             </button>
                         </div>
                         <div style='padding-left: 10px;'>
-                            <p class='text-danger' style="margin-top: 7px;">Requires a restart!</p>
+                            <p class='text-danger' style="margin-top: 7px;">Requires an application restart! (<code>Ctrl+R</code> alone won't work)</p>
                         </div>
                     </div>
                 <!-- /.container-fluid -->
@@ -195,7 +196,7 @@
     $('#setPathButton').click(function()
     {
         store.set('logPath', $('#inputPath').val());
-        infoBarMessage('text-success', "API Key Success", "Path Set Successfully!", 5000);
+        infoBarMessage('text-success', "Success", "Path Set Successfully!", 5000);
     });
     $(function()
     {

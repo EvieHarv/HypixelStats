@@ -7,18 +7,17 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>API Settings</title>
+    <title>Player Lookup</title>
     <base href="../">
 
     <!-- Custom fonts for this template-->
-    <link href="./bootstrap/all.css" rel="stylesheet" type="text/css">
-    <link href="./bootstrap/css.css" rel="stylesheet">
-    <script src="./bootstrap/jquery.js"></script>
+    <link href="bootstrap/all.css" rel="stylesheet" type="text/css">
+    <link href="bootstrap/css.css" rel="stylesheet">
+    <script src="bootstrap/jquery.js"></script>
 
     <!-- Custom styles for this template-->
-    <link href="./bootstrap/sb-admin-2.css" rel="stylesheet">
+    <link href="bootstrap/sb-admin-2.css" rel="stylesheet">
     <script src="https://kit.fontawesome.com/ffba1c6df7.js" crossorigin="anonymous"></script>
-
 
 <!-- 
 <style type="text/css">/* Chart.js */
@@ -120,7 +119,6 @@
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-
                     <div id='infoBarHolder'>
                     </div>
                     <div>
@@ -131,20 +129,19 @@
                         and Electron <script>document.write(process.versions.electron)</script>.                
                     </div>
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">API Settings:</h1>
+                        <h1 class="h3 mb-0 text-gray-800">Player Lookup:</h1>
                     </div>
                     <!-- Content Row -->
                     <div class="row" style='padding-left: 10px;'>
-                        <input style='width: 375px;' type="text" class="form-control form-control-user" id="inputApiKey" placeholder="Enter API Key">
+                        <input style='width: 500px;' type="text" class="form-control form-control-user" id="inputName" placeholder="Player Name">
                         <div style="padding-left: 5px;">
-                            <button class="btn btn-primary mb-4" type="button" id="setKeyButton">
-                                Set Hypixel Key
+                            <button class="btn btn-primary mb-4" type="button" id="lookupPlayer">
+                                Lookup
                             </button>
                         </div>
-                        <div style='padding-left: 10px;'>
-                            <p class='text-secondary' style="margin-top: 7px;">Do <code>/api key</code> in hypixel.</p>
-                        </div>
                     </div>
+                    <br>
+                    <webview src="" style="width: 100%; height: 75%;" id="webView"></webview>
                 <!-- /.container-fluid -->
             </div>
             <!-- End of Main Content -->
@@ -153,7 +150,7 @@
 
     </div>
     <!-- End of Page Wrapper -->
-
+    </div>
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top" style="display: none;">
         <i class="fas fa-angle-up"></i>
@@ -177,7 +174,27 @@
     <script src="js/demo/chart-pie-demo.js"></script>
 -->
 <script src='./bootstrap/logged_in.js'></script>
-<script src='./bootstrap/api_settings.js'></script>
-
-
+<script>
+    function infoBarMessage(textType, heading, message, timeMs)
+    {
+        $("#infoBarHolder").append('\
+                    <div class="card shadow mb-4" id="infoBar" style="display: none;">\
+                        <div class="card-header py-3">\
+                            <h6 class="m-0 font-weight-bold '+textType+'" id="infoHeading">'+ heading +'</h6>\
+                        </div>\
+                        <div class="card-body py-3">\
+                            <p class="mb-0 '+textType+'" id="infoMessage">'+ message +'</p>\
+                        </div>\
+                    </div>');
+        var div = $("#infoBarHolder").children().last();
+        div.fadeIn(500).delay(timeMs);
+        div.fadeOut(500);
+        setTimeout(function(){div.remove()}, timeMs+1000);
+    }
+    $('#lookupPlayer').click(function()
+    {
+        $("#webView").attr('src', "https://plancke.io/hypixel/player/stats/" + $('#inputName').val())
+        // TODO: IFrame
+    });
+</script>
 </body></html>

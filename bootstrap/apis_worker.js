@@ -105,7 +105,7 @@ async function callApis(player, key)
     
                 // Store winstreak in playerCard
                 //$("[player='" + player + "']").find('.winstreak').html(result.player.stats.Bedwars.winstreak);
-                if (result.player !== null && result.player.stats.Bedwars.winstreak !== undefined){ winstreak = result.player.stats.Bedwars.winstreak; }
+                if (result !== null && result.player.stats.Bedwars.winstreak !== undefined){ winstreak = result.player.stats.Bedwars.winstreak; }
                 else {winstreak = "N/A (Never Won?)"};
             }
         })
