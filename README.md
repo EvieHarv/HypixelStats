@@ -4,8 +4,6 @@ HypixelStats is a cross-platform, open-source project that aims to be the easies
 
 ![Main Page](https://media.discordapp.net/attachments/414270111067668502/822399830004465694/unknown.png)
 
----
-
 ## Features
 
 ### <b>NOTE: HypixelStats is only currently compatible with Lunar Client. Support for other clients coming soon!</b>
@@ -33,7 +31,6 @@ To be clear—I have nothing against the BedwarsStats overlay, and I'm not tryin
 
 If you only have a single monitor, BedwarsStats is still superior. If you have two monitors, it's your choice of which one is easier to read and gives more relevent information. 
 
----
 
 ## Installing, Getting Set Up, and Updating
 
@@ -45,7 +42,6 @@ If you only have a single monitor, BedwarsStats is still superior. If you have t
     - The installer should automatically create a Desktop Icon. You can run the program from there.
 - If you're on linux, use the `.AppImage` and you're done.
 - If you're on MAC, good luck. Run it with node.
-
 
 ### Setup
 
@@ -62,8 +58,6 @@ You can now join a game, do `/who`, and see all the stats!
 ### Updates
 
 When a new update is available, you'll see a prompt in the top right of the dashboard to update. Click it, and you're done! It's that easy.
-
----
 
 ## Disclaimer
 
