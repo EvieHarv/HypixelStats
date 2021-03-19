@@ -193,8 +193,13 @@
     }
     $('#lookupPlayer').click(function()
     {
-        $("#webView").attr('src', "https://plancke.io/hypixel/player/stats/" + $('#inputName').val())
-        // TODO: IFrame
+        $("#webView").attr('src', "https://plancke.io/hypixel/player/stats/" + $('#inputName').val());
+    });
+    $('#inputName').on("keypress", function(e) {
+        if (e.keyCode == 13) {
+            $("#webView").attr('src', "https://plancke.io/hypixel/player/stats/" + $('#inputName').val());
+            return false; // prevent the button click from happening
+        }
     });
 </script>
 </body></html>

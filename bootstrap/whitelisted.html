@@ -120,6 +120,8 @@
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
+                    <div id='infoBarHolder'>
+                    </div>
                     <div>
                         Versions: 
                         HypixelStats <script>document.write(require("electron").remote.app.getVersion());</script>,
@@ -181,11 +183,27 @@
     {
         updateWhitelist();
     });
+    function infoBarMessage(textType, heading, message, timeMs)
+    {
+        $("#infoBarHolder").append('\
+                    <div class="card shadow mb-4" id="infoBar" style="display: none;">\
+                        <div class="card-header py-3">\
+                            <h6 class="m-0 font-weight-bold '+textType+'" id="infoHeading">'+ heading +'</h6>\
+                        </div>\
+                        <div class="card-body py-3">\
+                            <p class="mb-0 '+textType+'" id="infoMessage">'+ message +'</p>\
+                        </div>\
+                    </div>');
+        var div = $("#infoBarHolder").children().last();
+        div.fadeIn(500).delay(timeMs);
+        div.fadeOut(500);
+        setTimeout(function(){div.remove()}, timeMs+1000);
+    };
     function updateWhitelist()
     {
         ensureListsExist();
         $(".playerList").html("");
-        store.get('whitelist').forEach(function(player){
+        store.get('whitelist').reverse().forEach(function(player){
         $(".playerList").append('\
             <div class="col-xl-3 col-md-6 mb-4 playerCard" player="' + player + '" uuid="">\
                 <div class="card border-left-success shadow h-100 py-2">\
@@ -212,12 +230,32 @@
             $("[player='" + playerName + "']").remove();
         });
     }
+    $('#inputPlayer').on("keypress", function(e) {
+        if (e.keyCode == 13) {
+            addPlayer();
+            return false; // prevent the button click from happening
+        }
+    });
     $('#whitelistPlayerButton').click(function()
     {
+        addPlayer();
+    });
+    function addPlayer()
+    {
         ensureListsExist();
+        var playerName = $('#inputPlayer').val().trim();
+        if (playerName == "")
+        {
+            return false;
+        }
+        if (!(/^[a-zA-Z_0-9]+$/.test(playerName)))
+        {
+            infoBarMessage('text-danger', "Invalid Name", "That name is invalid.", 3000);
+            return false;
+        }
         if ($('#inputPlayer').val() == "") { return; }
         console.log("Whitelisting " + $('#inputPlayer').val() + ".");
-        store.set('whitelist', [...new Set([...store.get("whitelist"),...[$('#inputPlayer').val()]])]);
+        store.set('whitelist', [...new Set([...store.get("whitelist"),...[$('#inputPlayer').val()]])]); // Ensures no duplicates
         var array = store.get('blacklist');
         const index = array.indexOf($('#inputPlayer').val()); // Remove from whitelist, player is blacklisted
         if (index > -1) {
@@ -225,7 +263,7 @@
         }
         store.set('blacklist', array);
         updateWhitelist();
-    });
+    }
     function ensureListsExist()
     {
         if (store.get('blacklist') == undefined)

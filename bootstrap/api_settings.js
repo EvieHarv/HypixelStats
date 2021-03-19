@@ -16,6 +16,12 @@ function infoBarMessage(textType, heading, message, timeMs)
     setTimeout(function(){div.remove()}, timeMs+1000);
 }
 
+$('#inputApiKey').on("keypress", function(e) {
+    if (e.keyCode == 13) {
+        $('#setKeyButton').click(); // Same thing as clicking the button manually
+        return false; // prevent the button click from happening
+    }
+});
 
 $('#setKeyButton').click(function()
 { 

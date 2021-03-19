@@ -193,6 +193,12 @@
         div.fadeOut(500);
         setTimeout(function(){div.remove()}, timeMs+1000);
     }
+    $('#inputPath').on("keypress", function(e) {
+        if (e.keyCode == 13) {
+            $('#setPathButton').click(); // Same thing as clicking the button manually
+            return false; // prevent the button click from happening
+        }
+    });
     $('#setPathButton').click(function()
     {
         store.set('logPath', $('#inputPath').val());

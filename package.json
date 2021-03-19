@@ -1,6 +1,6 @@
 {
   "name": "hypixelstats",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Standalone Cross-platform and open-source Hypixel Stattracker",
   "main": "main.js",
   "scripts": {

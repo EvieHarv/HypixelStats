@@ -97,14 +97,14 @@ if (store.get('logPath') !== undefined)
   const watcher = chokidar.watch(store.get('logPath'),
   {
     persistent: true,
-    usePolling: true // Unfortunately higher CPU usage, but seems reqiored to get it to work consistently
+    usePolling: true // Unfortunately higher CPU usage, but seems required to get it to work consistently
   });
   watcher.on('change', path => fileUpdated(path));
 }
 
 function fileUpdated(path)
 {
-  const lines = 25; // Maybe a bit much? Could bring down to 15—requires some testing.
+  const lines = 25; // Maybe a bit much? Could bring down to 15—requires some testing. Doesn't really seem to have a large performance impact, so I'll leave it for now.
 
   readLastLines.read(path, lines) // I wish I could just do line-by-line, but it misses it when they go too quickly, so we check multiple lines every update.
       .then((lastLines)=> {
