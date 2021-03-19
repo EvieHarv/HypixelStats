@@ -124,15 +124,15 @@ const arrayEquals = (a, b) =>
 
 function checkForPlayer(lines)// This function is so incredibly inefficent, but it's the best I've got right now, so it's what we're using. (It also just really does not matter at this scale)
 {
-  key_owner = store.get("key_owner"); // Only call storage once. Doesn't really matter, but technically more efficent
+  newLobby = false;
   playerListTemp = [...playerList];
-  const newMatchCheck = "[Client thread/INFO]: [CHAT] "+key_owner+" has joined"; // TODO: MAKE DYNAMIC
   lines.forEach(function(line)
   {
-    // Detection through [Client thread/INFO]: [CHAT] [key_owner] has joined
-    if (line.includes(newMatchCheck)) // When self joins, re-start array and /who
+    // Detection through [Client thread/INFO]: [CHAT] Sending you to 
+    if (line.includes("[Client thread/INFO]: [CHAT] Sending you to ")) // When we join a new match
     {
-      playerList = [key_owner]; // TODO: MAKE DYNAMIC
+      playerList = []; // Re-initalize list
+      newLobby = true;
     }
     // Detection through [PLAYER] has joined!
     else if (line.includes('[Client thread/INFO]: [CHAT] ') && line.includes('has joined')) // Another Player joins, add them to playerList
@@ -164,12 +164,12 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
     };
   });
   // Detect if array just changed AND it's only one player.
-  // There is an edgecase here where you join a new match and other people join too quickly for it to parse it out
-  // I'll deal with it if it becomes a problem
-  if (arrayEquals(playerList, [key_owner]) && (!arrayEquals(playerList, playerListTemp))) 
+  if (newLobby && (!arrayEquals(playerList, playerListTemp))) // Honestly I forget why I put in the second term. I don't think it's needed, but if I've learned one thing in programming it's don't touch something perfectly functional.
   {
-    //console.log("You just gotta type /who ig");
+    // Once I figure out a good cross-platform method of sending /who ill do it.
+    // I've tried robotjs but for various reasons it wouldn't quite work out.
     mainWindow.webContents.send('clearList');
+    updateFrontend();
   }
   else if (!arrayEquals(playerList, playerListTemp)) // Array has been updated
   {
