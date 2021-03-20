@@ -8,6 +8,7 @@ const log = require('electron-log');
 const {autoUpdater} = require("electron-updater");
 
 autoUpdater.logger = log;
+autoUpdater.autoDownload = false;
 autoUpdater.logger.transports.file.level = 'info';
 log.info('App starting...');
 
