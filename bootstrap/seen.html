@@ -71,6 +71,7 @@
                         <a class="collapse-item" href="./bootstrap/seen.html">Seen</a>
                         <a class="collapse-item" href="./bootstrap/whitelisted.html">Whitelisted</a>
                         <a class="collapse-item" href="./bootstrap/blacklisted.html">Blacklisted</a>
+                        <a class="collapse-item" href="./bootstrap/aliases.html">Aliases/Nick Hider</a>
                         <a class="collapse-item" href="./bootstrap/lookup.html">Stat Lookup</a>
                     </div>
                 </div>
@@ -189,6 +190,7 @@
     $(function()
     {
         var i = 0;
+        if (sessionStorage.getItem('seenPlayers') !== null){
         sessionStorage.getItem('seenPlayers').split(',').reverse().forEach(function(player){
         if (player !== ""){
         i++;
@@ -199,14 +201,14 @@
                         <div class="row no-gutters align-items-center">\
                             <div class="col mr-2">\
                                 <div class="font-weight-bold text-primary mb-1">' + player + '</div>\
-                                <button class="btn btn-success mb-0 whitelist" type="button" player="' + player + '">Whitelist</button>\
                                 <button class="btn btn-danger mb-0 blacklist" type="button" player="' + player + '">Blacklist</button>\
+                                <button class="btn btn-success mb-0 whitelist" type="button" player="' + player + '">Whitelist</button>\
                             </div>\
                         </div>\
                     </div>\
                 </div>\
             </div>\
-        ')}});
+        ')}})};
         $('#totalPlayers').html(i);
         if (store.get('whitelist') == undefined) // Really should do this on like, inital startup. Dunno, it's good to check here, ig? If that would fail somehow?
         {

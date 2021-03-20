@@ -13,6 +13,19 @@ ipcRenderer.on('clearList', function (event)
 
 function updatePlayerArea(playerList)
 {
+    // Could possibly do this aliasing stuff in main.js so it happens less. Keeping it here for now for ease of debugging in the render process
+    if (store.get('aliases') == undefined)
+    {
+        store.set('aliases', {})
+    }
+    var aliases = store.get('aliases');
+    for(var i = 0; i < playerList.length; i++)
+    {
+        if (Object.keys(aliases).includes(playerList[i])) // This name is aliased, change it.
+        {
+            playerList[i] = aliases[playerList[i]];
+        }
+    }
     if (sessionStorage.getItem('seenPlayers') == null)
     {
         sessionStorage.setItem('seenPlayers', []);

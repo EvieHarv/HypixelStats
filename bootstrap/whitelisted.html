@@ -71,6 +71,7 @@
                         <a class="collapse-item" href="./bootstrap/seen.html">Seen</a>
                         <a class="collapse-item" href="./bootstrap/whitelisted.html">Whitelisted</a>
                         <a class="collapse-item" href="./bootstrap/blacklisted.html">Blacklisted</a>
+                        <a class="collapse-item" href="./bootstrap/aliases.html">Aliases/Nick Hider</a>
                         <a class="collapse-item" href="./bootstrap/lookup.html">Stat Lookup</a>
                     </div>
                 </div>
@@ -178,27 +179,12 @@
     <script src="js/demo/chart-pie-demo.js"></script>
 -->
 <script src='./bootstrap/logged_in.js'></script>
+<script src='./bootstrap/infoBar.js'></script>
 <script>
     $(function()
     {
         updateWhitelist();
     });
-    function infoBarMessage(textType, heading, message, timeMs)
-    {
-        $("#infoBarHolder").append('\
-                    <div class="card shadow mb-4" id="infoBar" style="display: none;">\
-                        <div class="card-header py-3">\
-                            <h6 class="m-0 font-weight-bold '+textType+'" id="infoHeading">'+ heading +'</h6>\
-                        </div>\
-                        <div class="card-body py-3">\
-                            <p class="mb-0 '+textType+'" id="infoMessage">'+ message +'</p>\
-                        </div>\
-                    </div>');
-        var div = $("#infoBarHolder").children().last();
-        div.fadeIn(500).delay(timeMs);
-        div.fadeOut(500);
-        setTimeout(function(){div.remove()}, timeMs+1000);
-    };
     function updateWhitelist()
     {
         ensureListsExist();

@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Blacklisted</title>
+    <title>Aliases</title>
     <base href="../">
 
     <!-- Custom fonts for this template-->
@@ -123,6 +123,7 @@
                     <!-- Page Heading -->
                     <div id='infoBarHolder'>
                     </div>
+
                     <div>
                         Versions: 
                         HypixelStats <script>document.write(require("electron").remote.app.getVersion());</script>,
@@ -130,32 +131,34 @@
                         Chrome <script>document.write(process.versions.chrome)</script>,
                         and Electron <script>document.write(process.versions.electron)</script>.                
                     </div>
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Blacklist:</h1>
+                    <div class="d-sm-flex align-items-center justify-content-between mb-0">
+                        <h1 class="h3 mb-2 pb-0 text-gray-800">Aliases/Nick Hider:</h1>
                     </div>
                     <!-- Content Row -->
-                    <div class="row mt-0 pt-0" style="padding-left: 10px;">
-                        <input style="width: 375px;" type="text" class="form-control form-control-user" id="inputPlayer" placeholder="Name">
+                    <div class="row mt-0 pt-0 mb-4" style="padding-left: 10px;">
+                        <input style="width: 250px;" type="text" class="form-control form-control-user text-danger mr-1 newInput" id="inputNick" placeholder="Nick to Change">
+                        <input style="width: 250px;" type="text" class="form-control form-control-user text-success newInput" id="inputReal" placeholder="Real Username">
                         <div style="padding-left: 5px;">
-                            <button class="btn btn-danger mb-4" type="button" id="blacklistPlayerButton">
-                                Blacklist Player
+                            <button class="btn btn-success mb-4" type="button" id="addNewAlias">
+                                Add Alias
                             </button>
                         </div>
                         <div style='padding-left: 10px;'>
                             <p class='text-secondary' style="margin-top: 7px;">Case Sensitive!</p>
                         </div>
                     </div>
-                    <div class="row playerList">
+                    <div class="row playerlist">
 
                     </div>
-                    <!-- /.container-fluid -->
-                </div>
-                <!-- End of Main Content -->
+                <!-- /.container-fluid -->
             </div>
-            <!-- End of Content Wrapper -->
+            <!-- End of Main Content -->
         </div>
+        <!-- End of Content Wrapper -->
+
     </div>
     <!-- End of Page Wrapper -->
+
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top" style="display: none;">
         <i class="fas fa-angle-up"></i>
@@ -178,91 +181,164 @@
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
 -->
+
 <script src='./bootstrap/logged_in.js'></script>
 <script src='./bootstrap/infoBar.js'></script>
 <script>
     $(function()
     {
-        updateBlacklist();
+        updateList();
     });
-    function updateBlacklist()
+    function updateList()
     {
-        ensureListsExist();
+        if (store.get('aliases') == undefined)
+        {
+            store.set('aliases', {});
+        }
+        var aliases = store.get('aliases');
         $(".playerList").html("");
-        store.get('blacklist').reverse().forEach(function(player){
+        Object.keys(aliases).reverse().forEach(function(player){
+        if (player !== ""){
         $(".playerList").append('\
             <div class="col-xl-3 col-md-6 mb-4 playerCard" player="' + player + '" uuid="">\
-                <div class="card border-left-danger shadow h-100 py-2">\
+                <div class="card border-left-primary shadow h-100 py-2">\
                     <div class="card-body">\
                         <div class="row no-gutters align-items-center">\
                             <div class="col mr-2">\
-                                <div class="font-weight-bold text-danger mb-1">' + player + '</div>\
-                                <button class="btn btn-danger mb-0 removeblacklist" type="button" player="' + player + '">Remove From Blacklist</button>\
+                                <div class="font-weight-bold text-primary mb-1">Nick to Change:</div>\
+                                <input style="width: 100%;" type="text" class="form-control form-control-user mb-1 text-danger fieldNick" nick="' + player + '" id="nick' + player + '" value="' + player + '">\
+                                <div class="font-weight-bold text-primary mb-1">Real Username:</div>\
+                                <input style="width: 100%;" type="text" class="form-control form-control-user mb-1 text-success fieldReal" nick="' + player + '" id="real' + player + '" initReal="' + aliases[player] + '" value="' + aliases[player] + '">\
+                                <button class="btn btn-danger mb-0 removeAlias" type="button" nick="' + player + '">Remove</button>\
+                                <button style="float: right;" class="btn btn-success mb-0 updateAlias" type="button" nick="' + player + '">Update</button>\
                             </div>\
                         </div>\
                     </div>\
                 </div>\
             </div>\
-        ')});
-        $('.removeblacklist').click(function(player)
+        ')}});
+        // /^[a-zA-Z_0-9]+$/
+        $('.removeAlias').click(function(e)
         {
-            const playerName = player.target.getAttribute('player');
-            var array = store.get('blacklist');
-            const index = array.indexOf(playerName); // Remove from blacklist, player is blacklisted
-            if (index > -1) {
-                array.splice(index, 1);
-            }
-            store.set('blacklist', array);
-            $("[player='" + playerName + "']").remove();
+            delete aliases[e.target.getAttribute('nick')]; // Remove the player
+            store.set('aliases', aliases);
+            updateList();
         });
-    };
-    $('#inputPlayer').on("keypress", function(e) {
-        if (e.keyCode == 13) {
-            addPlayer();
-            return false; // prevent the button click from happening
-        }
-    });
-    $('#blacklistPlayerButton').click(function()
-    {
-        addPlayer();
-    });
-    function addPlayer()
-    {
-        ensureListsExist();
-        var playerName = $('#inputPlayer').val().trim();
-        if (playerName == "")
+        $('.fieldNick').on("keypress", function(e) {
+            if (e.keyCode == 13) {
+                $('.updateAlias[nick="' + e.target.getAttribute('nick') + '"]').first().click(); // Same thing as clicking the button manually
+                return false; // prevent the button click from happening
+            }
+        });
+        $('.fieldReal').on("keypress", function(e) {
+            if (e.keyCode == 13) {
+                $('.updateAlias[nick="' + e.target.getAttribute('nick') + '"]').first().click(); // Same thing as clicking the button manually
+                return false; // prevent the button click from happening
+            }
+        });
+        $('.updateAlias').click(function(e)
         {
-            return false;
-        }
-        if (!(/^[a-zA-Z_0-9]+$/.test(playerName)))
-        {
-            infoBarMessage('text-danger', "Invalid Name", "That name is invalid.", 3000);
-            return false;
-        }
-        console.log("Blacklisting " + $('#inputPlayer').val() + ".");
-        if ($('#inputPlayer').val() == "") { return; }
-        store.set('blacklist', [...new Set([...store.get("blacklist"),...[$('#inputPlayer').val()]])]); // Ensures no duplicates
-        var array = store.get('whitelist');
-        const index = array.indexOf($('#inputPlayer').val()); // Remove from whitelist, player is blacklisted
-        if (index > -1) {
-            array.splice(index, 1);
-        }
-        store.set('whitelist', array);
-        updateBlacklist();
+            var oldNick = e.target.getAttribute('nick');
+            var newNick = $("#nick" + e.target.getAttribute('nick')).val();
+            var oldReal = $("#real" + e.target.getAttribute('nick')).attr('initReal');
+            var newReal = $("#real" + e.target.getAttribute('nick')).val();
+            console.log(oldNick + ", " + newNick + ", " + oldReal + ", " + newReal);
+            if (newNick == "")
+            {
+                infoBarMessage('text-danger', "Invalid Name", "The name you input for nick is invalid.", 3000);
+                return false;
+            };
+            if (newReal == "")
+            {
+                infoBarMessage('text-danger', "Invalid Name", "The name you input for real username is invalid.", 3000);
+                return false;
+            };
+            if (!(/^[a-zA-Z_0-9]+$/.test(newNick)))
+            {
+                infoBarMessage('text-danger', "Invalid Name", "The name you input for nick is invalid.", 3000);
+                return false;
+            };
+            if (!(/^[a-zA-Z_0-9]+$/.test(newNick)))
+            {
+                infoBarMessage('text-danger', "Invalid Name", "The name you input for real username is invalid.", 3000);
+                return false;
+            };
+            if (oldNick == newNick && oldReal == newReal)
+            {
+                return false; // Do nothing if it's identical
+            }
+            if (Object.keys(aliases).includes(newNick) && oldReal == newReal)
+            {
+                infoBarMessage('text-danger', "Error", "That alias already exists.", 3000);
+                return false;
+            }
+            if (oldNick == newNick)
+            {
+                // Just the real has changed
+                aliases[oldNick] = newReal;
+                store.set('aliases', aliases);
+                infoBarMessage('text-success', "Success", "The alias was updated.", 1500);
+                updateList();
+                return true;
+            }
+            else
+            {
+                delete aliases[oldNick];
+                aliases[newNick] = newReal; 
+                store.set('aliases', aliases);
+                infoBarMessage('text-success', "Success", "The alias was updated.", 1500);
+                updateList();
+                return true;
+            }
+            return;
+        });
     }
-
-    function ensureListsExist()
+    $('.newInput').on("keypress", function(e) {
+        if (e.keyCode == 13) {
+            $('#addNewAlias').click(); // Same thing as clicking the button manually
+            return false; // prevent the key input from happening
+        }
+    });
+    $('#addNewAlias').click(function()
     {
-        if (store.get('blacklist') == undefined)
+        if(addAlias($('#inputNick').val().trim(), $('#inputReal').val().trim()))
         {
-            store.set('blacklist', []);
-        };
-        if (store.get('whitelist') == undefined)
+            infoBarMessage('text-success', "Success", "Alias Added Successfully", 1500); // Not really consistent with the behavior on the whitelist pages, but I'm keeping it because ¯\_(ツ)_/¯
+        }
+        $('#inputNick').val("");
+        $('#inputReal').val("");
+    });
+    function addAlias(nick, real)
+    {
+        var aliases = store.get('aliases');
+        if (aliases == undefined) // Literally should be no way for this to happen because it occurs on pageLoad, but I don't trust anything at this point.
         {
-            store.set('whitelist', []);
+            store.set('aliases', {});
+        } 
+        if (nick == "" || real == "")
+        {
+            return false;
         };
+        if (!(/^[a-zA-Z_0-9]+$/.test(nick)))
+        {
+            infoBarMessage('text-danger', "Invalid Name", "The name you input for nick is invalid.", 3000);
+            return false;
+        };
+        if (!(/^[a-zA-Z_0-9]+$/.test(real)))
+        {
+            infoBarMessage('text-danger', "Invalid Name", "The name you input for the username is invalid.", 3000);
+            return false;
+        };
+        if (Object.keys(aliases).includes(nick))
+        {
+            infoBarMessage('text-danger', "Nick already in use", "You already have that nick set! Please update the existing one.", 5000);
+            return false;
+        };
+        // Intentionally don't check for duplicate real usernames.
+        aliases[nick] = real;
+        store.set('aliases', aliases)
+        updateList();
+        return true;
     }
 </script>
-
-
 </body></html>
