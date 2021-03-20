@@ -122,15 +122,32 @@ const arrayEquals = (a, b) =>
   a.length === b.length &&
   a.every((v, i) => v === b[i])
 
-function checkForPlayer(lines)// This function is so incredibly inefficent, but it's the best I've got right now, so it's what we're using. (It also just really does not matter at this scale)
+function checkForPlayer(lines)// This function is so incredibly inefficent, but it's the best I've got right now, so it's what we're using. (It also just really does not matter at this scale, I've noticed 0 performance issues.)
 {
+  if (playerList.length > 16)
+  {
+    playerList = [];
+  }
   newLobby = false;
   playerListTemp = [...playerList];
   lines.forEach(function(line)
   {
     // Detection through [Client thread/INFO]: [CHAT] Sending you to 
-    if (line.includes("[Client thread/INFO]: [CHAT] Sending you to ")) // When we join a new match
+    if (line.includes("[Client thread/INFO]: [CHAT] " + store.get('key_owner') + " has joined") || line.includes("[Client thread/INFO]: [CHAT] Sending you to ")) // When we join a new match
     {
+      // Alright, let me explain the issue I'm having with this.
+      // When the player joins the match, there are two ways the logs (for lunar, at least, haven't started other clients at this point) indicate that.
+      // Way 1, the one I initally had, was to check for "[CHAT] (key_owner) has joined"
+      // This way breaks when the owner is nicked.
+      // So, I started using way 2 instead, where it checks for "[CHAT] Sending you to"
+      // Which is completely removed from the player's name, so you'd assume it's perfect, right?
+      // But for SOME reason, lunar client throws about 200 lines of errors whenever you join a match
+      // So if the timing isn't perfect, it doesn't detect "...sending you to..." at all.
+      // Often the timing is perfect, I'd say roughly 95% of the time it has worked for me, but it's not 100% reliable.
+      // So, for now, I'm stuck checking both. If the user is unnicked, it should work perfectly still. 
+      // If the player is nicked, though, the list still may not be reset in rare cases.
+      // Right now the best I can say is just do Ctrl+R if this happens to you, because that'll clear the page. 
+
       playerList = []; // Re-initalize list
       newLobby = true;
     }
@@ -163,10 +180,10 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
       playerList = playerList.concat(playerNames.filter((name) => playerList.indexOf(name) < 0));
     };
   });
-  // Detect if array just changed AND it's only one player.
+  // Detect if array just changed AND it's only one player. We clear the page.
   if (newLobby && (!arrayEquals(playerList, playerListTemp))) // Honestly I forget why I put in the second term. I don't think it's needed, but if I've learned one thing in programming it's don't touch something perfectly functional.
   {
-    // Once I figure out a good cross-platform method of sending /who ill do it.
+    // Once I figure out a good cross-platform method of sending /who here I'll do it.
     // I've tried robotjs but for various reasons it wouldn't quite work out.
     mainWindow.webContents.send('clearList');
     updateFrontend();
@@ -185,3 +202,7 @@ function updateFrontend()
 {
   mainWindow.webContents.send('playerList', playerList);
 };
+
+ipcMain.on('sendListAgain', function(){ // Something has gone wrong, re-sending player list.
+  mainWindow.webContents.send('playerList', playerList);
+});

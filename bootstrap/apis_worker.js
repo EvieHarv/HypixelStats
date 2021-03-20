@@ -24,8 +24,14 @@ async function callApis(player, key)
         dataType: 'json',
         success : function(result){
             // $("[player='" + player + "']").attr('uuid', result.data.player.id); // Store UUID in playerCard -- Can't access DOM over worker with new method
-            if (result.id !== undefined){ uuid = result.id; }
-            else { uuid = "Nick"; }
+            if (result !== undefined && result.id !== undefined){ uuid = result.id; } // Due to some weird edgecases, have to check that both are defined
+            else 
+            { 
+                uuid = "Nick"; 
+                fkdr = "N/A";
+                winstreak = "N/A";
+                console.error("Nick Detected! Name: " + player);
+            }
         },
         error : function(xhr, textStatus, errorThrown) {
             this.tryCount++;
@@ -105,7 +111,7 @@ async function callApis(player, key)
     
                 // Store winstreak in playerCard
                 //$("[player='" + player + "']").find('.winstreak').html(result.player.stats.Bedwars.winstreak);
-                if (result !== null && result.player.stats.Bedwars.winstreak !== undefined){ winstreak = result.player.stats.Bedwars.winstreak; }
+                if (result !== null && result.player !== null && result.player.stats.Bedwars.winstreak !== undefined){ winstreak = result.player.stats.Bedwars.winstreak; }
                 else {winstreak = "N/A (Never Won?)"};
             }
         })

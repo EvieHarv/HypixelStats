@@ -18,24 +18,44 @@ function updatePlayerArea(playerList)
         sessionStorage.setItem('seenPlayers', []);
     }
     sessionStorage.setItem('seenPlayers', [...new Set([...sessionStorage.getItem('seenPlayers').split(','),...playerList])]); // Should be O(n)? I think
-    $(".playerCard").each(function(card) // Keep old card data if player still in, delete data if card is no longer relevent
+    $(".playerCard").each(function(index, card) // Keep old card data if player still in, delete data if card is no longer relevent
     {
-        if ($(".playerCard")[card] == undefined) // Honestly not 100% sure where this comes from but handle it anyways. I'm tired don't judge me.
+        if (card == undefined) 
         {
+            // Honestly not 100% sure where this comes from but handle it anyways. I'm tired don't judge me. 
+            // UPDATE: 
+            // Think this came from the old system where I didn't know the second term in .each() was a thing so I was just using the index. 
+            // Sometimes it would get outdated data (an index that no longer exists) and would throw an error.
+            // Should be fixed now, but it adds practically no extra computation time, and if something somehow goes wrong it'd catch it, so it stays.
             return;
         }
-        if(playerList.includes(($(".playerCard")[card].getAttribute('player')))) // If card for this player exists already, keep and ignore
+        if(playerList.includes(card.getAttribute('player'))) // If card for this player exists already, keep and ignore
         {
-            const index = playerList.indexOf($(".playerCard")[card].getAttribute('player'));
+            const index = playerList.indexOf(card.getAttribute('player'));
             if (index > -1) {
                 playerList.splice(index, 1);
             }
         }
         else 
         {
-            $(".playerCard")[card].remove(); // Remove a card for a player who doesn't exist anymore
+            card.remove(); // Remove a card for a player who doesn't exist anymore
         }
     });
+    if ($(".playerCard").length > 0 && playerList.length > 0 && ($(".playerCard").length + playerList.length > 16))
+    {
+        // Something has gone horribly wrong, and there are more than 16 players in this game.
+        // This will have to be removed (or at least tweaked so it doesn't ever interfere) eventually, but for now
+        // with the issues I'm having in main.js with detecting it 100% of the time when the owner is nicked
+        // this seems like the best patch I'm gonna get.
+        console.error("Player list over maximum size! This usually happens when the program doesn't detect a new match properly. If this happens to you, do /who again to make sure you get all the players in the game.");
+        $(".playerList").html("");
+        console.log(playerList);
+        console.log($(".playerCard").length)
+        console.log(playerList.length);
+        infoBarMessage('text-danger', "<span style='font-size: 50px;'>DO <code>/WHO</code> AGAIN!</span>", "The program ran into an error, and everyone in your game might not have loaded properly! Do <code>/who</code> again to make sure you're good.", 7500);
+        ipcRenderer.send('sendListAgain');
+        return;
+    }
     playerList.forEach(function(player)
     {
         $(".playerList").append('\
