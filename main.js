@@ -123,6 +123,7 @@ const arrayEquals = (a, b) =>
   a.length === b.length &&
   a.every((v, i) => v === b[i])
 
+largestCount = 0;
 function checkForPlayer(lines)// This function is so incredibly inefficent, but it's the best I've got right now, so it's what we're using. (It also just really does not matter at this scale, I've noticed 0 performance issues.)
 {
   playerListTemp = [...playerList];
@@ -156,6 +157,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
       {
         playerList.push(playerName);
       }
+      largestCount = parseInt(line.split("[Client thread/INFO]: [CHAT] ")[1].split(" ")[3].split('/')[0].replace('(', ''));
     }
     // Detection through [PLAYER] has quit!
     else if (line.includes('[Client thread/INFO]: [CHAT] ') && line.includes('has quit!')) // Another Player leaves, remove them from playerList
@@ -165,6 +167,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
       if (index > -1) {
         playerList.splice(index, 1);
       }
+      largestCount--;
     }
     // Detection through /who
     else if (line.includes('[Client thread/INFO]: [CHAT] ONLINE: '))
@@ -177,12 +180,13 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
       playerList = playerList.concat(playerNames.filter((name) => playerList.indexOf(name) < 0));
     };
   });
+  if (largestCount > playerList.length)
+  {
+    // TODO: FIGURE OUT HOW TO SEND /who CROSSPLATFORM AND DO IT HERE
+    mainWindow.webContents.send('playerList', []); // Clear the page so that the owner's stats can update
+  }
   // Detect if array
   updateFrontend();
-  //if (!arrayEquals(playerList, playerListTemp)) // Array has been updated
-  //{
-  //  // this is no longer relevent?? i guess?? i dunno how i messed this up this badly before with how i sent this stuff lmao
-  //}
   playerListTemp = null; // Garbage collection? I dunno how JS works man.
   return;
 };
@@ -195,5 +199,5 @@ function updateFrontend()
 };
 
 ipcMain.on('sendListAgain', function(){ // Re-sending player list on page load
-  mainWindow.webContents.send('playerList', playerList);
+  updateFrontend();
 });
