@@ -6,11 +6,6 @@ ipcRenderer.on('playerList', function (event,playerList)
     updatePlayerArea(playerList);
 });
 
-ipcRenderer.on('clearList', function (event) 
-{
-    $(".playerList").html("");
-});
-
 function updatePlayerArea(playerList)
 {
     // Could possibly do this aliasing stuff in main.js so it happens less. Keeping it here for now for ease of debugging in the render process
@@ -25,10 +20,14 @@ function updatePlayerArea(playerList)
         {
             playerList[i] = aliases[playerList[i]];
         }
-    }
+    };
     if (sessionStorage.getItem('seenPlayers') == null)
     {
         sessionStorage.setItem('seenPlayers', []);
+    }
+    if (sessionStorage.getItem('checkForAndShowWarningOfNickedAccount') !== "shown")
+    {
+        // TODO: Show warning to go change nick. Keep it up for NaN
     }
     sessionStorage.setItem('seenPlayers', [...new Set([...sessionStorage.getItem('seenPlayers').split(','),...playerList])]); // Should be O(n)? I think
     $(".playerCard").each(function(index, card) // Keep old card data if player still in, delete data if card is no longer relevent
@@ -54,21 +53,6 @@ function updatePlayerArea(playerList)
             card.remove(); // Remove a card for a player who doesn't exist anymore
         }
     });
-    if ($(".playerCard").length > 0 && playerList.length > 0 && ($(".playerCard").length + playerList.length > 16))
-    {
-        // Something has gone horribly wrong, and there are more than 16 players in this game.
-        // This will have to be removed (or at least tweaked so it doesn't ever interfere) eventually, but for now
-        // with the issues I'm having in main.js with detecting it 100% of the time when the owner is nicked
-        // this seems like the best patch I'm gonna get.
-        console.error("Player list over maximum size! This usually happens when the program doesn't detect a new match properly. If this happens to you, do /who again to make sure you get all the players in the game.");
-        $(".playerList").html("");
-        console.log(playerList);
-        console.log($(".playerCard").length)
-        console.log(playerList.length);
-        infoBarMessage('text-danger', "<span style='font-size: 50px;'>DO <code>/WHO</code> AGAIN!</span>", "The program ran into an error, and everyone in your game might not have loaded properly! Do <code>/who</code> again to make sure you're good.", 7500);
-        ipcRenderer.send('sendListAgain');
-        return;
-    }
     playerList.forEach(function(player)
     {
         $(".playerList").append('\
