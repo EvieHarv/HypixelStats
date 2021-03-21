@@ -125,10 +125,6 @@ const arrayEquals = (a, b) =>
 
 function checkForPlayer(lines)// This function is so incredibly inefficent, but it's the best I've got right now, so it's what we're using. (It also just really does not matter at this scale, I've noticed 0 performance issues.)
 {
-  if (playerList.length > 16)
-  {
-    playerList = [];
-  }
   playerListTemp = [...playerList];
   var key_owner = store.get('key_owner');
   var aliases = store.get('aliases');
@@ -153,7 +149,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
       playerList = []; // Re-initalize list
     }
     // Detection through [PLAYER] has joined!
-    else if (line.includes('[Client thread/INFO]: [CHAT] ') && line.includes('has joined')) // Another Player joins, add them to playerList
+    if (line.includes('[Client thread/INFO]: [CHAT] ') && line.includes('has joined')) // Another Player joins, add them to playerList
     {
       var playerName = line.split("[Client thread/INFO]: [CHAT] ")[1].split(" ")[0];
       if(!playerList.includes(playerName)) 
@@ -182,10 +178,11 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
     };
   });
   // Detect if array
-  if (!arrayEquals(playerList, playerListTemp)) // Array has been updated
-  {
-    updateFrontend();
-  }
+  updateFrontend();
+  //if (!arrayEquals(playerList, playerListTemp)) // Array has been updated
+  //{
+  //  // this is no longer relevent?? i guess?? i dunno how i messed this up this badly before with how i sent this stuff lmao
+  //}
   playerListTemp = null; // Garbage collection? I dunno how JS works man.
   return;
 };

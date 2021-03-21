@@ -25,9 +25,20 @@ function updatePlayerArea(playerList)
     {
         sessionStorage.setItem('seenPlayers', []);
     }
-    if (sessionStorage.getItem('checkForAndShowWarningOfNickedAccount') !== "shown")
+    // Session storage so it doesn't spam someone who's stubborn, but still reminds them. playerList.Length > 0 for weird cases where [] is sent. Last one to check the message isn't already sent.
+    if (sessionStorage.getItem('checkForAndShowWarningOfNickedAccount') !== "shown" && playerList.length > 0 && $('#infoBarHolder').html().trim() == "")
     {
-        // TODO: Show warning to go change nick. Keep it up for NaN
+        if (!playerList.includes(store.get('key_owner')))
+        {
+            infoBarMessage('', "Nick/Alt Detected", "Hey! It looks like you're playing nicked or on an alt.\
+            <br>If you're nicked, please go to <a href='./bootstrap/aliases.html'><code>Player Lists -> Aliases/Nick Hider</code></a> \
+            and put your nick in as an alias to your account name. <b class='text-danger'>Update this whenever you change your nick.</b>\
+            <br>If you're on an alt, please update your API key to the API key of the alt account. \
+            Any time you join on a different account, just generate a new API key.\
+            <br>If you don't do this, the program can have a difficult time removing old players.\
+            <button class='btn btn-secondary warningButton' style='float: right;'>Hide This Message</button>\
+            <script>$('.warningButton').click(function(){$('#infoBarHolder').html(''); sessionStorage.setItem('checkForAndShowWarningOfNickedAccount', 'shown');})</script>", 999999);
+        }
     }
     sessionStorage.setItem('seenPlayers', [...new Set([...sessionStorage.getItem('seenPlayers').split(','),...playerList])]); // Should be O(n)? I think
     $(".playerCard").each(function(index, card) // Keep old card data if player still in, delete data if card is no longer relevent
