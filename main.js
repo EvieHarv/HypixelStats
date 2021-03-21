@@ -105,7 +105,7 @@ if (store.get('logPath') !== undefined)
 
 function fileUpdated(path)
 {
-  const lines = 25; // Maybe a bit much? Could bring down to 15—requires some testing. Doesn't really seem to have a large performance impact, so I'll leave it for now.
+  const lines = 10; // This isn't an exact science here, but 10 seems to work. Had it on 25 before and performace was fine still, so there's wiggle room.
 
   readLastLines.read(path, lines) // I wish I could just do line-by-line, but it misses it when they go too quickly, so we check multiple lines every update.
       .then((lastLines)=> {
@@ -194,6 +194,6 @@ function updateFrontend()
   mainWindow.webContents.send('playerList', playerList);
 };
 
-ipcMain.on('sendListAgain', function(){ // Something has gone wrong, re-sending player list.
+ipcMain.on('sendListAgain', function(){ // Re-sending player list on page load
   mainWindow.webContents.send('playerList', playerList);
 });

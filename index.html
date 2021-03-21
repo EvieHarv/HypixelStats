@@ -213,6 +213,7 @@
 </script>
 <script>
     ipcRenderer.send('updateCheck');
+    ipcRenderer.send('sendListAgain');
     // ipcRenderer defined in handlePlayers.js
     ipcRenderer.on('updateAvailable', function (event) 
     {
