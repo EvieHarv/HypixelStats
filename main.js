@@ -41,7 +41,73 @@ app.on('ready', function()
   // Build & Apply Menu 
   const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
   Menu.setApplicationMenu(mainMenu);
+
+  // Make sure store values are defined
+  checkUndefineds();
 });
+
+// Make sure store values are defined
+function checkUndefineds()
+{
+  // Set up default profile for a new user
+  if (store.get('profiles') == undefined)
+  {
+    profiles = {
+      "Bedwars":
+      {
+        "stats":
+        {
+          "Winstreak" : "data.player.stats.Bedwars.winstreak",
+          "FKDR" : "data.player.stats.Bedwars.four_four_final_kills_bedwars/data.player.stats.Bedwars.four_four_final_deaths_bedwars",
+          "Stars" : "data.player.achievements.bedwars_level",
+        },
+        "colorConditions":
+        {
+          "blacklist.includes(playerName)" : "#E74A3B",
+          "whitelist.includes(playerName)" : "#1CC88A",
+          "isNick" : "#F6C23E"
+        },
+        "sort" : "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars)"
+      },
+      "Custom Stats Examples":
+      {
+        "stats":
+        {
+          "One specific stat (winstreak)" : "data.player.stats.Bedwars.winstreak",
+          "Simple Math (FKDR)" : "data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars",
+          "Javascript Math (Network Level)" : "(Math.sqrt(data.player.networkExp + 15312.5) - 125/Math.sqrt(2))/(25*Math.sqrt(2))"
+        },
+        "colorConditions":
+        {
+          "blacklist.includes(playerName)" : "#E74A3B",
+          "whitelist.includes(playerName)" : "#1CC88A",
+          "isNick" : "#F6C23E",
+          "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars) > 5" : "#F6C23E"
+        },
+        "sort": "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars)"
+      }
+    };
+    store.set('profiles', profiles);
+    store.set('active_profile', 'Bedwars');
+  };
+
+  // Alias list
+  if (store.get('aliases') == undefined)
+  {
+    store.set('aliases', {});
+  };
+
+  // Blacklist and whitelist
+  if (store.get('blacklist') == undefined)
+  {
+      store.set('blacklist', []);
+  };
+  if (store.get('whitelist') == undefined)
+  {
+      store.set('whitelist', []);
+  };
+
+}
 
 ipcMain.on('updateCheck', function(){ // Check update like this to make sure page is fully loaded before checking
   log.info('Checking for update... (from render process)')
@@ -105,7 +171,7 @@ if (store.get('logPath') !== undefined)
 
 function fileUpdated(path)
 {
-  const lines = 10; // This isn't an exact science here, but 10 seems to work. Had it on 25 before and performace was fine still, so there's wiggle room.
+  const lines = 25; // This isn't an exact science here, but 25 seems to work. Performace is fine still, so there's wiggle room.
 
   readLastLines.read(path, lines) // I wish I could just do line-by-line, but it misses it when they go too quickly, so we check multiple lines every update.
       .then((lastLines)=> {
@@ -157,6 +223,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
       {
         playerList.push(playerName);
       }
+      // Gets the x from (x/16)! (or (x/8), whatever) and assigns it to largestCount
       largestCount = parseInt(line.split("[Client thread/INFO]: [CHAT] ")[1].split(" ")[3].split('/')[0].replace('(', ''));
     }
     // Detection through [PLAYER] has quit!
@@ -180,8 +247,14 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
       playerList = playerList.concat(playerNames.filter((name) => playerList.indexOf(name) < 0));
     };
   });
-  if (largestCount > playerList.length)
+  // Detect a new lobby
+  if (largestCount > playerList.length && !arrayEquals(playerList, playerListTemp))
   {
+    // This will constantly re-load when a new player joins UNTIL the user does /who.
+    // I would just set it to require playerList.length == 1, but then sometimes it won't catch a new game at all, 
+    // because the chat-update-delay would often catch more than 1 player and then *not* update already-existing players (namely key_owner).
+    // So, until I figure out auto /who, I'm taking the "always update until /who" route
+    
     // TODO: FIGURE OUT HOW TO SEND /who CROSSPLATFORM AND DO IT HERE
     mainWindow.webContents.send('playerList', []); // Clear the page so that the owner's stats can update
   }

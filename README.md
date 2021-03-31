@@ -45,7 +45,7 @@ If you only have a single monitor, BedwarsStats is still superior. If you have t
 
 ### Setup
 
-1. To get started, get your hypixel key. You can do this just by joining hypixel and doing `/api new`. Then, go to `Settings -> API Settings`, and put it in.
+1. To get started, get your hypixel key. You can do this just by joining hypixel and doing `/api new`. Then, go to `Settings -> Application Settings`, and put it in.
 
 2. You will also need to set your log path. Open the lunar client launcher, go to the "about" tab, and click "open logs folder in file explorer." Here you should see a `renderer.log` file. Make sure to give the <b>FULL</b> path to this file, e.g. `C:\Users\me\.lunarclient\logs\renderer.log`
 

@@ -135,6 +135,17 @@
                     </div>
                     <!-- Content Row -->
                     <div class="row" style='padding-left: 10px;'>
+                        <input style='width: 375px;' type="text" class="form-control form-control-user" id="inputApiKey" placeholder="Enter API Key">
+                        <div style="padding-left: 5px;">
+                            <button class="btn btn-primary mb-4" type="button" id="setKeyButton">
+                                Set Hypixel Key
+                            </button>
+                        </div>
+                        <div style='padding-left: 10px;'>
+                            <p class='text-secondary' style="margin-top: 7px;">Do <code>/api key</code> in hypixel.</p>
+                        </div>
+                    </div>
+                    <div class="row" style='padding-left: 10px;'>
                         <input style='width: 500px;' type="text" class="form-control form-control-user" id="inputPath" placeholder="./../renderer.log">
                         <div style="padding-left: 5px;">
                             <button class="btn btn-primary mb-4" type="button" id="setPathButton">
@@ -178,21 +189,5 @@
 -->
 <script src='./bootstrap/logged_in.js'></script>
 <script src='./bootstrap/infoBar.js'></script>
-<script>
-    $('#inputPath').on("keypress", function(e) {
-        if (e.keyCode == 13) {
-            $('#setPathButton').click(); // Same thing as clicking the button manually
-            return false; // prevent the button click from happening
-        }
-    });
-    $('#setPathButton').click(function()
-    {
-        store.set('logPath', $('#inputPath').val());
-        infoBarMessage('text-success', "Success", "Path Set Successfully!", 5000);
-    });
-    $(function()
-    {
-        $('#inputPath').val(store.get("logPath"));
-    });
-</script>
+<script src='./bootstrap/settings_page.js'></script>
 </body></html>

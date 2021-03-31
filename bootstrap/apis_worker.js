@@ -12,9 +12,6 @@ async function callApis(player, key)
 
     var uuid = null;
 
-    var fkdr = null; // TODO: Make some dynamic system for user-decided stats
-    var winstreak = null;
-
     $.ajax({
         url: uuidUrl,
         async: false,
@@ -23,13 +20,12 @@ async function callApis(player, key)
         contentType: "application/json",
         dataType: 'json',
         success : function(result){
-            // $("[player='" + player + "']").attr('uuid', result.data.player.id); // Store UUID in playerCard -- Can't access DOM over worker with new method
-            if (result !== undefined && result.id !== undefined){ uuid = result.id; } // Due to some weird edgecases, have to check that both are defined
+            if (result !== undefined && result.id !== undefined) // Due to some weird edgecases, have to check that both are defined
+            { 
+                uuid = result.id; 
+            } 
             else 
             { 
-                uuid = "Nick"; 
-                fkdr = "N/A";
-                winstreak = "N/A";
                 console.error("Nick Detected! Name: " + player);
             }
         },
@@ -60,9 +56,6 @@ async function callApis(player, key)
             }
             else
             {
-                uuid = "Nick";
-                fkdr = "N/A";
-                winstreak = "N/A";
                 console.error("Nick Detected! Name: " + player);        
             }
     }
@@ -70,13 +63,11 @@ async function callApis(player, key)
     .fail(function(err)
     {
         console.error(err);
-        // $("[player='" + player + "']").attr('uuid', "Nick"); // TODO: Handle nicks somehow
-        uuid = "Nick";
-        fkdr = "N/A";
-        winstreak = "N/A";
+        uuid = null;
         console.error("Nick Detected! Name: " + player);
     });
-    if (uuid !== "Nick")
+    var data = null;
+    if (uuid)
     {
         $.ajax({
             url: hypxUrl + uuid,
@@ -84,46 +75,14 @@ async function callApis(player, key)
             contentType: "application/json",
             dataType: 'json',
             success: function(result){ // TODO: Make dynamic for which stats are chosen
-                if (result.player == null)
-                {
-                    uuid = 'Nick';
-                    fkdr = 'N/A';
-                    winstreak = 'N/A';
-                    console.error("Nick Detected! Name: " + player);
-                }
-                // Store FKDR in playerCard
-                else if (result.player.stats.Bedwars.four_four_final_kills_bedwars == undefined) // No kills (rough)
-                {
-                    //$("[player='" + player + "']").find('.fkdr').html("0");
-                    fkdr = 0;
-                }
-                else if (result.player.stats.Bedwars.four_four_final_deaths_bedwars == undefined) // No Deaths (nice)
-                {
-                    //$("[player='" + player + "']").find('.fkdr').html(result.player.stats.Bedwars.four_four_final_kills_bedwars);
-                    fkdr = result.player.stats.Bedwars.four_four_final_kills_bedwars;
-                }
-                else // Normal Human with both kills & deaths
-                {
-                    //$("[player='" + player + "']").find('.fkdr').html((
-                    //    result.player.stats.Bedwars.four_four_final_kills_bedwars / result.player.stats.Bedwars.four_four_final_deaths_bedwars).toFixed(2));
-                    fkdr = (result.player.stats.Bedwars.four_four_final_kills_bedwars / result.player.stats.Bedwars.four_four_final_deaths_bedwars).toFixed(2)
-                }
-    
-                // Store winstreak in playerCard
-                //$("[player='" + player + "']").find('.winstreak').html(result.player.stats.Bedwars.winstreak);
-                if (result !== null && result.player !== null && result.player.stats.Bedwars.winstreak !== undefined){ winstreak = result.player.stats.Bedwars.winstreak; }
-                else {winstreak = "N/A (Never Won?)"};
+                data = result;
             }
         })
         .fail(function(jqXHR, textStatus, errorThrown)
         {
             console.log(jqXHR.cause + " : " + textStatus + " : " + errorThrown);
-            uuid = 'Nick';
-            fkdr = 'N/A';
-            winstreak = 'N/A';
             console.error("API Failed. Nick Detected! Name: " + player);
         });
     }
-    workerResult = [player, uuid, fkdr, winstreak]; // TODO:  Make some dynamic system for user-decided stats
-    postMessage(workerResult);
+    postMessage([data, player]);
 };

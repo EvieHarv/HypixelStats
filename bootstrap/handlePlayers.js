@@ -40,7 +40,7 @@ function updatePlayerArea(playerList)
             <script>$('.warningButton').click(function(){$('#infoBarHolder').html(''); sessionStorage.setItem('checkForAndShowWarningOfNickedAccount', 'shown');})</script>", 999999);
         }
     }
-    sessionStorage.setItem('seenPlayers', [...new Set([...sessionStorage.getItem('seenPlayers').split(','),...playerList])]); // Should be O(n)? I think
+    sessionStorage.setItem('seenPlayers', [...new Set([...sessionStorage.getItem('seenPlayers').split(','),...playerList])].filter(function (el) {return el != "";})); // Should be O(n)? I think
     $(".playerCard").each(function(index, card) // Keep old card data if player still in, delete data if card is no longer relevent
     {
         if (card == undefined) 
@@ -67,14 +67,13 @@ function updatePlayerArea(playerList)
     playerList.forEach(function(player)
     {
         $(".playerList").append('\
-            <div class="col-xl-3 col-md-6 mb-4 playerCard" player="' + player + '" uuid="">\
+            <div class="col-xl-3 col-md-6 mb-4 playerCard" id="' + player + '" player="' + player + '" uuid="">\
                 <div class="card border-left-primary shadow h-100 py-2">\
                     <div class="card-body">\
                         <div class="row no-gutters align-items-center">\
                             <div class="col mr-2">\
                                 <div class="font-weight-bold text-primary mb-1 name">' + player + '</div>\
-                                <div class="h5 mb-0 font-weight-bold text-gray-800 fkdr-div">FKDR: <span class="fkdr">Loading...</span></div>\
-                                <div class="h5 mb-0 font-weight-bold text-gray-800 winstreak-div">Winstreak: <span class="winstreak">Loading...</span></div>\
+                                <div class="h5 mb-0 font-weight-bold text-gray-800 playerDataHolder">Loading...</div>\
                             </div>\
                         </div>\
                     </div>\
@@ -92,43 +91,172 @@ function updatePlayerArea(playerList)
         worker.postMessage([player, store.get('hypixel_key')]);
         worker.onmessage = function (e) 
         {
-            var player = e.data[0]
-            var uuid = e.data[1]
-            var fkdr = e.data[2]
-            var winstreak = e.data[3]
+            player = resolve('player.displayname', e.data[0]); // using resolve() so it doesn't error out
+            playerBackup = e.data[1] // If player isn't defined, still need name to resolve nick.
 
-            var color = getColor(player, fkdr, winstreak, uuid);
-            if (color !== "primary")
+            // The data is invalid somehow
+            if (player)
             {
-                $("[player='" + player + "'] > .card").removeClass('border-left-primary');
-                $("[player='" + player + "'] > .card").addClass('border-left-' + color);
-                $("[player='" + player + "'] .name").removeClass('text-primary');
-                $("[player='" + player + "'] .name").addClass('text-' + color);
+                // Assign the data we go to the playerCard div. It's just a jquery thing, so handle it all in jquery
+                $("#" + player).data('data', e.data[0]);
+                
+                updatePlayerData(player);
             }
-            $("[player='" + player + "']").attr('uuid', uuid);
-            $("[player='" + player + "']").find('.fkdr').html(fkdr);
-            $("[player='" + player + "']").find('.winstreak').html(winstreak);
-
-            // Re-order divs based on FKDR
-            var divList = $(".playerCard");
-            divList.sort(function(a, b){
-                aNum = $(a).find(".fkdr").html();
-                bNum = $(b).find(".fkdr").html();
-                if (!Number.isFinite((aNum + 1 - 1))) // This is JANK but it works
-                {
-                    // If it's not a number, its 0
-                    aNum = 0;
-                }
-                if (!Number.isFinite((bNum + 1 - 1)))
-                {
-                    bNum = 0;
-                }
-                return bNum-aNum;
-            });
-            $(".playerList").html(divList);
-            //$("[player='" + list[0].getAttribute('player') + "'] .fkdr").html()
+            else
+            {
+                $("#" + playerBackup).data('data', "Nick");
+                $("#" + playerBackup).attr('uuid', 'Nick');
+                $("#" + playerBackup).find('.playerDataHolder').html('<div class="h5 mb-0 font-weight-bold text-warning">Nick</div>');
+                updatePlayerData(playerBackup);
+            }
         }
     });
+}
+
+Number.prototype.toFixedDown = function(digits) {
+    var re = new RegExp("(\\d+\\.\\d{" + digits + "})(\\d)"),
+        m = this.toString().match(re);
+    return m ? parseFloat(m[1]) : this.valueOf();
+};
+
+
+// Parse the data for all players
+// Used in profileLoader.js
+function updateAllPlayerData()
+{
+    $(".playerCard").each(function(index, card){
+        updatePlayerData(card.id);
+    });
+    resortCards();
+}
+
+// Parse the data for a specific player
+function updatePlayerData(player)
+{
+    profile = store.get('profiles')[store.get('active_profile')];
+
+    isNick = false;
+    if ($("#" + playerBackup).attr('uuid') == "Nick")
+    {
+        isNick = true;
+    }
+    else // Only need to run through stats if its a valid player
+    {
+        // Reset the data area
+        $("#" + player).find('.playerDataHolder').html('');
+        
+        // Get the active profile as a JSON object
+        
+        // Get the data from the playerCard div
+        data = $("#" + player).data('data');
+        
+        // Loop through each stat and append it. This *has* to exist in a profile, so no if statement to check.
+        for (var entry in profile["stats"])
+        {
+            // Not sure on the security of Function() or if it's a good practice.
+            // As far as I can tell, it seems better than eval() at least.
+            
+            // Evaluate the expression
+            value = undefined;
+
+            // Wrap in a try/catch because idk what these people are gonna put
+            try{ value = Function('"use strict";return (' + profile.stats[entry] + ')')(data); }
+            catch(error){ console.error(error); }
+
+            if (typeof value === 'number') {
+                value = value.toFixedDown(2);
+            }
+            if (value == undefined || value == NaN)
+            {
+                value = "N/A";
+            }
+            // Add the data to the player card
+            $("#" + player).find('.playerDataHolder').append('<div class="h5 mb-0 font-weight-bold text-gray-800">' + entry + ": " + value + '</div>');
+        }
+    }
+    // Check that this profile has valid colorConditions
+    if (profile['colorConditions'])
+    {
+        color = undefined;
+        for (var condition in profile['colorConditions'])
+        {
+            if (!(color)) // Keep checking until we find a valid color
+            {
+                playerName = player;
+                data = $("#" + player).data('data');
+                blacklist = store.get('blacklist');
+                whitelist = store.get('whitelist');
+                seenPlayers = sessionStorage.getItem('seenPlayers').split(',').filter(function (el) {return el != "";});
+                isNick = isNick; // Just here for clarity
+                try // Can error out for the user, still want to continue going if it does.
+                {
+                    color = Function('"use strict";if (' + condition + ') { return ("' + profile.colorConditions[condition] + '"); } ')
+                    (playerName, data, blacklist, whitelist, seenPlayers, isNick);
+                }
+                catch(error){ console.error(error); }; 
+            }
+        }
+        // A color was found
+        if (color)
+        {
+            // Set name to color
+            $('#' + player).find('.name').attr('style', "color: " + color + "!important;")
+            // Set border to color
+            $('#' + player).find('.border-left-primary').attr('style', "border-left: .25rem solid " + color + "!important;")
+        }
+    };
+    resortCards();
+}
+
+
+// Re-sort the cards based on their data and the current profile
+function resortCards()
+{
+    profile = store.get('profiles')[store.get('active_profile')];
+    
+    // Check for a valid sort config
+    if (profile['sort'])
+    {
+        divList = $(".playerCard");
+
+        sortString = profile.sort;
+
+        divList.sort(function(a, b)
+        {
+            dataA = $(a).data('data');
+            dataB = $(b).data('data');
+            try {
+                data = dataA;
+                valueA = Function('"use strict"; return (' + sortString + ');')(data);
+                data = dataB;
+                valueB = Function('"use strict"; return (' + sortString + ');')(data);
+
+                if (!Number.isFinite(valueA) && !Number.isFinite(valueB)) // Both NaN? Do nothing.
+                {
+                    return 0;
+                }
+                else if (!Number.isFinite(valueA))
+                {
+                    return 1;
+                }
+                else if (!Number.isFinite(valueB))
+                {
+                    return -1;
+                }
+
+                value = valueB - valueA; // Values are good, actually subract them
+
+                return value;
+            } catch (error) {console.warn(error); return 1;} // This tends to spam the output log. Maybe tidy this up with some checks?
+        });
+        divList.appendTo('.playerList')
+    }    
+}
+
+function resolve(path, obj) {
+    return path.split('.').reduce(function(prev, curr) {
+        return prev ? prev[curr] : null
+    }, obj || self)
 }
 
 function getColor(player, fkdr, winstreak, uuid)
