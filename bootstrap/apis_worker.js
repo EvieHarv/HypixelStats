@@ -84,5 +84,5 @@ async function callApis(player, key)
             console.error("API Failed. Nick Detected! Name: " + player);
         });
     }
-    postMessage([data, player]);
+    postMessage([data, player, uuid]);
 };

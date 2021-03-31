@@ -99,6 +99,7 @@ function updatePlayerArea(playerList)
             {
                 // Assign the data we go to the playerCard div. It's just a jquery thing, so handle it all in jquery
                 $("#" + player).data('data', e.data[0]);
+                $("#" + playerBackup).attr('uuid', e.data[2]);
                 
                 updatePlayerData(player);
             }
@@ -219,6 +220,18 @@ function resortCards()
     {
         divList = $(".playerCard");
 
+        // Wait untill all player calls have been made to sort. TODO: Maybe make this a toggle? 
+        somePlayersUndefined = false;
+        divList.each(function(a, b){
+            // If the div has the uuid attribute defined, it means that the data has been grabbed successfully.
+            if(!b.getAttribute('uuid'))
+            {
+                somePlayersUndefined = true;
+                return false;
+            }
+        });
+        if (somePlayersUndefined){ return false; } // End execution
+        
         sortString = profile.sort;
 
         divList.sort(function(a, b)
