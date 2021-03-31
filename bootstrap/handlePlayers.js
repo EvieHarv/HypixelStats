@@ -249,9 +249,16 @@ function resortCards()
                 return value;
             } catch (error) {console.warn(error); return 1;} // This tends to spam the output log. Maybe tidy this up with some checks?
         });
+        // Flip array around if the user wants ascending list
+        if (profile['sortOrder'] && profile.sortOrder == "ascending")
+        {
+            divList = divList.reverse();
+        }
         divList.appendTo('.playerList')
     }    
 }
+
+$.fn.reverse = [].reverse;
 
 function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {

@@ -67,7 +67,8 @@ function checkUndefineds()
           "whitelist.includes(playerName)" : "#1CC88A",
           "isNick" : "#F6C23E"
         },
-        "sort" : "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars)"
+        "sort" : "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars)",
+        "sortOrder" : "descending"
       },
       "Custom Stats Examples":
       {
@@ -84,7 +85,8 @@ function checkUndefineds()
           "isNick" : "#F6C23E",
           "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars) > 5" : "#F6C23E"
         },
-        "sort": "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars)"
+        "sort": "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars)",
+        "sortOrder" : "ascending"
       }
     };
     store.set('profiles', profiles);
