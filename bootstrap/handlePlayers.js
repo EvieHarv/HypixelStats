@@ -25,8 +25,10 @@ function updatePlayerArea(playerList)
     {
         sessionStorage.setItem('seenPlayers', []);
     }
-    // Session storage so it doesn't spam someone who's stubborn, but still reminds them. playerList.Length > 0 for weird cases where [] is sent. Last one to check the message isn't already sent.
-    if (sessionStorage.getItem('checkForAndShowWarningOfNickedAccount') !== "shown" && playerList.length > 0 && $('#infoBarHolder').html().trim() == "")
+    // Session storage so it doesn't spam someone who's stubborn, but still reminds them. playerList.Length > 4 for cases where a whole party joins at once.
+    // (A whole party joining at once, the key owners's name can end up at the end of the of the 4)
+    // Check infoBar status to check the message isn't already sent.
+    if (sessionStorage.getItem('checkForAndShowWarningOfNickedAccount') !== "shown" && playerList.length > 4 && $('#infoBarHolder').html().trim() == "")
     {
         if (!playerList.includes(store.get('key_owner')) || playerList.length > 16)
         {
