@@ -74,7 +74,7 @@ function checkUndefineds()
       {
         "stats":
         {
-          "One specific stat (winstreak)" : "data.player.stats.Bedwars.winstreak",
+          "One Specific Stat (Winstreak)" : "data.player.stats.Bedwars.winstreak",
           "Simple Math (FKDR)" : "data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars",
           "Javascript Math (Network Level)" : "(Math.sqrt(data.player.networkExp + 15312.5) - 125/Math.sqrt(2))/(25*Math.sqrt(2))"
         },
