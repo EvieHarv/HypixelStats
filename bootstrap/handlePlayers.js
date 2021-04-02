@@ -235,12 +235,16 @@ function resortCards()
         if (somePlayersUndefined){ return false; } // End execution
         
         sortString = profile.sort;
-
         divList.sort(function(a, b)
         {
             dataA = $(a).data('data');
             dataB = $(b).data('data');
             try {
+                if (b.getAttribute('uuid') == "Nick") // Send nicks to end
+                {
+                    return -1;
+                };
+
                 data = dataA;
                 valueA = Function('"use strict"; return (' + sortString + ');')(data);
                 data = dataB;
@@ -262,14 +266,14 @@ function resortCards()
                 value = valueB - valueA; // Values are good, actually subract them
 
                 return value;
-            } catch (error) {console.warn(error); return 1;} // This tends to spam the output log. Maybe tidy this up with some checks?
+            } catch (error) {console.warn(error); return 0;} // This tends to spam the output log. Maybe tidy this up with some checks?
         });
         // Flip array around if the user wants ascending list
         if (profile['sortOrder'] && profile.sortOrder == "ascending")
         {
             divList = divList.reverse();
         }
-        divList.appendTo('.playerList')
+        divList.appendTo('.playerList');
     }    
 }
 
