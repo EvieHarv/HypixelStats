@@ -71,6 +71,7 @@
                         <a class="collapse-item" href="./bootstrap/seen.html">Seen</a>
                         <a class="collapse-item" href="./bootstrap/whitelisted.html">Whitelisted</a>
                         <a class="collapse-item" href="./bootstrap/blacklisted.html">Blacklisted</a>
+                        <a class="collapse-item" href="./bootstrap/aliases.html">Aliases/Nick Hider</a>
                         <a class="collapse-item" href="./bootstrap/lookup.html">Stat Lookup</a>
                     </div>
                 </div>
@@ -130,12 +131,77 @@
                         Chrome <script>document.write(process.versions.chrome)</script>,
                         and Electron <script>document.write(process.versions.electron)</script>.                
                     </div>
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <div class="d-sm-flex align-items-center justify-content-between">
                         <h1 class="h3 mb-0 text-gray-800">API Settings:</h1>
+                        <ul class="navbar-nav ml-auto mr-3" style='width: fit-content;'>
+                            <li class="dropdown">
+                                <a class="btn btn-primary dropdown-toggle pl-1 pr-1" href="javascript:void(0)" id="profileDropdown" role="button" data-toggle="dropdown">Loading Profiles...</a>
+                                <div class="dropdown-menu dropdown-menu-right" id="profileDropdownMenu">
+                                    <a class="dropdown-item" href="javascript:void(0)">Loading...</a>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
-                    <!-- Content Row -->
-                    <div class="row" style='padding-left: 10px;'>
-                        amoges
+                    <p class='mb-4 text-danger'>Read the <a target="_blank" href='https://github.com/EthanHarv/HypixelStats/wiki/API-Settings'>wiki</a> on Github to get started.</p>
+                    <hr>
+                    <div class="d-sm-flex align-items-center justify-content-between mb-2">
+                        <div class="row mt-0 pt-0 mb-1" style="padding-left: 10px;">
+                            <input style="width: 375px;" type="text" class="form-control form-control-user text-primary" id="profileNameField" placeholder="Profile Name">
+                            <div class='ml-2'>
+                                <button class="btn btn-success" type="button" id="saveAllChanges">
+                                    <i class="fas fa-save" aria-hidden="true"></i> Save All Profile Changes 
+                                </button>
+                            </div>
+                        </div>
+                        <div class='mr-3'>
+                            <button class="btn btn-primary" type="button" id="importProfile">
+                                Import Profile <i class="fas fa-file-import" aria-hidden="true"></i>
+                            </button>
+                            <button class="btn btn-primary" type="button" id="exportProfile">
+                                Export Profile <i class="fas fa-file-export" aria-hidden="true"></i>
+                            </button>
+                            <button class="btn btn-success" type="button" id="createNewProfile">
+                                Create New Profile <i class="fas fa-plus" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h1 class='text-dark'>Stats Displayed: <button class="btn btn-success mb-0 mr-3 addNewStat" style="float: right;" type="button">Add New Stat <i class="fas fa-plus"></i></button></h1>
+                    <h6 class='text-danger mb-4' style="padding-left: 2px;">Click and Drag to Reorder!</h6>
+                    <div id="statCardsDiv" class='row' style="width: 100%; padding-left: 10px;">
+                    </div>
+
+                    <hr>
+
+                    <h1 class='text-dark'>Color Settings: <button class="btn btn-success mb-0 mr-3 addNewColorRule" style="float: right;" type="button">Add New Color Rule <i class="fas fa-plus"></i></button></h1>
+                    <h6 class='text-danger mb-4' style="padding-left: 2px;">Order is important! Higher takes priority.</h6>
+                    <div id="colorDiv" class='row' style="width: 100%; padding-left: 10px;">
+                    </div>
+
+                    <hr>
+
+                    <h1 class='text-dark'>Sorting:</h1>
+                    <h6 class='text-danger mb-4' style="padding-left: 2px;">Leave blank for no sorting.</h6>
+                    <div id="sortDiv" class='row' style="width: 100%; padding-left: 10px;">
+                        <div class="mb-4 sortCard" style="width: 100%">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="no-gutters align-items-center">
+                                        <div class="mr-2" style="width: 100%;">
+                                            <input type="text" class="form-control form-control-user mb-1 text-dark sortRule" id="sortRule" placeholder="Condition"></input>
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" id="sortAscending">
+                                                    <label class="custom-control-label" for="sortAscending">Invert (sort ascending instead of descending).</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 <!-- /.container-fluid -->
             </div>
@@ -169,5 +235,11 @@
     <script src="js/demo/chart-pie-demo.js"></script>
 -->
 <script src='./bootstrap/logged_in.js'></script>
-
+<script src="./bootstrap/sortable/Sortable.min.js"></script>
+<style>
+    .sortable-drag {
+        opacity: 0;
+    }
+</style>
+<script src='./bootstrap/api_settings.js'></script>
 </body></html>

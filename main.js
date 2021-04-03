@@ -35,6 +35,11 @@ app.on('ready', function()
 
   mainWindow.on('closed', function(){app.quit();});
   
+  mainWindow.webContents.on('new-window', function(e, url) {
+    e.preventDefault();
+    require('electron').shell.openExternal(url);
+  });
+  
   //mainWindow.setAutoHideMenuBar(true);
   //mainWindow.menuBarVisible = false;
 
@@ -53,39 +58,49 @@ function checkUndefineds()
   if (store.get('profiles') == undefined)
   {
     profiles = {
-      "Bedwars":
-      {
-        "stats":
-        {
+      "Bedwars" : {
+        "stats" : {
           "Winstreak" : "data.player.stats.Bedwars.winstreak",
           "FKDR" : "data.player.stats.Bedwars.four_four_final_kills_bedwars/data.player.stats.Bedwars.four_four_final_deaths_bedwars",
-          "Stars" : "data.player.achievements.bedwars_level",
+          "Stars" :  "data.player.achievements.bedwars_level"
         },
-        "colorConditions":
-        {
+        "colorConditions" : {
           "blacklist.includes(playerName)" : "#E74A3B",
           "whitelist.includes(playerName)" : "#1CC88A",
-          "isNick" : "#F6C23E"
+          "isNick" : "#F6C23E",
+          "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars) > 5" : "#e74a3b"
         },
         "sort" : "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars)",
         "sortOrder" : "descending"
       },
-      "Custom Stats Examples":
-      {
-        "stats":
-        {
+      "Duels" : {
+        "stats" : {
+          "Sumo Winstreak" : "data.player.stats.Duels.current_sumo_winstreak",
+          "Sumo W/L" : "data.player.stats.Duels.sumo_duel_wins/data.player.stats.Duels.sumo_duel_losses",
+          "UHC Winstreak" : "data.player.stats.Duels.current_uhc_winstreak",
+          "UHC W/L" : "data.player.stats.Duels.uhc_duel_wins/data.player.stats.Duels.uhc_duel_losses"
+        },
+        "colorConditions" : {
+          "blacklist.includes(playerName)" : "#E74A3B",
+          "whitelist.includes(playerName)" : "#1CC88A",
+          "isNick" : "#F6C23E"
+        },
+        "sort" : "",
+        "sortOrder" : "descending"
+      },
+      "Custom Stats Examples" : {
+        "stats" : {
           "One Specific Stat (Winstreak)" : "data.player.stats.Bedwars.winstreak",
           "Simple Math (FKDR)" : "data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars",
           "Javascript Math (Network Level)" : "(Math.sqrt(data.player.networkExp + 15312.5) - 125/Math.sqrt(2))/(25*Math.sqrt(2))"
         },
-        "colorConditions":
-        {
+        "colorConditions" : {
           "blacklist.includes(playerName)" : "#E74A3B",
           "whitelist.includes(playerName)" : "#1CC88A",
           "isNick" : "#F6C23E",
           "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars) > 5" : "#F6C23E"
         },
-        "sort": "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars)",
+        "sort" : "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars)",
         "sortOrder" : "ascending"
       }
     };
