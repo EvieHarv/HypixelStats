@@ -2,6 +2,8 @@
 
 HypixelStats is a cross-platform, open-source project that aims to be the easiest way to get stats about the players in your games.
 
+Not associated with Hypixel Inc.
+
 ![Main Page](https://media.discordapp.net/attachments/414270111067668502/822399830004465694/unknown.png)
 
 ## Features
@@ -10,20 +12,17 @@ HypixelStats is a cross-platform, open-source project that aims to be the easies
 
 - Automatically detects when you join new game, and automatically detects when players leave/join and adds/removes them from the list.
     - Currently, you still have to do `/who` once when you join to get the players already in the lobby. I'm currently working on an automatic system for this.
-- Currently sorts by FKDR, and shows FKDR+Winstreak
-    - This will be configurable in future releases!
-- Includes the ability to whitelist/blacklist players for quick identification. Whitelisted players appear green, blacklisted players appear red.
-- Detects nicked players and displays them as yellow.
+- Fully configuarable view of stats, with on-the-fly profile switching for easy viewing of any stats you want, at any time.
+    - Also includes assignable colors based off of stats, as well as the ability to sort the list by any (numeric) stat.
+- Includes the ability to whitelist/blacklist players for quick identification. By default, whitelisted players appear green and blacklisted players appear red. (This is configurable in the profiles!)
+- Detects nicked players and displays them as yellow by default (also configurable).
 - Keeps track of every player you've run into since you opened the app, for ease of blacklisting or whitelisting.
 - Built-in plancke.io search
 
 ## Features in the works
 
 - Compatibility with every popular client (lunar, badlion, vanilla).
-- Ability to set what stats you want to see, from what games, and in what order.
-    - Based on a profile system, so you can switch what you want to see easily at any given time. 
-- Automatic party detection.
-- Automatic coloring based off of stat critera. (e.g. Red if `FKDR > 4`)
+- Automatic, temporary party whitelisting (toggable)
 - Automatic `/who` on join
 - Reach goal: make into an overlay, similar to BedwarsStats overlay.
 
