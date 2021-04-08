@@ -32,7 +32,7 @@ function updatePlayerArea(playerList)
     {
         if (!playerList.includes(store.get('key_owner')) || playerList.length > 16)
         {
-            infoBarMessage('', "<span class='text-danger'>Nick/Alt Detected</span>", "Hey! It looks like you're playing nicked or on an alt.\
+            infoBarMessage('', "<span class='text-danger' id='nickAltBanner'>Nick/Alt Detected</span>", "Hey! It looks like you're playing nicked or on an alt.\
             <br>If you're nicked, please go to <a href='./bootstrap/aliases.html'><code>Player Lists -> Aliases/Nick Hider</code></a> \
             and put your nick in as an alias to your account name. <b class='text-danger'>Update this whenever you change your nick.</b>\
             <br>If you're on an alt, please update your API key to the API key of the alt account. \
@@ -40,6 +40,10 @@ function updatePlayerArea(playerList)
             <br>If you don't do this, the program can have a difficult time removing old players, and often won't purge the list at <i>all</i>.\
             <button class='btn btn-secondary warningButton' style='float: right;'>Hide This Message</button>\
             <script>$('.warningButton').click(function(){$('#infoBarHolder').html(''); sessionStorage.setItem('checkForAndShowWarningOfNickedAccount', 'shown');})</script>", 999999);
+        }
+        else
+        {
+            $('#nickAltBanner').closest('#infoBar').remove();
         }
     }
     sessionStorage.setItem('seenPlayers', [...new Set([...sessionStorage.getItem('seenPlayers').split(','),...playerList])].filter(function (el) {return el != "";})); // Should be O(n)? I think

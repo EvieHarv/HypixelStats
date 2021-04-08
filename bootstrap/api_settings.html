@@ -26,9 +26,12 @@
 -->
 
 </head><body id="page-top">
-
+    <div id="overlay" style='position: fixed; display: none; width: 100%;height: 100%;top: 0;left: 0;right: 0;bottom: 0;background-color: rgba(0,0,0,0.5);z-index: 2;cursor: pointer;'></div>
     <!-- Page Wrapper -->
     <div id="wrapper">
+
+        <div id='notificationBox'>
+        </div>
 
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
@@ -114,6 +117,7 @@
                         <i class="fa fa-bars"></i>
                     </button>
                     <div>Logged in as: <span class='myPlayerName'></span></div>
+                    <div class='navbar-item ml-auto small'>Made by <a href='https://www.github.com/EthanHarv/HypixelStats' target="_blank">github.com/EthanHarv</a>.<br>Not associated with Hypixel Inc.</div>
                 </nav>
                 <!-- End of Topbar -->
 
@@ -124,6 +128,7 @@
 
                     <div id='infoBarHolder'>
                     </div>
+
                     <div>
                         Versions: 
                         HypixelStats <script>document.write(require("electron").remote.app.getVersion());</script>,
@@ -151,14 +156,17 @@
                                 <button class="btn btn-success" type="button" id="saveAllChanges">
                                     <i class="fas fa-save" aria-hidden="true"></i> Save All Profile Changes 
                                 </button>
+                                <button class="btn btn-danger" type="button" id="deleteProfile">
+                                    <i class="fas fa-trash-alt" aria-hidden="true"></i> Delete Profile 
+                                </button>
                             </div>
                         </div>
                         <div class='mr-3'>
                             <button class="btn btn-primary" type="button" id="importProfile">
-                                Import Profile <i class="fas fa-file-import" aria-hidden="true"></i>
+                                (WIP) Import Profile <i class="fas fa-file-import" aria-hidden="true"></i>
                             </button>
                             <button class="btn btn-primary" type="button" id="exportProfile">
-                                Export Profile <i class="fas fa-file-export" aria-hidden="true"></i>
+                                (WIP) Export Profile <i class="fas fa-file-export" aria-hidden="true"></i>
                             </button>
                             <button class="btn btn-success" type="button" id="createNewProfile">
                                 Create New Profile <i class="fas fa-plus" aria-hidden="true"></i>
@@ -168,41 +176,25 @@
 
                     <hr>
 
-                    <h1 class='text-dark'>Stats Displayed: <button class="btn btn-success mb-0 mr-3 addNewStat" style="float: right;" type="button">Add New Stat <i class="fas fa-plus"></i></button></h1>
+                    <h1 class='text-dark'>Stats Displayed: <button class="btn btn-success mb-0 mr-3 addNewStat" id='addNewStat' style="float: right;" type="button">Add New Stat <i class="fas fa-plus"></i></button></h1>
                     <h6 class='text-danger mb-4' style="padding-left: 2px;">Click and Drag to Reorder!</h6>
                     <div id="statCardsDiv" class='row' style="width: 100%; padding-left: 10px;">
                     </div>
 
                     <hr>
 
-                    <h1 class='text-dark'>Color Settings: <button class="btn btn-success mb-0 mr-3 addNewColorRule" style="float: right;" type="button">Add New Color Rule <i class="fas fa-plus"></i></button></h1>
+                    <h1 class='text-dark'>Color Settings: <button class="btn btn-success mb-0 mr-3 addNewColorRule" id='addNewColorRule' style="float: right;" type="button">Add New Color Rule <i class="fas fa-plus"></i></button></h1>
                     <h6 class='text-danger mb-4' style="padding-left: 2px;">Order is important! Higher takes priority.</h6>
                     <div id="colorDiv" class='row' style="width: 100%; padding-left: 10px;">
                     </div>
 
                     <hr>
 
-                    <h1 class='text-dark'>Sorting:</h1>
+                    <h1 class='text-dark'>Sort By:</h1>
                     <h6 class='text-danger mb-4' style="padding-left: 2px;">Leave blank for no sorting.</h6>
-                    <div id="sortDiv" class='row' style="width: 100%; padding-left: 10px;">
-                        <div class="mb-4 sortCard" style="width: 100%">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="no-gutters align-items-center">
-                                        <div class="mr-2" style="width: 100%;">
-                                            <input type="text" class="form-control form-control-user mb-1 text-dark sortRule" id="sortRule" placeholder="Condition"></input>
-                                            <div class="form-group">
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="sortAscending">
-                                                    <label class="custom-control-label" for="sortAscending">Invert (sort ascending instead of descending).</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div id="sortDiv" class='row mb-5 pb-5' style="width: 100%; padding-left: 10px;">
                     </div>
+
                 <!-- /.container-fluid -->
             </div>
             <!-- End of Main Content -->
@@ -236,7 +228,9 @@
 -->
 <script src='./bootstrap/logged_in.js'></script>
 <script src="./bootstrap/sortable/Sortable.min.js"></script>
+<script src='./bootstrap/infoBar.js'></script>
 <style>
+    /* This makes it so that you don't get a "ghost" above the dragged object. */
     .sortable-drag {
         opacity: 0;
     }
