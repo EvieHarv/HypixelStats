@@ -4,6 +4,8 @@ HypixelStats is a cross-platform, open-source project that aims to be the easies
 
 Not associated with Hypixel Inc.
 
+[Join the discord!](http://discord.gg/yAAz4UkNb5)
+
 ![Main Page](https://media.discordapp.net/attachments/414270111067668502/822399830004465694/unknown.png)
 
 ## Features
