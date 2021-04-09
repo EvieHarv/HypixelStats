@@ -1,3 +1,7 @@
+const dialog = require('electron').remote.dialog;
+const path = require('path');
+const fs = require('fs');
+
 $(function()
 {
     profileLoad(); // Load in all existing profiles to start
@@ -39,6 +43,11 @@ $(function()
     $("#addNewColorRule").click(function(){ 
         addNewColorRule();
     });
+
+    
+
+
+    $('#apiViewMethods').attr('href', "https://api.hypixel.net/player?key=" + store.get('hypixel_key') + "&uuid=f8537e2b-8097-4048-8331-e5d686bfe10d")
 });
 
 function profileLoad()
@@ -245,13 +254,109 @@ function saveAllChanges()
 
 function importProfile()
 {
-    // validate w/ joi.dev
-    console.log('import');
+    profile = null;
+
+    dialog.showOpenDialog(
+        { 
+            title: 'Select Path',
+            properties: ['openFile'],
+            filters: [
+                { name: 'JSON', extensions: ['json'] },
+            ],
+            properties: []
+        }
+    ).then(result => {
+        if (!result.canceled) {
+            fs.readFile(result.filePaths[0], 'utf8' , (err, data) => {
+                if (err) {
+                  console.error(err)
+                  return;
+                }
+                validateAndAddProfile(data);
+            })
+        }
+    }).catch(err => {
+        console.error(err);
+    });
 };
+
+// TODO:
+// This structure is pretty rigid, and not very future-thinking.
+// I'm using it for now for lack of better idea off the top of my head, but looking to change this at some point.
+function validateAndAddProfile(data) {
+    data = JSON.parse(data)
+    profiles = store.get('profiles');
+    activeProfile = store.get('active_profile');
+
+    profName = "";
+
+    // Make sure it only has one profile
+    if (Object.keys(data).length == 1)
+    {
+        profName = Object.keys(data)[0];
+    }
+    else{ infoBarMessage('text-danger', 'Error!', 'That profile is invalid.', 2500); return; };
+
+    // Make sure it has the right vague structure
+    // Sub-strucutre isn't checked, but by this point im just *assuming* valid.
+    // If it breaks, they should still be able to delete it.
+    if (!Object.keys(data[profName]).equals(["stats", "colorConditions", "sort", "sortOrder"]))
+    {
+        infoBarMessage('text-danger', 'Error!', 'That profile is invalid.', 2500); return;
+    }
+    
+    if (Object.keys(profiles).includes(profName))
+    {
+        infoBarMessage('text-danger', 'Error!', 'That profile already exists!', 2500); return;
+    }
+
+    profiles[profName] = data[profName];
+    store.set('profiles', profiles);
+    store.set('active_profile', profName)
+    profileLoad();
+    infoBarMessage('text-success', 'Success!', 'Profile settings saved.', 2000);
+}
 
 function exportProfile()
 {
-    console.log('export');
+    // Currently we get the _as-is_ profile, not the saved one. Could change this, maybe.
+    prof = getCurrentProperties();
+    
+    json = {};
+    json[prof.name] = prof.properties;
+
+    if (prof == null)
+    {
+        infoBarMessage('text-danger', 'Error!', 'Check again! The current profile is invalid. (Is something empty?)', 2500);
+        return null;
+    }
+    else
+    {
+        dialog.showSaveDialog({
+            title: 'Select Path',
+            defaultPath: prof.name + '.json',
+            buttonLabel: 'Save',
+            // Restricting the user to only Text Files.
+            filters: [
+                {
+                    name: 'JSON',
+                    extensions: ['json']
+                }, ],
+            properties: []
+        }).then(file => {
+            // Stating whether dialog operation was cancelled or not.
+            if (!file.canceled) {                
+                // Creating and Writing to the sample.txt file
+                fs.writeFile(file.filePath.toString(), 
+                            JSON.stringify(json, null, 2), function (err) {
+                    if (err) throw err;
+                    console.log('Saved Profile ' + prof.name);
+                });
+            }
+        }).catch(err => {
+            console.log(err)
+        });
+    }
 };
 
 function createNewProfile()
@@ -271,8 +376,6 @@ function createNewProfile()
         // If the name exists already:
         if (profileNames.includes(newProfile.name))
         {
-            console.log(profileNames)
-            console.log('I hate it here.')
             if (newProfile.name == "New Profile")
             {
                 // If "New Profile" exists, rename to "New Profile 1"
@@ -400,3 +503,35 @@ function dimPage() {
 function undimPage() {
     document.getElementById("overlay").style.display = "none";
 }
+
+
+// https://stackoverflow.com/a/14853974
+// Warn if overriding existing method
+if(Array.prototype.equals)
+    console.warn("Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code.");
+// attach the .equals method to Array's prototype to call it on any array
+Array.prototype.equals = function (array) {
+    // if the other array is a falsy value, return
+    if (!array)
+        return false;
+
+    // compare lengths - can save a lot of time 
+    if (this.length != array.length)
+        return false;
+
+    for (var i = 0, l=this.length; i < l; i++) {
+        // Check if we have nested arrays
+        if (this[i] instanceof Array && array[i] instanceof Array) {
+            // recurse into the nested arrays
+            if (!this[i].equals(array[i]))
+                return false;       
+        }           
+        else if (this[i] != array[i]) { 
+            // Warning - two different object instances will never be equal: {x:20} != {x:20}
+            return false;   
+        }           
+    }       
+    return true;
+}
+// Hide method from for-in loops
+Object.defineProperty(Array.prototype, "equals", {enumerable: false});

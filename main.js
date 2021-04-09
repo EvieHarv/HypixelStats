@@ -68,6 +68,7 @@ function checkUndefineds()
           "blacklist.includes(playerName)" : "#E74A3B",
           "whitelist.includes(playerName)" : "#1CC88A",
           "isNick" : "#F6C23E",
+          "data.player.channel == 'PARTY'" : "#36B9CC",
           "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars) > 5" : "#e74a3b"
         },
         "sort" : "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars)",
@@ -98,6 +99,7 @@ function checkUndefineds()
           "blacklist.includes(playerName)" : "#E74A3B",
           "whitelist.includes(playerName)" : "#1CC88A",
           "isNick" : "#F6C23E",
+          "data.player.channel == 'PARTY'" : "#36B9CC",
           "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars) > 5" : "#F6C23E"
         },
         "sort" : "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars)",
@@ -175,7 +177,6 @@ const mainMenuTemplate =
   }
 ];
 
-// TODO: DON'T HARDCODE THIS PATH
 if (store.get('logPath') !== undefined)
 {
   const watcher = chokidar.watch(store.get('logPath'),

@@ -74,7 +74,7 @@ async function callApis(player, key)
             async: false,
             contentType: "application/json",
             dataType: 'json',
-            success: function(result){ // TODO: Make dynamic for which stats are chosen
+            success: function(result){
                 data = result;
             }
         })
