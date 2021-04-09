@@ -58,7 +58,7 @@ function checkUndefineds()
   if (store.get('profiles') == undefined)
   {
     profiles = {
-      "Bedwars" : {
+      "Bedwars 4v4s" : {
         "stats" : {
           "Winstreak" : "data.player.stats.Bedwars.winstreak",
           "FKDR" : "data.player.stats.Bedwars.four_four_final_kills_bedwars/data.player.stats.Bedwars.four_four_final_deaths_bedwars",
@@ -74,7 +74,7 @@ function checkUndefineds()
         "sort" : "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars)",
         "sortOrder" : "descending"
       },
-      "Duels" : {
+      "UHC/Sumo Duels" : {
         "stats" : {
           "Sumo Winstreak" : "data.player.stats.Duels.current_sumo_winstreak",
           "Sumo W/L" : "data.player.stats.Duels.sumo_duel_wins/data.player.stats.Duels.sumo_duel_losses",
