@@ -107,7 +107,7 @@ function checkUndefineds()
       }
     };
     store.set('profiles', profiles);
-    store.set('active_profile', 'Bedwars');
+    store.set('active_profile', 'Bedwars 4v4s');
   };
 
   // Alias list
