@@ -23,7 +23,8 @@ Not associated with Hypixel Inc.
 
 ## Features in the works
 
-- Compatibility with every popular client (lunar, badlion, vanilla).
+- Compatibility with vanilla client
+    - Won't be adding compatiblity with BLC as I don't support the devs, use lunar or vanilla.
 - Automatic, temporary party whitelisting (toggable)
 - Automatic `/who` on join
 - Reach goal: make into an overlay, similar to BedwarsStats overlay.
