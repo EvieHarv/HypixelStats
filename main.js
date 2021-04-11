@@ -65,10 +65,10 @@ function checkUndefineds()
           "Stars" :  "data.player.achievements.bedwars_level"
         },
         "colorConditions" : {
-          "blacklist.includes(playerName)" : "#E74A3B",
-          "whitelist.includes(playerName)" : "#1CC88A",
-          "isNick" : "#F6C23E",
-          "data.player.channel == 'PARTY'" : "#36B9CC",
+          "blacklist.includes(playerName)" : "#e74a3b",
+          "whitelist.includes(playerName)" : "#1cc88a",
+          "isNick" : "#f6c23e",
+          "data.player.channel == 'PARTY'" : "#36b9cc",
           "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars) > 5" : "#e74a3b"
         },
         "sort" : "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars)",
@@ -82,9 +82,9 @@ function checkUndefineds()
           "UHC W/L" : "data.player.stats.Duels.uhc_duel_wins/data.player.stats.Duels.uhc_duel_losses"
         },
         "colorConditions" : {
-          "blacklist.includes(playerName)" : "#E74A3B",
-          "whitelist.includes(playerName)" : "#1CC88A",
-          "isNick" : "#F6C23E"
+          "blacklist.includes(playerName)" : "#e74a3b",
+          "whitelist.includes(playerName)" : "#1cc88a",
+          "isNick" : "#f6c23e"
         },
         "sort" : "",
         "sortOrder" : "descending"
@@ -96,11 +96,11 @@ function checkUndefineds()
           "Javascript Math (Network Level)" : "(Math.sqrt(data.player.networkExp + 15312.5) - 125/Math.sqrt(2))/(25*Math.sqrt(2))"
         },
         "colorConditions" : {
-          "blacklist.includes(playerName)" : "#E74A3B",
-          "whitelist.includes(playerName)" : "#1CC88A",
-          "isNick" : "#F6C23E",
-          "data.player.channel == 'PARTY'" : "#36B9CC",
-          "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars) > 5" : "#F6C23E"
+          "blacklist.includes(playerName)" : "#e74a3b",
+          "whitelist.includes(playerName)" : "#1cc88a",
+          "isNick" : "#f6c23e",
+          "data.player.channel == 'PARTY'" : "#36b9cc",
+          "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars) > 5" : "#f6c23e"
         },
         "sort" : "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars)",
         "sortOrder" : "ascending"

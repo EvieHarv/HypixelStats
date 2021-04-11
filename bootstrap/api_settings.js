@@ -44,10 +44,11 @@ $(function()
         addNewColorRule();
     });
 
-    
+    // Check for unsaved changes
+    $('.leavePageLink').click(function(e){ return validateLeave(e); });
 
-
-    $('#apiViewMethods').attr('href', "https://api.hypixel.net/player?key=" + store.get('hypixel_key') + "&uuid=f8537e2b-8097-4048-8331-e5d686bfe10d")
+    // TODO: Possibly grab owner uuid instead of hardcoding this one
+    $('#apiViewMethods').attr('href', "https://api.hypixel.net/player?key=" + store.get('hypixel_key') + "&uuid=b876ec32-e396-476b-a115-8438d83c67d4")
 });
 
 function profileLoad()
@@ -69,6 +70,8 @@ function profileLoad()
         profileLoad();
     });
     $('#statCardsDiv').html('');
+    // Probably a better way to do this, but if I put it manually as a value="" it breaks on quotes.
+    i = 0;
     for (var p in profs[profile].stats)
     {
         $('#statCardsDiv').append('\
@@ -77,15 +80,18 @@ function profileLoad()
                     <div class="card-body">\
                         <div class="no-gutters align-items-center">\
                             <div class="mr-2" style="width: 100%;">\
-                                <input type="text" class="form-control form-control-user mb-1 text-dark statName" stat="' + p + '" placeholder="Display Name" value="' + p + '"></input>\
-                                <input type="text" class="form-control form-control-user mb-1 text-primary statData" stat="' + p + '" placeholder="Stat Code" value="' +  profs[profile].stats[p] + '"></input>\
-                                <button class="btn btn-danger mb-0 removeStatButton" stat="' + p + '" type="button">Remove</button>\
+                                <input type="text" class="form-control form-control-user mb-1 text-dark statName" id="statName' + i + '" placeholder="Display Name"></input>\
+                                <input type="text" class="form-control form-control-user mb-1 text-primary statData" id="statCode' + i + '" placeholder="Stat Code"></input>\
+                                <button class="btn btn-danger mb-0 removeStatButton" type="button">Remove</button>\
                             </div>\
                         </div>\
                     </div>\
                 </div>\
             </div>'
         );
+        $('#statName' + i).val(p);
+        $('#statCode' + i).val(profs[profile].stats[p]);
+        i++;
     }
     $('.removeStatButton').click(function(card)
     {
@@ -101,15 +107,18 @@ function profileLoad()
                     <div class="card-body">\
                         <div class="no-gutters align-items-center">\
                             <div class="mr-2" style="width: 100%;">\
-                                <input type="text" class="form-control form-control-user mb-1 text-dark colorRule" stat="' + p + '" placeholder="Condition" value="' + p + '"></input>\
-                                <input type="color" class="form-control form-control-user mb-1 text-primary colorColor" stat="' + p + '" value="' +  profs[profile].colorConditions[p] + '"></input>\
-                                <button class="btn btn-danger mb-0 removeColorButton" stat="' + p + '" type="button">Remove</button>\
+                                <input type="text" class="form-control form-control-user mb-1 text-dark colorRule" id="colorName' + i + '" placeholder="Condition"></input>\
+                                <input type="color" class="form-control form-control-user mb-1 text-primary colorColor" id="colorCode' + i + '"></input>\
+                                <button class="btn btn-danger mb-0 removeColorButton" type="button">Remove</button>\
                             </div>\
                         </div>\
                     </div>\
                 </div>\
             </div>'
         );
+        $('#colorName' + i).val(p);
+        $('#colorCode' + i).val(profs[profile].colorConditions[p]);
+        i++;
     }
     $('.removeColorButton').click(function(card)
     {
@@ -535,3 +544,57 @@ Array.prototype.equals = function (array) {
 }
 // Hide method from for-in loops
 Object.defineProperty(Array.prototype, "equals", {enumerable: false});
+
+
+function validateLeave(target)
+{
+    savedProfile = store.get('profiles')[store.get('active_profile')]
+    editedProfile = getCurrentProperties();
+
+    // If the profile has no changes, we're good to leave
+    if(objEquals(savedProfile, editedProfile.properties) && store.get('active_profile') == editedProfile.name)
+    {
+        return true;
+    }
+
+    dimPage();
+
+    // Show notif box asking if they want to leave
+    $("#notificationBox").html('\
+    <div class="mb-4" id="confirmLeavePage" style="display: block; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: auto; z-index: 3;">\
+        <div class="card border-bottom-danger shadow h-100 py-2">\
+            <div class="card-body">\
+                <div class="no-gutters align-items-center">\
+                    <div class="mr-2" style="width: 100%;">\
+                        <h1 class="text-danger">You have unsaved changes! <br>Do you really want to leave?</h1>\
+                        <button class="btn btn-danger mb-0 ml-1 confirmLeavePageButton" type="button" style="float: right;">Leave</button>\
+                        <button class="btn btn-primary mb-0 cancelLeavePageButton" type="button" style="float: right;"">Cancel</button>\
+                    </div>\
+                </div>\
+            </div>\
+        </div>\
+    </div>\
+    ');
+
+    // They confirm, we leave.
+    $('.confirmLeavePageButton').click(function()
+    {
+        window.location.href = $(target.target).attr('href');
+    });
+
+    $('.cancelLeavePageButton').click(function(){
+        $("#notificationBox").html('');
+        undimPage();
+    });
+
+    return false;
+}
+
+// A little jank, but effective
+function objEquals(obj1, obj2) {
+    function _equals(obj1, obj2) {
+        return JSON.stringify(obj1)
+            === JSON.stringify($.extend(true, {}, obj1, obj2));
+    }
+    return _equals(obj1, obj2) && _equals(obj2, obj1);
+}
