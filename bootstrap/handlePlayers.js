@@ -87,9 +87,9 @@ function updatePlayerArea(playerList)
             </div>\
         ')
     });
-    var worker = new Worker('./bootstrap/apis_worker.js'); // Seperate this from the main thread (I think that's how this works here, I'm too used to C#)
     playerList.forEach(function(player) 
     {
+        var worker = new Worker('./bootstrap/apis_worker.js'); // Seperate this from the main thread (I think that's how this works here, I'm too used to C#)
         if (store.get('hypixel_key') == undefined)
         {
             $(".playerList").html("Please set your hypixel API key in Settings -> API Settings -> Hypixel Key");
