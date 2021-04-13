@@ -194,7 +194,7 @@ function fileUpdated(path)
   readLastLines.read(path, lines) // I wish I could just do line-by-line, but it misses it when they go too quickly, so we check multiple lines every update.
       .then((lastLines)=> {
         // Split lines into array, and remove blank values
-          checkForPlayer(lastLines.split('\n').filter(function(l){return l != '';})) // TODO: Call Function to update player list
+          checkForPlayer(lastLines.split('\n').filter(function(l){return l != '';}))
       })
       .catch((err)=> {
           console.error(err)
@@ -203,20 +203,23 @@ function fileUpdated(path)
 
 var playerList = []; // Is this bad practice in javascript, or is this okay? I'm gonna go with it being okay, because it works.
 
-const arrayEquals = (a, b) =>
-  a.length === b.length &&
-  a.every((v, i) => v === b[i])
+const arrayEquals = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
 
-largestCount = 0;
+largestCount = 0; // The number of players currently in the game, as calculated by a running total
+
 function checkForPlayer(lines)// This function is so incredibly inefficent, but it's the best I've got right now, so it's what we're using. (It also just really does not matter at this scale, I've noticed 0 performance issues.)
 {
+  // Get the player list before we add any, for comparison's sake
   playerListTemp = [...playerList];
+
   var key_owner = store.get('key_owner');
   var aliases = store.get('aliases');
+
+  // Loop through the past 25 lines and check each for new players (we use the past 25 because sometimes when many join at once the event will skip)
   lines.forEach(function(line)
-  {
+  {    
     var nickDetect = false;
-    // Detection through [Client thread/INFO]: [CHAT] Sending you to && [CHAT] (nicked_alias) has joined
+    // Detects if we join a new match through [Client thread/INFO]: [CHAT] Sending you to && [CHAT] (nicked_alias) has joined
     if (aliases !== undefined && Object.values(aliases).includes(key_owner))
     {
       Object.keys(aliases).filter(function(key) {return aliases[key] === key_owner}).forEach(function (nick) // Could be multiple, so we forEach it. I can't imagine this being very many.
@@ -227,13 +230,15 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
         }
       });
     }
-    // Detection through [Client thread/INFO]: [CHAT] Sending you to && [CHAT] (key_owner) has joined
+    // Detects if we join a new match through [Client thread/INFO]: [CHAT] Sending you to && [CHAT] (key_owner) has joined
     if (nickDetect || line.includes("[Client thread/INFO]: [CHAT] " + key_owner + " has joined" || line.includes("[Client thread/INFO]: [CHAT] Sending you to "))) // When we join a new match
     {
       // Still not completely consistent for an nicked, un-aliased account. Should be consistent enough to give them the warning, though.
       playerList = []; // Re-initalize list
     }
-    // Detection through [PLAYER] has joined!
+
+
+    // Detects a new player through [PLAYER] has joined!
     if (line.includes('[Client thread/INFO]: [CHAT] ') && line.includes('has joined')) // Another Player joins, add them to playerList
     {
       var playerName = line.split("[Client thread/INFO]: [CHAT] ")[1].split(" ")[0];
@@ -265,7 +270,8 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
       playerList = playerList.concat(playerNames.filter((name) => playerList.indexOf(name) < 0));
     };
   });
-  // Detect a new lobby
+
+  // Reset frontend list entirely if in a new lobby
   if (largestCount > playerList.length && !arrayEquals(playerList, playerListTemp))
   {
     // This will constantly re-load when a new player joins UNTIL the user does /who.
@@ -274,9 +280,9 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
     // So, until I figure out auto /who, I'm taking the "always update until /who" route
     
     // TODO: FIGURE OUT HOW TO SEND /who CROSSPLATFORM AND DO IT HERE
-    mainWindow.webContents.send('playerList', []); // Clear the page so that the owner's stats can update
+    mainWindow.webContents.send('playerList', []); // Clear the page so that the key owner's stats can update
   }
-  // Detect if array
+  // Send the player list 
   updateFrontend();
   playerListTemp = null; // Garbage collection? I dunno how JS works man.
   return;
