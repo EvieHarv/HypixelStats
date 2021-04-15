@@ -10,7 +10,9 @@ Not associated with Hypixel Inc.
 
 [Join the discord!](http://discord.gg/yAAz4UkNb5)
 
-![Main Page](https://media.discordapp.net/attachments/414270111067668502/822399830004465694/unknown.png)
+## [Download the latest release here](https://github.com/EthanHarv/HypixelStats/releases/latest)
+
+[![Main Page](https://media.discordapp.net/attachments/414270111067668502/822399830004465694/unknown.png)](https://github.com/EthanHarv/HypixelStats/releases/latest)
 
 ## Features
 
