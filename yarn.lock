@@ -1712,11 +1712,6 @@
   dependencies:
     "lru-cache" "^6.0.0"
 
-"sendkeys-js@^0.0.4":
-  "integrity" "sha512-TW1ZzkHPDJn/uB8pl/SNoQPW94VV3w+ytRD+PjRfwRDz1ORRflOBoVZ8LNrF94mLDya+opOgRl+VzShee205MQ=="
-  "resolved" "https://registry.npmjs.org/sendkeys-js/-/sendkeys-js-0.0.4.tgz"
-  "version" "0.0.4"
-
 "serialize-error@^7.0.1":
   "integrity" "sha512-8I8TjW5KMOKsZQTvoxjuSIa7foAwPWGOts+6o7sgjz41/qMD9VQHEDxi6PBvK2l0MXUmqZyNpUK+T2tQaaElvw=="
   "resolved" "https://registry.npmjs.org/serialize-error/-/serialize-error-7.0.1.tgz"

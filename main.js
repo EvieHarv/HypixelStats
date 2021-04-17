@@ -6,7 +6,6 @@ const console = require('console');
 const Store = require('electron-store');
 const log = require('electron-log');
 const {autoUpdater} = require("electron-updater");
-const sendkeys = require('sendkeys-js');
 
 autoUpdater.logger = log;
 autoUpdater.autoDownload = false;
@@ -282,7 +281,6 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
     
     // TODO: FIGURE OUT HOW TO SEND /who CROSSPLATFORM AND DO IT HERE
     mainWindow.webContents.send('playerList', []); // Clear the page so that the key owner's stats can update
-    sendkeys.sendKeys("/who{enter}");
   }
   // Send the player list 
   updateFrontend();
