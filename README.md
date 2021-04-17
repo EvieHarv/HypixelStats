@@ -1,8 +1,6 @@
 # HypixelStats
 
-<p align="center">
-<img src="/bootstrap/imgs/logo.png" width="350px">
-</p>
+[<p align="center"><img src="/bootstrap/imgs/logo.png" width="350px"></p>](https://github.com/EthanHarv/HypixelStats/releases/latest)
 
 HypixelStats is a cross-platform, open-source project that aims to be the easiest way to get stats about the players in your games.
 
@@ -10,7 +8,9 @@ Not associated with Hypixel Inc.
 
 [Join the discord!](http://discord.gg/yAAz4UkNb5)
 
-![Main Page](https://media.discordapp.net/attachments/414270111067668502/822399830004465694/unknown.png)
+## [Download the latest release here](https://github.com/EthanHarv/HypixelStats/releases/latest)
+
+[![Main Page](https://media.discordapp.net/attachments/414270111067668502/822399830004465694/unknown.png)](https://github.com/EthanHarv/HypixelStats/releases/latest)
 
 ## Features
 
