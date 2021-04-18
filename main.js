@@ -6,6 +6,7 @@ const console = require('console');
 const Store = require('electron-store');
 const log = require('electron-log');
 const {autoUpdater} = require("electron-updater");
+const https = require('https');
 
 autoUpdater.logger = log;
 autoUpdater.autoDownload = false;
@@ -126,6 +127,27 @@ function checkUndefineds()
       store.set('whitelist', []);
   };
 
+  // If key owner exists but no UUID has been grabbed (from prev. versions of the tool), build that information.
+  if (store.get("key_owner") && !(store.get('key_owner_uuid')))
+  {
+    https.get("https://api.hypixel.net/key?key=" + store.get('hypixel_key'), (resp) => {
+      let data = '';
+      // A chunk of data has been recieved.
+      resp.on('data', (chunk) => {
+        data += chunk;
+      });    
+      // The whole response has been received. Print out the result.
+      resp.on('end', () => {
+        key_owner_uuid = (JSON.parse(data)).record.owner;
+        console.log("Setting key owner UUID as: " + key_owner_uuid);
+        store.set('key_owner_uuid', key_owner_uuid)
+      });
+
+    }).on("error", (err) => {
+      console.log("Error: " + err.message);
+    });
+
+  }
 }
 
 ipcMain.on('updateCheck', function(){ // Check update like this to make sure page is fully loaded before checking

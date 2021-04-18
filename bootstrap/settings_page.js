@@ -28,6 +28,7 @@ $('#setKeyButton').click(function()
     }
     else
     {
+        store.set('key_owner_uuid', uuid)
         $.ajax({
             url: "https://api.mojang.com/user/profile/" + uuid,
             async: false,
