@@ -276,13 +276,8 @@ function importProfile()
         }
     ).then(result => {
         if (!result.canceled) {
-            fs.readFile(result.filePaths[0], 'utf8' , (err, data) => {
-                if (err) {
-                  console.error(err)
-                  return;
-                }
-                validateAndAddProfile(data);
-            })
+            var data = fs.readFileSync(result.filePaths[0], 'utf8');
+            validateAndAddProfile(data);
         }
     }).catch(err => {
         console.error(err);
