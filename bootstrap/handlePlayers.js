@@ -36,7 +36,7 @@ function updatePlayerArea(playerList)
             <br>If you're nicked, please go to <a href='./bootstrap/aliases.html'><code>Player Lists -> Aliases/Nick Hider</code></a> \
             and put your nick in as an alias to your account name. <b class='text-danger'>Update this whenever you change your nick.</b>\
             <br>If you're on an alt, please update your API key to the API key of the alt account. \
-            Any time you join on a different account, just generate a new API key.\
+            <br>Any time you join on a different account, just generate a new API key with <code>/api new</code> and the program will auto-detect it!\
             <br>If you don't do this, the program can have a difficult time removing old players, and often won't purge the list at <i>all</i>.\
             <button class='btn btn-secondary warningButton' style='float: right;'>Hide This Message</button>\
             <script>$('.warningButton').click(function(){$('#infoBarHolder').html(''); sessionStorage.setItem('checkForAndShowWarningOfNickedAccount', 'shown');})</script>", 999999);

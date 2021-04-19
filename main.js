@@ -146,7 +146,6 @@ function checkUndefineds()
     }).on("error", (err) => {
       console.log("Error: " + err.message);
     });
-
   }
 }
 
@@ -237,9 +236,18 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
   var key_owner = store.get('key_owner');
   var aliases = store.get('aliases');
 
+  new_api_key = null;
+
   // Loop through the past 25 lines and check each for new players (we use the past 25 because sometimes when many join at once the event will skip)
   lines.forEach(function(line)
-  {    
+  {
+    // Detect new API key and do relevent work
+    // The indexOf checking is needed to ensure that nobody can just type in chat "[Client thread/INFO]: [CHAT] Your new API key is [xyz]" and inject a fake key
+    if (line.includes("[Client thread/INFO]: [CHAT] Your new API key is ") && (line.indexOf("[Client thread/INFO]: [CHAT]") == line.lastIndexOf("[Client thread/INFO]: [CHAT]")))
+    {
+      new_api_key = line.split('[Client thread/INFO]: [CHAT] Your new API key is ')[1];
+      // I would just set it here, but we do it after all 25 lines are checked to ensure that someone who did `/api new` twice in a short spam wont cause bugs
+    };
     var nickDetect = false;
     // Detects if we join a new match through [Client thread/INFO]: [CHAT] Sending you to && [CHAT] (nicked_alias) has joined
     if (aliases !== undefined && Object.values(aliases).includes(key_owner))
@@ -307,6 +315,13 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
   // Send the player list 
   updateFrontend();
   playerListTemp = null; // Garbage collection? I dunno how JS works man.
+
+  if (new_api_key && (new_api_key != store.get('hypixel_key')))
+  {
+    console.log('Setting API key to ' + new_api_key);
+    mainWindow.webContents.send('setNewAPIKey', new_api_key);
+  }
+
   return;
 };
 

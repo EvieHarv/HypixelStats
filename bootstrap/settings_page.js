@@ -58,6 +58,7 @@ $('#setKeyButton').click(function()
 $(function()
 {
     $('#inputApiKey').val(store.get("hypixel_key"));
+    $('#inputPath').val(store.get("logPath"));
 });
 
 $('#inputPath').on("keypress", function(e) {
@@ -66,12 +67,18 @@ $('#inputPath').on("keypress", function(e) {
         return false; // prevent the button click from happening
     }
 });
+
 $('#setPathButton').click(function()
 {
     store.set('logPath', $('#inputPath').val());
     infoBarMessage('text-success', "Success", "Path Set Successfully!", 5000);
 });
-$(function()
+
+ipcRenderer.on('setNewAPIKey', function (event,new_api_key)
 {
-    $('#inputPath').val(store.get("logPath"));
+    // Wait a little so it's set.
+    setTimeout(
+        function() {
+            $('#inputApiKey').val(store.get("hypixel_key"));
+        }, 100);    
 });
