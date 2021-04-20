@@ -1392,6 +1392,11 @@
     "object-assign" "^4.0.1"
     "thenify-all" "^1.0.0"
 
+"node-key-sender@^1.0.11":
+  "integrity" "sha512-vv2IXd8QdZBFYXaIy02uy2rK6EKj+tOTEuoTxJKS9l8zw8Cz6DeLffR8ompj7N2A3h6XK7aiy+YAcTaeOqwp2Q=="
+  "resolved" "https://registry.npmjs.org/node-key-sender/-/node-key-sender-1.0.11.tgz"
+  "version" "1.0.11"
+
 "normalize-package-data@^3.0.0":
   "integrity" "sha512-6CdZocmfGaKnIHPVFhJJZ3GuR8SsLKvDANFp47Jmy51aKIr8akjAWTSxtpI+MBgBFdSMRyo4hMpDlT6dTffgZg=="
   "resolved" "https://registry.npmjs.org/normalize-package-data/-/normalize-package-data-3.0.2.tgz"

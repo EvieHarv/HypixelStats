@@ -7,6 +7,11 @@ const Store = require('electron-store');
 const log = require('electron-log');
 const {autoUpdater} = require("electron-updater");
 const https = require('https');
+var keySender = require('node-key-sender');
+
+keySender.setOption('startDelayMillisec', 25);
+keySender.setOption('globalDelayPressMillisec', 15);
+keySender.setOption('globalDelayBetweenMillisec', 15);
 
 autoUpdater.logger = log;
 autoUpdater.autoDownload = false;
@@ -304,13 +309,15 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
   // Reset frontend list entirely if in a new lobby
   if (largestCount > playerList.length && !arrayEquals(playerList, playerListTemp))
   {
-    // This will constantly re-load when a new player joins UNTIL the user does /who.
-    // I would just set it to require playerList.length == 1, but then sometimes it won't catch a new game at all, 
-    // because the chat-update-delay would often catch more than 1 player and then *not* update already-existing players (namely key_owner).
-    // So, until I figure out auto /who, I'm taking the "always update until /who" route
-    
-    // TODO: FIGURE OUT HOW TO SEND /who CROSSPLATFORM AND DO IT HERE
     mainWindow.webContents.send('playerList', []); // Clear the page so that the key owner's stats can update
+
+
+    keySender.startBatch()
+      .batchTypeKey('control', 15) // We send these three keys before because they can often interfere with `/who` if they were already pressed down.
+      .batchTypeKey('w', 15)
+      .batchTypeKey('space', 15)
+      .batchTypeKeys(['slash','w','h','o','enter'])
+      .sendBatch();
   }
   // Send the player list 
   updateFrontend();
