@@ -28,6 +28,10 @@ $(function()
         exportProfile();
     });
     
+    $("#duplicateProfile").click(function(){ 
+        duplicateProfile();
+    });
+
     $("#createNewProfile").click(function(){ 
         createNewProfile();
     });
@@ -363,6 +367,51 @@ function exportProfile()
     }
 };
 
+function duplicateProfile()
+{
+    current_prof = getCurrentProperties();
+    newProfile = {};
+    profiles = store.get('profiles');
+
+    profileNames = Object.keys(profiles);
+
+    newProfile.name = store.get('active_profile');
+    
+    // Probably a better/more concise way of doing this, but this works fine.
+    // Make a new unique name for the profile
+    searchingForName = true;
+    while (searchingForName)
+    {
+        // If the name exists already:
+        if (profileNames.includes(newProfile.name))
+        {
+            if (newProfile.name == store.get('active_profile'))
+            {
+                // If "[ProfileName]" exists, rename to "New Profile 1"
+                newProfile.name = store.get('active_profile') + " 1";
+            }
+            else
+            {
+                // If "[ProfileName] [x]" exists, increment [x]
+                newProfile.name = newProfile.name.replace(/(\d+)+$/g, function(match, number) {
+                    return parseInt(number)+1;
+                });
+            }
+        }
+        else
+        {
+            searchingForName = false;
+        };
+    };
+    
+    newProfile.properties = current_prof.properties;
+
+    profiles[newProfile.name] = newProfile.properties;
+    store.set('profiles', profiles);
+    store.set('active_profile', newProfile.name)
+    profileLoad();
+}
+
 function createNewProfile()
 {
     newProfile = {};
@@ -388,7 +437,7 @@ function createNewProfile()
             else
             {
                 // If "New Profile [x]" exists, increment [x]
-                newProfile.name = newProfile.name.replace(/(\d+)+/g, function(match, number) {
+                newProfile.name = newProfile.name.replace(/(\d+)+$/g, function(match, number) {
                     return parseInt(number)+1;
                 });
             }
