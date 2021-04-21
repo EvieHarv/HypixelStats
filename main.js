@@ -13,6 +13,8 @@ keySender.setOption('startDelayMillisec', 25);
 keySender.setOption('globalDelayPressMillisec', 15);
 keySender.setOption('globalDelayBetweenMillisec', 15);
 
+var hasJava = false; // We need java for /who to be sent with keySender
+
 autoUpdater.logger = log;
 autoUpdater.autoDownload = false;
 autoUpdater.logger.transports.file.level = 'info';
@@ -55,6 +57,20 @@ app.on('ready', function()
 
   // Make sure store values are defined
   checkUndefineds();
+
+  javaversion(function(err,version){
+    // Java not installed
+    if (err)
+    {
+      // We wait to make sure it's ready.
+      setTimeout(function(){mainWindow.webContents.send('downloadJava');}, 2500);
+    }
+    // Java is installed
+    else
+    {
+      hasJava = true;
+    }
+  });  
 });
 
 // Make sure store values are defined
@@ -312,12 +328,18 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
     mainWindow.webContents.send('playerList', []); // Clear the page so that the key owner's stats can update
 
 
-    keySender.startBatch()
-      .batchTypeKey('control', 15) // We send these three keys before because they can often interfere with `/who` if they were already pressed down.
-      .batchTypeKey('w', 15)
+    if (hasJava)
+    {
+      keySender.startBatch()
+      .batchTypeKey('control', 5) // We send these keys before because they can often interfere with `/who` if they were already pressed down.
+      .batchTypeKey('w', 5)
+      .batchTypeKey('a', 5)
+      .batchTypeKey('s', 5)
+      .batchTypeKey('d', 5)
       .batchTypeKey('space', 15)
       .batchTypeKeys(['slash','w','h','o','enter'])
       .sendBatch();
+    }
   }
   // Send the player list 
   updateFrontend();
@@ -342,3 +364,33 @@ function updateFrontend()
 ipcMain.on('sendListAgain', function(){ // Re-sending player list on page load
   updateFrontend();
 });
+
+
+
+
+function javaversion(callback) {
+  var spawn = require('child_process').spawn('java', ['-version']);
+  spawn.on('error', function(err){
+    return callback(err, null);
+  })
+
+  var scriptOutput = "";
+
+  spawn.stderr.on('data', function(data) {
+    data=data.toString();
+    scriptOutput+=data;
+  });
+  
+  spawn.on('close', function(exitCode){
+    data = scriptOutput.split('\n')[0];
+    var javaVersion = new RegExp('(java|openjdk) version').test(data) ? data.split(' ')[2].replace(/"/g, '') : false;
+    if (javaVersion != false) {
+      // We have Java installed
+      return callback(null, javaVersion);
+    } 
+    else {
+      // We don't have Java installed. Sad.
+      return callback(null, null);
+    }
+  });
+}

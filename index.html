@@ -230,7 +230,7 @@
                 </div>\
             </div>\
             </div>'
-        )
+        );
     });
 </script>
 <script>
@@ -244,6 +244,33 @@
     $('#updateBtn').click(function()
     { 
         ipcRenderer.send('updateConfirmed');
+    });
+
+    ipcRenderer.on('downloadJava', function (event) 
+    {
+        // Allow the user to hide this message forever 
+        if (store.get('dontShowJavaDownloadMessage') == undefined)
+        {
+            // Set the timeout here to try to alleviate a race condition with the new user message
+            setTimeout(function(){
+                $('.playerList').append('\
+                <div class="card shadow mb-4" id="infoBarJava">\
+                    <div class="card-header py-3">\
+                        <h2 class="m-0 font-weight-bold text-danger" id="infoHeading">It appears you don\'t have Java installed!</h2>\
+                    </div>\
+                    <div class="card-body py-3">\
+                        <p>\
+                            The program will still work fine, but it won\'t support automatic <code>/who</code>.\
+                            <br>\
+                            If you want to have auto <code>/who</code>, download it and restart HypixelStats. (It needs to be in your PATH).\
+                            <br><button class="btn btn-secondary warningButton" id="hideJavaWarning" style="float: right;">Hide This Message Forever</button>\
+                        </p>\
+                        <script> $("#hideJavaWarning").click(function(){ $("#infoBarJava").remove(); store.set("dontShowJavaDownloadMessage", true)});<\/script>\
+                    </div>\
+                </div>\
+                </div>')
+            }, 250);
+        }
     });
 </script>
 </body></html>
