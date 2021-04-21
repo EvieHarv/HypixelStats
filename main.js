@@ -7,13 +7,11 @@ const Store = require('electron-store');
 const log = require('electron-log');
 const {autoUpdater} = require("electron-updater");
 const https = require('https');
+
 var keySender = require('node-key-sender');
-
 keySender.setOption('startDelayMillisec', 25);
-keySender.setOption('globalDelayPressMillisec', 15);
-keySender.setOption('globalDelayBetweenMillisec', 15);
-
 var hasJava = false; // We need java for /who to be sent with keySender
+var autoWhoInUse = false;
 
 autoUpdater.logger = log;
 autoUpdater.autoDownload = false;
@@ -327,18 +325,23 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
   {
     mainWindow.webContents.send('playerList', []); // Clear the page so that the key owner's stats can update
 
-
-    if (hasJava)
+    // User must have java and /who must not have been sent in the last 3 seconds
+    if (hasJava && !autoWhoInUse)
     {
+      autoWhoInUse = true;
       keySender.startBatch()
-      .batchTypeKey('control', 5) // We send these keys before because they can often interfere with `/who` if they were already pressed down.
-      .batchTypeKey('w', 5)
-      .batchTypeKey('a', 5)
-      .batchTypeKey('s', 5)
-      .batchTypeKey('d', 5)
-      .batchTypeKey('space', 15)
-      .batchTypeKeys(['slash','w','h','o','enter'])
+      .batchTypeKey('control') // We send these keys before because they can often interfere with `/who` if they were already pressed down.
+      .batchTypeKey('w')
+      .batchTypeKey('a')
+      .batchTypeKey('s')
+      .batchTypeKey('d')
+      .batchTypeKey('space')
+      .batchTypeKey('slash', 25)
+      .batchTypeKeys(['w','h','o','enter'])
       .sendBatch();
+
+      // Wait 3 seconds until /who is available again
+      setTimeout(function(){ autoWhoInUse = false; }, 3000);
     }
   }
   // Send the player list 
