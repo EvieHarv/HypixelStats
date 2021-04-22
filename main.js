@@ -328,15 +328,18 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
     // User must have java and /who must not have been sent in the last 3 seconds
     if (hasJava && !autoWhoInUse)
     {
+      // Don't allow for interruption 
       autoWhoInUse = true;
+      
       keySender.startBatch()
-      .batchTypeKey('control') // We send these keys before because they can often interfere with `/who` if they were already pressed down.
+      .batchTypeKey('control') // We send these keys before because they can often interfere with `/who` if they were already pressed down. Might (try) to make this configurable (somehow) if enough people use different layouts for it to matter.
       .batchTypeKey('w')
       .batchTypeKey('a')
       .batchTypeKey('s')
       .batchTypeKey('d')
+      .batchTypeKey('f')
       .batchTypeKey('space')
-      .batchTypeKey('slash', 25)
+      .batchTypeKey('slash', 50)
       .batchTypeKeys(['w','h','o','enter'])
       .sendBatch();
 
