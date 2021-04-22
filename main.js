@@ -8,7 +8,7 @@ const log = require('electron-log');
 const {autoUpdater} = require("electron-updater");
 const https = require('https');
 
-var keySender = require('node-key-sender');
+var keySender = require('./node-key-sender/');
 keySender.setOption('startDelayMillisec', 25);
 var hasJava = false; // We need java for /who to be sent with keySender
 var autoWhoInUse = false;
