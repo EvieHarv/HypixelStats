@@ -355,6 +355,8 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
   {
     console.log('Setting API key to ' + new_api_key);
     mainWindow.webContents.send('setNewAPIKey', new_api_key);
+    playerList = [];
+    updateFrontend();
   }
 
   return;

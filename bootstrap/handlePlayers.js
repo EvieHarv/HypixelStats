@@ -28,18 +28,21 @@ function updatePlayerArea(playerList)
     // Session storage so it doesn't spam someone who's stubborn, but still reminds them. playerList.Length > 4 for cases where a whole party joins at once.
     // (A whole party joining at once, the key owners's name can end up at the end of the of the 4)
     // Check infoBar status to check the message isn't already sent.
-    if (sessionStorage.getItem('checkForAndShowWarningOfNickedAccount') !== "shown" && playerList.length > 4 && $('#infoBarHolder').html().trim() == "")
+    if (sessionStorage.getItem('checkForAndShowWarningOfNickedAccount') !== "shown" && playerList.length > 4)
     {
-        if (!playerList.includes(store.get('key_owner')) || playerList.length > 16)
+        if ((!playerList.includes(store.get('key_owner')) || playerList.length > 16))
         {
-            infoBarMessage('', "<span class='text-danger' id='nickAltBanner'>Nick/Alt Detected</span>", "Hey! It looks like you're playing nicked or on an alt.\
-            <br>If you're nicked, please go to <a href='./bootstrap/aliases.html'><code>Player Lists -> Aliases/Nick Hider</code></a> \
-            and put your nick in as an alias to your account name. <b class='text-danger'>Update this whenever you change your nick.</b>\
-            <br>If you're on an alt, please update your API key to the API key of the alt account. \
-            <br>Any time you join on a different account, just generate a new API key with <code>/api new</code> and the program will auto-detect it!\
-            <br>If you don't do this, the program can have a difficult time removing old players, and often won't purge the list at <i>all</i>.\
-            <button class='btn btn-secondary warningButton' style='float: right;'>Hide This Message</button>\
-            <script>$('.warningButton').click(function(){$('#infoBarHolder').html(''); sessionStorage.setItem('checkForAndShowWarningOfNickedAccount', 'shown');})</script>", 999999);
+            if($('#infoBarHolder').html().trim() == "")
+            {
+                infoBarMessage('', "<span class='text-danger' id='nickAltBanner'>Nick/Alt Detected</span>", "Hey! It looks like you're playing nicked or on an alt.\
+                <br>If you're nicked, please go to <a href='./bootstrap/aliases.html'><code>Player Lists -> Aliases/Nick Hider</code></a> \
+                and put your nick in as an alias to your account name. <b class='text-danger'>Update this whenever you change your nick.</b>\
+                <br>If you're on an alt, please update your API key to the API key of the alt account. \
+                <br>Any time you join on a different account, just generate a new API key with <code>/api new</code> and the program will auto-detect it!\
+                <br>If you don't do this, the program can have a difficult time removing old players, and often won't purge the list at <i>all</i>.\
+                <button class='btn btn-secondary warningButton' style='float: right;'>Hide This Message</button>\
+                <script>$('.warningButton').click(function(){$('#infoBarHolder').html(''); sessionStorage.setItem('checkForAndShowWarningOfNickedAccount', 'shown');})</script>", 999999);
+            }
         }
         else
         {
