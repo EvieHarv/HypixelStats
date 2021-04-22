@@ -17,7 +17,8 @@ $('#setKeyButton').click(function()
         error: function(jqXHR, textStatus, errorThrown)
         {
             // Handle?
-        }
+        },
+        timeout: 3000
     });
     if (uuid == null)
     {
@@ -45,6 +46,7 @@ $('#setKeyButton').click(function()
                 $('.myPlayerName').html(store.get("key_owner"));
                 infoBarMessage('text-danger', "API Key Error", "The API Key could not be verified. Please ensure you're using the right key, and try again in a moment.", 7500);
             },
+            timeout: 3000
         })
         .fail(function(jqXHR, textStatus, errorThrown)
         {

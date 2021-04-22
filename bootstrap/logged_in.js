@@ -26,7 +26,8 @@ ipcRenderer.on('setNewAPIKey', function (event,new_api_key)
         error: function(jqXHR, textStatus, errorThrown)
         {
             // Handle?
-        }
+        },
+        timeout: 3000
     });
     if (uuid == null)
     {
@@ -51,11 +52,12 @@ ipcRenderer.on('setNewAPIKey', function (event,new_api_key)
                 store.set("key_owner", "N/A");
                 $('.myPlayerName').html(store.get("key_owner"));
             },
+            timeout: 3000
         })
         .fail(function(jqXHR, textStatus, errorThrown)
         {
             store.set("key_owner", "N/A");
             $('.myPlayerName').html(store.get("key_owner"));
-        });
+        })
     }
 });

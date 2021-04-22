@@ -46,7 +46,8 @@ async function callApis(player, key)
                     },
                     error : function(xhr, textStatus, errorThrown) {
                         console.error("PLAYERDB LOOKUP FAILED! Trying again for " + player + " err: " + errorThrown);
-                    }
+                    },
+                    timeout: 3000
                 });
             }
             else if (this.tryCount <= this.retryLimit) {
@@ -58,7 +59,8 @@ async function callApis(player, key)
             {
                 console.error("Nick Detected! Name: " + player);        
             }
-    }
+        },
+        timeout: 3000
     })
     .fail(function(err)
     {
@@ -76,7 +78,8 @@ async function callApis(player, key)
             dataType: 'json',
             success: function(result){
                 data = result;
-            }
+            },
+            timeout: 3000
         })
         .fail(function(jqXHR, textStatus, errorThrown)
         {
