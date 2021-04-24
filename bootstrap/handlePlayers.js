@@ -100,6 +100,8 @@ function updatePlayerArea(playerList)
         worker.postMessage([player, store.get('hypixel_key')]);
         worker.onmessage = function (e) 
         {
+            e.target.terminate(); // Free system resources. Think this lead to some crashes before I added this.
+
             player = resolve('player.displayname', e.data[0]); // using resolve() so it doesn't error out
             playerBackup = e.data[1] // If player isn't defined, still need name to resolve nick.
 
@@ -229,7 +231,6 @@ function resortCards()
     {
         divList = $(".playerCard");
 
-        console.log('akij')
         // Wait untill all player calls have been made to sort. TODO: Maybe make this a toggle? 
         // somePlayersUndefined = false;
         // divList.each(function(a, b){
@@ -248,9 +249,21 @@ function resortCards()
             dataA = $(a).data('data');
             dataB = $(b).data('data');
             try {
-                if (b.getAttribute('uuid') == "Nick") // Send nicks to end
+                if (!(dataB))
                 {
                     return -1;
+                }
+                if (!(dataA))
+                {
+                    return 1;
+                }
+                if (b.getAttribute('uuid') == "Nick" || b.getAttribute('uuid') == null) // Send nicks to end
+                {
+                    return -1;
+                }
+                if (a.getAttribute('uuid') == "Nick" || a.getAttribute('uuid') == null) // Send nicks to end
+                {
+                    return 1;
                 };
 
                 data = dataA;

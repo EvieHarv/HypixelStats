@@ -73,15 +73,24 @@ async function callApis(player, key)
             url: hypxUrl + uuid,
             contentType: "application/json",
             dataType: 'json',
+            tryCount: 0,
             success: function(result){
                 data = result;
                 postMessage([data, player, uuid]);
             },
             error: function (data, textStatus, errorThrown) 
             {
-                postMessage([null, player, uuid]);
+                if (this.tryCount == 0 && errorThrown == "timeout")
+                {
+                    console.warn('Hypixel API timed out, trying one more time.')
+                    $.ajax(this);
+                }
+                else
+                {
+                    postMessage([null, player, uuid]);
+                }
             },
-            timeout: 3000 // TODO: Maybe make customizable?
+            timeout: 2500 // TODO: Maybe make customizable?
         })
         .fail(function(jqXHR, textStatus, errorThrown)
         {
