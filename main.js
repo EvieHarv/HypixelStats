@@ -330,18 +330,24 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
     {
       // Don't allow for interruption 
       autoWhoInUse = true;
-      
-      keySender.startBatch()
-      .batchTypeKey('control') // We send these keys before because they can often interfere with `/who` if they were already pressed down. Might (try) to make this configurable (somehow) if enough people use different layouts for it to matter.
-      .batchTypeKey('w')
-      .batchTypeKey('a')
-      .batchTypeKey('s')
-      .batchTypeKey('d')
-      .batchTypeKey('f')
-      .batchTypeKey('space')
-      .batchTypeKey('slash', 50)
-      .batchTypeKeys(['w','h','o','enter'])
-      .sendBatch();
+      if (process.platform == "win32")
+      {
+        // TODO: DO AHK SCRIPT
+      }
+      else
+      {
+        keySender.startBatch()
+        .batchTypeKey('control') // We send these keys before because they can often interfere with `/who` if they were already pressed down. Might (try) to make this configurable (somehow) if enough people use different layouts for it to matter.
+        .batchTypeKey('w')
+        .batchTypeKey('a')
+        .batchTypeKey('s')
+        .batchTypeKey('d')
+        .batchTypeKey('f')
+        .batchTypeKey('space')
+        .batchTypeKey('slash', 50)
+        .batchTypeKeys(['w','h','o','enter'])
+        .sendBatch();
+      }
 
       // Wait 3 seconds until /who is available again
       setTimeout(function(){ autoWhoInUse = false; }, 3000);
