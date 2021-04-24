@@ -60,6 +60,26 @@ $(function()
 {
     $('#inputApiKey').val(store.get("hypixel_key"));
     $('#inputPath').val(store.get("logPath"));
+
+    if(store.get('disableAutoWho') != true) // We want it on by default
+    {
+        
+        $('#enableAutoWho').prop('checked', true)
+    }
+    else
+    {
+        $('#enableAutoWho').prop('checked', false)
+    }
+
+    $("#enableAutoWho").change(function() {
+        if(this.checked) {
+            store.set('disableAutoWho', false)
+        }
+        else
+        {
+            store.set('disableAutoWho', true)
+        }
+    });
 });
 
 $('#inputPath').on("keypress", function(e) {

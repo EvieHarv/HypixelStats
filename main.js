@@ -58,19 +58,24 @@ app.on('ready', function()
   // Make sure store values are defined
   checkUndefineds();
 
-  javaversion(function(err,version){
-    // Java not installed
-    if (err)
-    {
-      // We wait to make sure it's ready.
-      setTimeout(function(){mainWindow.webContents.send('downloadJava');}, 2500);
-    }
-    // Java is installed
-    else
-    {
-      hasJava = true;
-    }
-  });  
+  if (!(process.platform == "win32"))
+  {
+    // We only need java on non-windows platforms.
+    // We use it for autowho, and windows uses a compiled AHK script
+    javaversion(function(err,version){
+      // Java not installed
+      if (err)
+      {
+        // We wait to make sure it's ready.
+        setTimeout(function(){mainWindow.webContents.send('downloadJava');}, 2500);
+      }
+      // Java is installed
+      else
+      {
+        hasJava = true;
+      }
+    });  
+  }
 });
 
 // Make sure store values are defined
@@ -328,7 +333,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
     mainWindow.webContents.send('playerList', []); // Clear the page so that the key owner's stats can update
 
     // User must have java and /who must not have been sent in the last 3 seconds
-    if (hasJava && !autoWhoInUse)
+    if (hasJava && !autoWhoInUse && (store.get('disableAutoWho') != true))
     {
       // Don't allow for interruption 
       autoWhoInUse = true;
