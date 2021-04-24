@@ -8,53 +8,52 @@ $('#setKeyButton').click(function()
     var uuid = null;
     $.ajax({
         url: "https://api.hypixel.net/key?key=" + $('#inputApiKey').val(),
-        async: false,
         contentType: "application/json",
         dataType: 'json',
         success: function(result){
             uuid = result.record.owner;
+            if (uuid == null)
+            {
+                store.set("key_owner", "N/A");
+                $('.myPlayerName').html(store.get("key_owner"));
+                infoBarMessage('text-danger', "API Key Error", "The API Key could not be verified. Please ensure you're using the right key, and try again in a moment.", 7500);
+                return;
+            }
+            else
+            {
+                store.set('key_owner_uuid', uuid)
+                $.ajax({
+                    url: "https://api.mojang.com/user/profile/" + uuid,
+                    async: false,
+                    contentType: "application/json",
+                    dataType: 'json',
+                    success: function(result){
+                        store.set("key_owner", result.name);
+                        $('.myPlayerName').html(store.get("key_owner"));
+                        infoBarMessage('text-success', "API Key Success", "API Key Set Successfully!", 5000);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown)
+                    {
+                        store.set("key_owner", "N/A");
+                        $('.myPlayerName').html(store.get("key_owner"));
+                        infoBarMessage('text-danger', "API Key Error", "The API Key could not be verified. Please ensure you're using the right key, and try again in a moment.", 7500);
+                    },
+                    timeout: 1500
+                })
+                .fail(function(jqXHR, textStatus, errorThrown)
+                {
+                    store.set("key_owner", "N/A");
+                    $('.myPlayerName').html(store.get("key_owner"));
+                    infoBarMessage('text-danger', "API Key Error", "The API Key could not be verified. Please ensure you're using the right key, and try again in a moment.", 7500);
+                });
+            }        
         },
         error: function(jqXHR, textStatus, errorThrown)
         {
             // Handle?
         },
-        timeout: 3000
+        timeout: 1500
     });
-    if (uuid == null)
-    {
-        store.set("key_owner", "N/A");
-        $('.myPlayerName').html(store.get("key_owner"));
-        infoBarMessage('text-danger', "API Key Error", "The API Key could not be verified. Please ensure you're using the right key, and try again in a moment.", 7500);
-        return;
-    }
-    else
-    {
-        store.set('key_owner_uuid', uuid)
-        $.ajax({
-            url: "https://api.mojang.com/user/profile/" + uuid,
-            async: false,
-            contentType: "application/json",
-            dataType: 'json',
-            success: function(result){
-                store.set("key_owner", result.name);
-                $('.myPlayerName').html(store.get("key_owner"));
-                infoBarMessage('text-success', "API Key Success", "API Key Set Successfully!", 5000);
-            },
-            error: function(jqXHR, textStatus, errorThrown)
-            {
-                store.set("key_owner", "N/A");
-                $('.myPlayerName').html(store.get("key_owner"));
-                infoBarMessage('text-danger', "API Key Error", "The API Key could not be verified. Please ensure you're using the right key, and try again in a moment.", 7500);
-            },
-            timeout: 3000
-        })
-        .fail(function(jqXHR, textStatus, errorThrown)
-        {
-            store.set("key_owner", "N/A");
-            $('.myPlayerName').html(store.get("key_owner"));
-            infoBarMessage('text-danger', "API Key Error", "The API Key could not be verified. Please ensure you're using the right key, and try again in a moment.", 7500);
-        });
-    }
 });
 
 $(function()

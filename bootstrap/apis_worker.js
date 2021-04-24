@@ -46,8 +46,7 @@ async function callApis(player, key)
                     },
                     error : function(xhr, textStatus, errorThrown) {
                         console.error("PLAYERDB LOOKUP FAILED! Trying again for " + player + " err: " + errorThrown);
-                    },
-                    timeout: 3000
+                    }
                 });
             }
             else if (this.tryCount <= this.retryLimit) {
@@ -59,8 +58,7 @@ async function callApis(player, key)
             {
                 console.error("Nick Detected! Name: " + player);        
             }
-        },
-        timeout: 3000
+        }
     })
     .fail(function(err)
     {
@@ -73,19 +71,27 @@ async function callApis(player, key)
     {
         $.ajax({
             url: hypxUrl + uuid,
-            async: false,
             contentType: "application/json",
             dataType: 'json',
             success: function(result){
                 data = result;
+                postMessage([data, player, uuid]);
             },
-            timeout: 3000
+            error: function (data, textStatus, errorThrown) 
+            {
+                postMessage([null, player, uuid]);
+            },
+            timeout: 3000 // TODO: Maybe make customizable?
         })
         .fail(function(jqXHR, textStatus, errorThrown)
         {
             console.log(jqXHR.cause + " : " + textStatus + " : " + errorThrown);
             console.error("API Failed. Nick Detected! Name: " + player);
+            postMessage([null, player, uuid]);
         });
     }
-    postMessage([data, player, uuid]);
+    else
+    {
+        postMessage([null, player, uuid]);
+    }
 };
