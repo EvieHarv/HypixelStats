@@ -82,21 +82,18 @@ async function callApis(player, key)
             {
                 if (this.tryCount == 0 && errorThrown == "timeout")
                 {
+                    this.tryCount++;
                     console.warn('Hypixel API timed out, trying one more time.')
                     $.ajax(this);
                 }
                 else
                 {
+                    console.log('Err: ' + errorThrown);
+                    console.error("API Failed. Nick Detected! Name: " + player);    
                     postMessage([null, player, uuid]);
                 }
             },
-            timeout: 2500 // TODO: Maybe make customizable?
-        })
-        .fail(function(jqXHR, textStatus, errorThrown)
-        {
-            console.log(jqXHR.cause + " : " + textStatus + " : " + errorThrown);
-            console.error("API Failed. Nick Detected! Name: " + player);
-            postMessage([null, player, uuid]);
+            timeout: 1500 // TODO: Maybe make customizable?
         });
     }
     else
