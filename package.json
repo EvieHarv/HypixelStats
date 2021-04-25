@@ -1,6 +1,6 @@
 {
   "name": "hypixelstats",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "Standalone, cross-platform, and open-source Hypixel stat tracker",
   "main": "main.js",
   "scripts": {
@@ -41,6 +41,10 @@
       {
         "from": "./node-key-sender/jar/key-sender.jar",
         "to": "./resources/key-sender.jar"
+      },
+      {
+        "from": "./node-key-sender/AutoWho.exe",
+        "to": "./resources/AutoWho.exe"
       }
     ],
     "publish": [

@@ -12,6 +12,8 @@ var keySender = require('./node-key-sender/');
 keySender.setOption('startDelayMillisec', 25);
 var hasJava = false; // We need java for /who to be sent with keySender
 var autoWhoInUse = false;
+const { exec } = require('child_process'); // For windows AutoWho
+var path = require("path");
 
 autoUpdater.logger = log;
 autoUpdater.autoDownload = false;
@@ -332,7 +334,18 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
       autoWhoInUse = true;
       if (process.platform == "win32")
       {
-        // TODO: DO AHK SCRIPT
+        // I made the AHK a compiled script so that you don't have to have AHK installed
+        // You can find the AHK script in node-key-sender/AutoWho.ahk
+        var AHKpath = path.join(__dirname, 'node-key-sender', 'AutoWho.exe');
+        if (__dirname.includes('app.asar')) // A slightly strange way to check if we're in the published executable
+        {
+          AHKpath = path.join(__dirname.split("app.asar")[0], 'AutoWho.exe');
+        }
+        exec(AHKpath, {}, function(error, stdout, stderr) {
+          if (error) {
+            console.log(`error: ${error.message}`);
+          }
+        });
       }
       else
       {
