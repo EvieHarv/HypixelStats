@@ -333,7 +333,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
     mainWindow.webContents.send('playerList', []); // Clear the page so that the key owner's stats can update
 
     // User must have java and /who must not have been sent in the last 3 seconds
-    if (hasJava && !autoWhoInUse && (store.get('disableAutoWho') != true))
+    if ((hasJava || process.platform == "win32") && !autoWhoInUse && (store.get('disableAutoWho') != true)) // The "disableAutoWho" nomenclature is slightly confusing, but we use it so we don't have to verify it's existance.
     {
       // Don't allow for interruption 
       autoWhoInUse = true;
