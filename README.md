@@ -17,7 +17,7 @@ Not associated with Hypixel Inc.
 ### <b>NOTE: HypixelStats is only currently compatible with Lunar Client. Support for other clients coming soon!</b>
 
 - Automatically detects when you join new game, sends /who to get the full list, and automatically detects when players leave/join and adds/removes them from the list.
-    - Auto `/who` requires Java to be installed.
+    - Auto `/who` should work fine with nothing else on windows, other platforms require Java to be installed in the PATH.
 - Fully configuarable view of stats, with on-the-fly profile switching for easy viewing of any stats you want, at any time.
     - Also includes assignable colors based off of stats, as well as the ability to sort the list by any (numeric) stat.
 - Includes the ability to whitelist/blacklist players for quick identification. By default, whitelisted players appear green and blacklisted players appear red. (This is configurable in the profiles!)
@@ -63,7 +63,7 @@ If you only have a single monitor, BedwarsStats is still superior. If you have t
 
 Done!
 
-You can now join a game and see all the stats! (If you don't have Java installed, you'll have to do `/who` manually. I'd recommend installing Java and restarting the application.)
+You can now join a game and see all the stats!
 
 ***NOTE***: If you ever play nicked, make sure to go to the Aliases tab and set your nickname! It can break things if you don't.
 
