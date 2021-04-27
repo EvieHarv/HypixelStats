@@ -4,6 +4,8 @@
 
 HypixelStats is a cross-platform, open-source project that aims to be the easiest way to get stats about the players in your games.
 
+Works for more than just bedwars! You can define exactly what you want to see and how you want to see it, making it the most configurable option out there!
+
 Not associated with Hypixel Inc.
 
 [Join the discord!](http://discord.gg/yAAz4UkNb5)
