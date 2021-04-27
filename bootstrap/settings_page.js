@@ -80,6 +80,79 @@ $(function()
             store.set('disableAutoWho', true)
         }
     });
+
+
+    udbState = store.get("undefinedBehavior");
+
+    if (udbState == undefined)
+    {
+        $('#hideLabel').prop('checked', true)
+        $('#showBlank').prop('checked', false)
+        $('#showNA').prop('checked', false)
+    }
+    else if (udbState == 'blank')
+    {
+        $('#hideLabel').prop('checked', false)
+        $('#showBlank').prop('checked', true)
+        $('#showNA').prop('checked', false)
+    }
+    else if (udbState == 'na')
+    {
+        $('#hideLabel').prop('checked', false)
+        $('#showBlank').prop('checked', false)
+        $('#showNA').prop('checked', true)
+    }
+
+    $("#hideLabel").change(function(e) {
+        // It's already default
+        if (store.get("undefinedBehavior") == undefined)
+        {
+            $('#hideLabel').prop('checked', true)
+            return;
+        }
+        else if(this.checked) 
+        {
+            // Set back to default
+            store.delete('undefinedBehavior');
+            
+            $('#hideLabel').prop('checked', true)
+            $('#showBlank').prop('checked', false)
+            $('#showNA').prop('checked', false)
+        }
+    });
+    $("#showBlank").change(function() {
+        if (store.get("undefinedBehavior") == "blank")
+        {
+            $('#showBlank').prop('checked', true)
+            return;
+        }
+        else if(this.checked) 
+        {
+            // Set
+            store.set('undefinedBehavior', 'blank');
+
+            $('#hideLabel').prop('checked', false)
+            $('#showBlank').prop('checked', true)
+            $('#showNA').prop('checked', false)
+        }
+    });
+    $("#showNA").change(function() {
+        if (store.get("undefinedBehavior") == "na")
+        {
+            $('#showNA').prop('checked', true)
+            return;
+        }
+        else if(this.checked) 
+        {
+            // Set
+            store.set('undefinedBehavior', 'na');
+
+            $('#hideLabel').prop('checked', false)
+            $('#showBlank').prop('checked', false)
+            $('#showNA').prop('checked', true)
+        }
+    });
+
 });
 
 $('#inputPath').on("keypress", function(e) {

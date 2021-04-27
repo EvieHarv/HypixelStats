@@ -88,7 +88,7 @@ function checkUndefineds()
       "Bedwars 4v4s" : {
         "stats" : {
           "Winstreak" : "data.player.stats.Bedwars.winstreak",
-          "FKDR" : "data.player.stats.Bedwars.four_four_final_kills_bedwars/data.player.stats.Bedwars.four_four_final_deaths_bedwars",
+          "FKDR" : 'Function(\'"use strict"; if (data.player.stats.Bedwars.four_four_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.four_four_final_deaths_bedwars == 0 || data.player.stats.Bedwars.four_four_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.four_four_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.four_four_final_kills_bedwars/data.player.stats.Bedwars.four_four_final_deaths_bedwars;\')(data)',
           "Stars" :  "data.player.achievements.bedwars_level"
         },
         "colorConditions" : {
@@ -98,7 +98,7 @@ function checkUndefineds()
           "data.player.channel == 'PARTY'" : "#36b9cc",
           "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars) > 5" : "#e74a3b"
         },
-        "sort" : "(data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars)",
+        "sort" : 'Function(\'"use strict"; if (data.player.stats.Bedwars.four_four_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.four_four_final_deaths_bedwars == 0 || data.player.stats.Bedwars.four_four_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.four_four_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.four_four_final_kills_bedwars/data.player.stats.Bedwars.four_four_final_deaths_bedwars;\')(data)',
         "sortOrder" : "descending"
       },
       "UHC/Sumo Duels" : {
@@ -120,7 +120,9 @@ function checkUndefineds()
         "stats" : {
           "One Specific Stat (Winstreak)" : "data.player.stats.Bedwars.winstreak",
           "Simple Math (FKDR)" : "data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars",
-          "Javascript Math (Network Level)" : "(Math.sqrt(data.player.networkExp + 15312.5) - 125/Math.sqrt(2))/(25*Math.sqrt(2))"
+          "Javascript Math (Network Level)" : "(Math.sqrt(data.player.networkExp + 15312.5) - 125/Math.sqrt(2))/(25*Math.sqrt(2))",
+          "Embedded Functions (Fixed FKDR)" : 'Function(\'"use strict"; if (data.player.stats.Bedwars.four_four_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.four_four_final_deaths_bedwars == 0 || data.player.stats.Bedwars.four_four_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.four_four_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.four_four_final_kills_bedwars/data.player.stats.Bedwars.four_four_final_deaths_bedwars;\')(data)',
+          "String Returns" : 'Function(\'"use strict"; if (data.player.playername == undefined) { return "Nick!"; } else { return undefined; }\')(data)'
         },
         "colorConditions" : {
           "blacklist.includes(playerName)" : "#e74a3b",

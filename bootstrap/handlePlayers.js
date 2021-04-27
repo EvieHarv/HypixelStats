@@ -178,12 +178,27 @@ function updatePlayerData(player)
             if (typeof value === 'number') {
                 value = value.toFixedDown(2);
             }
-            if (value == undefined || value == NaN)
+            hide = false;
+            if (value == undefined || Number.isNaN(value))
             {
-                value = "N/A";
+                if (store.get('undefinedBehavior') == "blank")
+                {
+                    value = "";
+                }
+                else if (store.get('undefinedBehavior') == "na")
+                {
+                    value = "N/A";
+                }
+                else
+                {
+                    hide = true;
+                }
             }
             // Add the data to the player card
-            $("#" + player).find('.playerDataHolder').append('<div class="h5 mb-0 font-weight-bold text-gray-800">' + entry + ": " + value + '</div>');
+            if (!hide)
+            {
+                $("#" + player).find('.playerDataHolder').append('<div class="h5 mb-0 font-weight-bold text-gray-800">' + entry + ": " + value + '</div>');
+            }
         }
     }
     // Check that this profile has valid colorConditions
