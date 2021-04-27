@@ -329,6 +329,21 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
     };
   });
 
+  // Validate that the names are legit. (This keeps random stuff like [Master] ranks from other servers from interfering. Also technically security, as someone could theoretically inject a <script>)
+  playerList.forEach(player => {
+    if(!(player.match(/^\w+$/i)))
+    {
+      console.error("An invalid name was detected!");
+
+      // Remove name from array
+      playerList = playerList.filter(function(name) {
+        return name !== player;
+      });
+
+      largestCount--; // Account for list size change
+    }
+  });
+
   // Reset frontend list entirely if in a new lobby
   if (largestCount > playerList.length && !arrayEquals(playerList, playerListTemp))
   {
@@ -381,7 +396,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
   {
     console.log('Setting API key to ' + new_api_key);
     mainWindow.webContents.send('setNewAPIKey', new_api_key);
-    playerList = [];
+    playerList = []; // Reset so it doesnt yell at us for being "nicked"
     updateFrontend();
   }
 
