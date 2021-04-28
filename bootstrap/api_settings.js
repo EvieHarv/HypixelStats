@@ -642,3 +642,16 @@ function objEquals(obj1, obj2) {
     }
     return _equals(obj1, obj2) && _equals(obj2, obj1);
 }
+
+ipcRenderer.on('profileChanged', function (event,new_api_key)
+{
+    console.log('HEY')
+    active_prof = store.get('active_profile');
+    console.log(active_prof)
+    $('.dropdown-item').each(function(index, item){
+        if (item.innerHTML == active_prof)
+        {
+            item.click(); // Yes, it's a little jank to do it this way, but it cleans up the code by just centralizing the various function calls.
+        }
+    });
+});

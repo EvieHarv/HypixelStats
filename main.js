@@ -1,4 +1,4 @@
-const { app, webContents, BrowserWindow, Menu, MessageChannelMain, ipcMain } = require('electron');
+const { app, webContents, BrowserWindow, Menu, MessageChannelMain, ipcMain, globalShortcut } = require('electron');
 const process = require('process');
 const chokidar = require('chokidar');
 const readLastLines = require('read-last-lines');
@@ -14,6 +14,7 @@ var hasJava = false; // We need java for /who to be sent with keySender
 var autoWhoInUse = false;
 const { exec } = require('child_process'); // For windows AutoWho
 var path = require("path");
+const isAccelerator = require('electron-is-accelerator');
 
 autoUpdater.logger = log;
 autoUpdater.autoDownload = false;
@@ -29,13 +30,17 @@ app.on('ready', function()
 {
   // Create window
   mainWindow = new BrowserWindow({
+    width: 1280,
+    height: 720,
     webPreferences: {
       contextIsolation: false,
       nodeIntegration: true,
       devTools: true,
       enableRemoteModule: true,
       webviewTag: true // Is this a bad thing to do? I needed it in playerLookup, but ngl thats nonessential so if somone tells me that's bad I'll remove it.
-    }
+    },
+    minWidth: 800,
+    minHeight: 450
   });
 
   // Load index
@@ -76,7 +81,63 @@ app.on('ready', function()
       }
     });  
   }
+
+  initalizeGlobalShortcuts();
 });
+
+ipcMain.on('keybindsChanged', function(){
+  initalizeGlobalShortcuts();
+});
+
+
+function initalizeGlobalShortcuts()
+{
+  globalShortcut.unregisterAll();
+  shortcuts = store.get('keybinds');
+  
+  if (shortcuts.profUp !== null && isAccelerator(shortcuts.profUp)) // We verify that it is valid or null when we set it, but it may be good to validate. Dunno.
+  {
+    const pfu = globalShortcut.register(shortcuts.profUp, () => 
+    {
+      profs = store.get('profiles');
+      index = Object.keys(profs).indexOf(store.get('active_profile'));
+      len = Object.keys(profs).length;
+
+      if ((len-1) == index) { index = 0; }
+      else { index++; }
+
+      store.set('active_profile', Object.keys(profs)[index]);
+
+      mainWindow.webContents.send('profileChanged');
+    });  
+  };
+
+  if (shortcuts.profDown !== null && isAccelerator(shortcuts.profDown))
+  {
+    const pfd = globalShortcut.register(shortcuts.profDown, () => 
+    {
+      profs = store.get('profiles');
+      index = Object.keys(profs).indexOf(store.get('active_profile'));
+      len = Object.keys(profs).length;
+
+      if (index == 0) { index = (len-1); }
+      else { index--; }
+
+      store.set('active_profile', Object.keys(profs)[index]);
+
+      mainWindow.webContents.send('profileChanged');
+    });
+  };
+
+  if (shortcuts.lobbyMode !== null && isAccelerator(shortcuts.lobbyMode))
+  {
+    const lbm = globalShortcut.register(shortcuts.lobbyMode, () => 
+    {
+      // TODO;
+      // mainWindow.webContents.send('lobbyMode', "");
+    });
+  };
+}
 
 // Make sure store values are defined
 function checkUndefineds()
@@ -85,11 +146,11 @@ function checkUndefineds()
   if (store.get('profiles') == undefined)
   {
     profiles = {
-      "Bedwars 4v4s" : {
+      "Bedwars 4s" : {
         "stats" : {
-          "Winstreak" : "data.player.stats.Bedwars.winstreak",
-          "FKDR" : 'Function(\'"use strict"; if (data.player.stats.Bedwars.four_four_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.four_four_final_deaths_bedwars == 0 || data.player.stats.Bedwars.four_four_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.four_four_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.four_four_final_kills_bedwars/data.player.stats.Bedwars.four_four_final_deaths_bedwars;\')(data)',
-          "Stars" :  "data.player.achievements.bedwars_level"
+          "Winstreak:" : "data.player.stats.Bedwars.winstreak",
+          "FKDR:" : 'Function(\'"use strict"; if (data.player.stats.Bedwars.four_four_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.four_four_final_deaths_bedwars == 0 || data.player.stats.Bedwars.four_four_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.four_four_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.four_four_final_kills_bedwars/data.player.stats.Bedwars.four_four_final_deaths_bedwars;\')(data)',
+          "Stars:" :  "data.player.achievements.bedwars_level"
         },
         "colorConditions" : {
           "blacklist.includes(playerName)" : "#e74a3b",
@@ -103,10 +164,10 @@ function checkUndefineds()
       },
       "UHC/Sumo Duels" : {
         "stats" : {
-          "Sumo Winstreak" : "data.player.stats.Duels.current_sumo_winstreak",
-          "Sumo W/L" : "data.player.stats.Duels.sumo_duel_wins/data.player.stats.Duels.sumo_duel_losses",
-          "UHC Winstreak" : "data.player.stats.Duels.current_uhc_winstreak",
-          "UHC W/L" : "data.player.stats.Duels.uhc_duel_wins/data.player.stats.Duels.uhc_duel_losses"
+          "Sumo Winstreak:" : "data.player.stats.Duels.current_sumo_winstreak",
+          "Sumo W/L:" : "data.player.stats.Duels.sumo_duel_wins/data.player.stats.Duels.sumo_duel_losses",
+          "UHC Winstreak:" : "data.player.stats.Duels.current_uhc_winstreak",
+          "UHC W/L:" : "data.player.stats.Duels.uhc_duel_wins/data.player.stats.Duels.uhc_duel_losses"
         },
         "colorConditions" : {
           "blacklist.includes(playerName)" : "#e74a3b",
@@ -118,11 +179,11 @@ function checkUndefineds()
       },
       "Custom Stats Examples" : {
         "stats" : {
-          "One Specific Stat (Winstreak)" : "data.player.stats.Bedwars.winstreak",
-          "Simple Math (FKDR)" : "data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars",
-          "Javascript Math (Network Level)" : "(Math.sqrt(data.player.networkExp + 15312.5) - 125/Math.sqrt(2))/(25*Math.sqrt(2))",
-          "Embedded Functions (Fixed FKDR)" : 'Function(\'"use strict"; if (data.player.stats.Bedwars.four_four_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.four_four_final_deaths_bedwars == 0 || data.player.stats.Bedwars.four_four_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.four_four_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.four_four_final_kills_bedwars/data.player.stats.Bedwars.four_four_final_deaths_bedwars;\')(data)',
-          "String Returns" : 'Function(\'"use strict"; if (data.player.playername == undefined) { return "Nick!"; } else { return undefined; }\')(data)'
+          "One Specific Stat (Winstreak:)" : "data.player.stats.Bedwars.winstreak",
+          "Simple Math (FKDR):" : "data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars",
+          "Javascript Math (Network Level):" : "(Math.sqrt(data.player.networkExp + 15312.5) - 125/Math.sqrt(2))/(25*Math.sqrt(2))",
+          "Embedded Functions (Fixed FKDR):" : 'Function(\'"use strict"; if (data.player.stats.Bedwars.four_four_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.four_four_final_deaths_bedwars == 0 || data.player.stats.Bedwars.four_four_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.four_four_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.four_four_final_kills_bedwars/data.player.stats.Bedwars.four_four_final_deaths_bedwars;\')(data)',
+          "String Returns:" : 'Function(\'"use strict"; if (data.player.playername == undefined) { return "Nick!"; } else { return undefined; }\')(data)'
         },
         "colorConditions" : {
           "blacklist.includes(playerName)" : "#e74a3b",
@@ -136,7 +197,7 @@ function checkUndefineds()
       }
     };
     store.set('profiles', profiles);
-    store.set('active_profile', 'Bedwars 4v4s');
+    store.set('active_profile', 'Bedwars 4s');
   };
 
   // Alias list
@@ -158,22 +219,35 @@ function checkUndefineds()
   // If key owner exists but no UUID has been grabbed (from prev. versions of the tool), build that information.
   if (store.get("key_owner") && !(store.get('key_owner_uuid')))
   {
-    https.get("https://api.hypixel.net/key?key=" + store.get('hypixel_key'), (resp) => {
-      let data = '';
-      // A chunk of data has been recieved.
-      resp.on('data', (chunk) => {
-        data += chunk;
-      });    
-      // The whole response has been received. Print out the result.
-      resp.on('end', () => {
-        key_owner_uuid = (JSON.parse(data)).record.owner;
-        console.log("Setting key owner UUID as: " + key_owner_uuid);
-        store.set('key_owner_uuid', key_owner_uuid)
-      });
+    try
+    {
+      https.get("https://api.hypixel.net/key?key=" + store.get('hypixel_key'), (resp) => {
+        let data = '';
+        // A chunk of data has been recieved.
+        resp.on('data', (chunk) => {
+          data += chunk;
+        });    
+        // The whole response has been received. Print out the result.
+        resp.on('end', () => {
+          key_owner_uuid = (JSON.parse(data)).record.owner;
+          console.log("Setting key owner UUID as: " + key_owner_uuid);
+          store.set('key_owner_uuid', key_owner_uuid)
+        });
+  
+      }).on("error", (err) => {
+        console.log("Error: " + err.message);
+      });  
+    }
+    catch(e)
+    {
+      console.error(e);
+    }
+  }
 
-    }).on("error", (err) => {
-      console.log("Error: " + err.message);
-    });
+  // Initalize the toplevel property
+  if (store.get('keybinds') == undefined)
+  {
+    store.set('keybinds', { "profUp": "Control+U", "profDown" : "Control+I", "lobbyMode": "Control+L" });
   }
 }
 
@@ -403,8 +477,6 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
   return;
 };
 
-const { port1, port2 } = new MessageChannelMain()
-
 function updateFrontend()
 {
   mainWindow.webContents.send('playerList', playerList);
@@ -443,3 +515,9 @@ function javaversion(callback) {
     }
   });
 }
+
+
+app.on('will-quit', () => {
+  // Unregister all shortcuts.
+  globalShortcut.unregisterAll();
+})

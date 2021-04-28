@@ -1,5 +1,7 @@
 //store should already be set
 
+const isAccelerator = require("electron-is-accelerator");
+
 $('#setKeyButton').click(function()
 { 
     console.log("Setting " + $('#inputApiKey').val() + " as new API key.");
@@ -153,7 +155,119 @@ $(function()
         }
     });
 
+    keybinds = store.get('keybinds');
+    $( "#kbProfileUp" ).val(keybinds.profUp);
+    $( "#kbProfileDown" ).val(keybinds.profDown);
+    $( "#kbLobbyMode" ).val(keybinds.lobbyMode);
+
+    $( "#kbProfileUp" ).keydown(function(e) 
+    {
+        key  = validateKey(e);
+        if (key !== false)
+        {
+            $( "#kbProfileUp" ).val(key);
+            keybinds = store.get('keybinds');
+            keybinds.profUp = key;
+            store.set('keybinds', keybinds);
+            ipcRenderer.send('keybindsChanged');
+        };
+        return false;
+    });
+    $( "#kbProfileDown" ).keydown(function(e) 
+    {
+        key  = validateKey(e);
+        if (key !== false)
+        {
+            $( "#kbProfileDown" ).val(key);
+            keybinds = store.get('keybinds');
+            keybinds.profDown = key;
+            store.set('keybinds', keybinds);
+            ipcRenderer.send('keybindsChanged');
+        };
+        return false;
+    });
+    $( "#kbLobbyMode" ).keydown(function(e) 
+    {
+        key  = validateKey(e);
+        if (key !== false)
+        {
+            $( "#kbLobbyMode" ).val(key);
+            keybinds = store.get('keybinds');
+            keybinds.lobbyMode = key;
+            store.set('keybinds', keybinds);
+            ipcRenderer.send('keybindsChanged');
+        };
+        return false;
+    });
+
+
+    $('#RMkbProfileUp').click(function()
+    {
+        $( "#kbProfileUp" ).val("");
+        keybinds = store.get('keybinds');
+        keybinds.profUp = "";
+        store.set('keybinds', keybinds);
+        ipcRenderer.send('keybindsChanged');
+    });
+    $('#RMkbProfileDown').click(function()
+    {
+        $( "#kbProfileDown" ).val("");
+        keybinds = store.get('keybinds');
+        keybinds.profDown = "";
+        store.set('keybinds', keybinds);
+        ipcRenderer.send('keybindsChanged');
+    });
+    $('#RMkbLobbyMode').click(function()
+    {
+        $( "#kbLobbyMode" ).val("");
+        keybinds = store.get('keybinds');
+        keybinds.lobbyMode = "";
+        store.set('keybinds', keybinds);
+        ipcRenderer.send('keybindsChanged');
+    });
+
 });
+
+function validateKey(e)
+{
+    keybind = "";
+
+    if (e.keyCode == 8)
+    {
+        return "";
+    }
+    if (e.metaKey)
+    {
+        return false;
+    }
+
+    x = e.keyCode;
+    if (x >= 16 && x <=18)
+    {
+        return false;
+    }
+    if (e.ctrlKey)
+    {
+        keybind += "Control+";
+    }
+    if (e.altKey)
+    {
+        keybind += "Alt+";
+    }
+    if (e.shiftKey)
+    {
+        keybind += "Shift+";
+    }
+
+    keybind += e.key.toUpperCase();
+
+    if (!isAccelerator(keybind))
+    {
+        return false;
+    }
+
+    return keybind;
+}
 
 $('#inputPath').on("keypress", function(e) {
     if (e.keyCode == 13) {

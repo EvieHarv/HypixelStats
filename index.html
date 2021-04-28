@@ -272,5 +272,16 @@
             }, 250);
         }
     });
+
+    ipcRenderer.on('profileChanged', function (event,new_api_key)
+    {
+        active_prof = store.get('active_profile');
+        $('.dropdown-item').each(function(index, item){
+            if (item.innerHTML == active_prof)
+            {
+                item.click(); // Yes, it's a little jank to do it this way, but it cleans up the code by just centralizing the various function calls.
+            }
+        });
+    });
 </script>
 </body></html>

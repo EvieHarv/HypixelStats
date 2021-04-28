@@ -197,7 +197,11 @@ function updatePlayerData(player)
             // Add the data to the player card
             if (!hide)
             {
-                $("#" + player).find('.playerDataHolder').append('<div class="h5 mb-0 font-weight-bold text-gray-800">' + entry + ": " + value + '</div>');
+                $("#" + player).find('.playerDataHolder').append('<div class="h5 mb-0 font-weight-bold text-gray-800">' + entry + " " + value + '</div>');
+            }
+            else // We still want it to *be* there, just hidden
+            {
+                $("#" + player).find('.playerDataHolder').append('<div class="h5 mb-0 font-weight-bold text-gray-800" style="display: none;"></div>');
             }
         }
     }
@@ -310,7 +314,9 @@ function resortCards()
             divList = divList.reverse();
         }
         divList.appendTo('.playerList');
-    }    
+    }
+
+    // Sorting (or lack thereof) is done
 }
 
 $.fn.reverse = [].reverse;
