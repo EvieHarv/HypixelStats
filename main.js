@@ -325,6 +325,7 @@ function fileUpdated(path)
 };
 
 var playerList = []; // Is this bad practice in javascript, or is this okay? I'm gonna go with it being okay, because it works.
+var outOfGame = [];
 
 const arrayEquals = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
 
@@ -334,6 +335,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
 {
   // Get the player list before we add any, for comparison's sake
   playerListTemp = [...playerList];
+  outOfGameTemp = [...outOfGame];
 
   var key_owner = store.get('key_owner');
   var aliases = store.get('aliases');
@@ -401,6 +403,18 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
       };
       playerList = playerList.concat(playerNames.filter((name) => playerList.indexOf(name) < 0));
     };
+
+
+
+    // Check for finals
+    if (line.includes('[Client thread/INFO]: [CHAT] ') && line.includes('FINAL KILL!')) // Another Player joins, add them to playerList
+    {
+      var playerName = line.split("[Client thread/INFO]: [CHAT] ")[1].split(" ")[0];
+      if(!outOfGame.includes(playerName)) 
+      {
+        outOfGame.push(playerName);
+      }
+    }    
   });
 
   // Validate that the names are legit. (This keeps random stuff like [Master] ranks from other servers from interfering. Also technically security, as someone could theoretically inject a <script>)
@@ -411,6 +425,19 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
 
       // Remove name from array
       playerList = playerList.filter(function(name) {
+        return name !== player;
+      });
+
+      largestCount--; // Account for list size change
+    }
+  });
+  outOfGame.forEach(player => {
+    if(!(player.match(/^\w+$/i)))
+    {
+      console.error("An invalid final was detected!");
+
+      // Remove name from array
+      outOfGame = outOfGame.filter(function(name) {
         return name !== player;
       });
 
@@ -480,6 +507,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
 function updateFrontend()
 {
   mainWindow.webContents.send('playerList', playerList);
+  mainWindow.webContents.send('outOfGame', outOfGame);
 };
 
 ipcMain.on('sendListAgain', function(){ // Re-sending player list on page load

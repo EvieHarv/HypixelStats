@@ -5,6 +5,10 @@ ipcRenderer.on('playerList', function (event,playerList)
 {
     updatePlayerArea(playerList);
 });
+ipcRenderer.on('outOfGame', function (event,outOfGame) 
+{
+    outOfGameUpdate(outOfGame);
+});
 
 function updatePlayerArea(playerList)
 {
@@ -78,6 +82,7 @@ function updatePlayerArea(playerList)
         $(".playerList").append('\
             <div class="col-xl-3 col-md-6 mb-4 playerCard" id="' + player + '" player="' + player + '" uuid="">\
                 <div class="card border-left-primary shadow h-100 py-2">\
+                <div id="obscure' + player + '" class="card" style="position: absolute; display: none; width: 100%;height: 100%;top: 0;left: 0;right: 0;bottom: 0;background-color: rgba(0,0,0,0.5);z-index: 2;cursor: pointer; border: none; pointer-events: none; border-top-left-radius: 0px; border-bottom-left-radius: 0px;"></div>\
                     <div class="card-body">\
                         <div class="row no-gutters align-items-center">\
                             <div class="col mr-2">\
@@ -122,6 +127,15 @@ function updatePlayerArea(playerList)
                 updatePlayerData(playerBackup);
             }
         }
+    });
+}
+
+// Obscure playercards
+function outOfGameUpdate(list)
+{
+    list.forEach(function(player)
+    {
+        $('#obscure' + player).show();
     });
 }
 
