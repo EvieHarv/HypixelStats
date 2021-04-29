@@ -230,11 +230,19 @@ function checkUndefineds()
       store.set('whitelist', []);
   };
 
-  // Set the path default to "C:\Users\[USER]\.lunarclient\logs\launcher\renderer.log" if the file exists
+  // Set the path default to "C:\Users\[USER]\.lunarclient\logs\launcher\renderer.log" if the file exists (or linux equivilent)
   if (store.get('logPath') == undefined)
   {
     // TODO: Don't hardcode this as lunar
-    var logPath = path.join(process.env['USERPROFILE'], ".lunarclient\\logs\\launcher\\renderer.log");
+    var logPath;
+    if (process.platform == "win32")
+    {
+      var logPath = path.join(process.env['USERPROFILE'], ".lunarclient\\logs\\launcher\\renderer.log");
+    }
+    else
+    {
+      var logPath = path.join(process.env['HOME'], ".lunarclient/logs/launcher/renderer.log");
+    }
     if (fs.existsSync(logPath)) {
       //file exists
       store.set('logPath', logPath)
