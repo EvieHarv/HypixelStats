@@ -7,6 +7,8 @@ const Store = require('electron-store');
 const log = require('electron-log');
 const {autoUpdater} = require("electron-updater");
 const https = require('https');
+const fs = require('fs')
+
 
 var keySender = require('./node-key-sender/');
 keySender.setOption('startDelayMillisec', 25);
@@ -62,6 +64,18 @@ app.on('ready', function()
 
   // Make sure store values are defined
   checkUndefineds();
+
+  
+  if (store.get('logPath') !== undefined)
+  {
+    const watcher = chokidar.watch(store.get('logPath'),
+    {
+      persistent: true,
+      usePolling: true // Unfortunately higher CPU usage, but seems required to get it to work consistently
+    });
+    watcher.on('change', path => fileUpdated(path));
+  }
+
 
   if (!(process.platform == "win32"))
   {
@@ -216,6 +230,17 @@ function checkUndefineds()
       store.set('whitelist', []);
   };
 
+  // Set the path default to "C:\Users\[USER]\.lunarclient\logs\launcher\renderer.log" if the file exists
+  if (store.get('logPath') == undefined)
+  {
+    // TODO: Don't hardcode this as lunar
+    var logPath = path.join(process.env['USERPROFILE'], ".lunarclient\\logs\\launcher\\renderer.log");
+    if (fs.existsSync(logPath)) {
+      //file exists
+      store.set('logPath', logPath)
+    };  
+  }
+
   // If key owner exists but no UUID has been grabbed (from prev. versions of the tool), build that information.
   if (store.get("key_owner") && !(store.get('key_owner_uuid')))
   {
@@ -299,16 +324,6 @@ const mainMenuTemplate =
     ]
   }
 ];
-
-if (store.get('logPath') !== undefined)
-{
-  const watcher = chokidar.watch(store.get('logPath'),
-  {
-    persistent: true,
-    usePolling: true // Unfortunately higher CPU usage, but seems required to get it to work consistently
-  });
-  watcher.on('change', path => fileUpdated(path));
-}
 
 function fileUpdated(path)
 {
