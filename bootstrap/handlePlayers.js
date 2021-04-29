@@ -133,10 +133,20 @@ function updatePlayerArea(playerList)
 // Obscure playercards
 function outOfGameUpdate(list)
 {
+    // Hide players who got finaled or disconnected
     list.forEach(function(player)
     {
         $('#obscure' + player).show();
     });
+
+    // Re-show players who reconnected
+    $(".playerCard").each(function(index, card)
+    {
+        if (!list.includes(card.getAttribute('player')))
+        {
+            $('#obscure' + card.getAttribute('player')).hide();
+        }
+    })
 }
 
 Number.prototype.toFixedDown = function(digits) {

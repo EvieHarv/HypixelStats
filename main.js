@@ -350,7 +350,6 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
 {
   // Get the player list before we add any, for comparison's sake
   playerListTemp = [...playerList];
-  outOfGameTemp = [...outOfGame];
 
   var key_owner = store.get('key_owner');
   var aliases = store.get('aliases');
@@ -384,6 +383,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
     {
       // Still not completely consistent for an nicked, un-aliased account. Should be consistent enough to give them the warning, though.
       playerList = []; // Re-initalize list
+      outOfGame = [];
     }
 
 
@@ -429,14 +429,39 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
       {
         outOfGame.push(playerName);
       }
-    }    
+    }
+
+    // Check for leaves
+    if (line.includes('[Client thread/INFO]: [CHAT] ') && line.includes('disconnected')) // Another Player joins, add them to playerList
+    {
+      var playerName = line.split("[Client thread/INFO]: [CHAT] ")[1].split(" ")[0];
+      if(!outOfGame.includes(playerName)) 
+      {
+        outOfGame.push(playerName);
+      }
+    }
+    if (line.includes('[Client thread/INFO]: [CHAT] ') && line.includes('reconnected.')) // Another Player joins, add them to playerList
+    {
+      console.log('before')
+      console.log(outOfGame)
+      var playerName = line.split("[Client thread/INFO]: [CHAT] ")[1].split(" ")[0];
+      if(outOfGame.includes(playerName)) 
+      {
+        const index = outOfGame.indexOf(playerName);
+        if (index > -1) {
+          outOfGame.splice(index, 1);
+        };
+      }
+      console.log('after')
+      console.log(outOfGame)
+    }
   });
 
   // Validate that the names are legit. (This keeps random stuff like [Master] ranks from other servers from interfering. Also technically security, as someone could theoretically inject a <script>)
   playerList.forEach(player => {
     if(!(player.match(/^\w+$/i)))
     {
-      console.error("An invalid name was detected!");
+      console.error("An invalid name was detected! (This is nothing to worry about)");
 
       // Remove name from array
       playerList = playerList.filter(function(name) {
@@ -449,7 +474,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
   outOfGame.forEach(player => {
     if(!(player.match(/^\w+$/i)))
     {
-      console.error("An invalid final was detected!");
+      console.error("An invalid final was detected! (This is nothing to worry about)");
 
       // Remove name from array
       outOfGame = outOfGame.filter(function(name) {
@@ -513,6 +538,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
     console.log('Setting API key to ' + new_api_key);
     mainWindow.webContents.send('setNewAPIKey', new_api_key);
     playerList = []; // Reset so it doesnt yell at us for being "nicked"
+    outOfGame = [];
     updateFrontend();
   }
 
