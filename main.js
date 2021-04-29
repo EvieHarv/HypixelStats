@@ -442,8 +442,6 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
     }
     if (line.includes('[Client thread/INFO]: [CHAT] ') && line.includes('reconnected.')) // Another Player joins, add them to playerList
     {
-      console.log('before')
-      console.log(outOfGame)
       var playerName = line.split("[Client thread/INFO]: [CHAT] ")[1].split(" ")[0];
       if(outOfGame.includes(playerName)) 
       {
@@ -452,8 +450,6 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
           outOfGame.splice(index, 1);
         };
       }
-      console.log('after')
-      console.log(outOfGame)
     }
   });
 
