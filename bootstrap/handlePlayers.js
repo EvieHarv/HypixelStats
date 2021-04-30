@@ -75,6 +75,7 @@ function updatePlayerArea(playerList)
         else 
         {
             card.remove(); // Remove a card for a player who doesn't exist anymore
+            sendDataToOverlay();
         }
     });
     playerList.forEach(function(player)
@@ -221,11 +222,11 @@ function updatePlayerData(player)
             // Add the data to the player card
             if (!hide)
             {
-                $("#" + player).find('.playerDataHolder').append('<div class="h5 mb-0 font-weight-bold text-gray-800">' + entry + " " + value + '</div>');
+                $("#" + player).find('.playerDataHolder').append('<div class="h5 mb-0 font-weight-bold text-gray-800">' + entry + ": <span class='data'>" + value + '</span></div>');
             }
             else // We still want it to *be* there, just hidden
             {
-                $("#" + player).find('.playerDataHolder').append('<div class="h5 mb-0 font-weight-bold text-gray-800" style="display: none;"></div>');
+                $("#" + player).find('.playerDataHolder').append('<div class="h5 mb-0 font-weight-bold text-gray-800" style="display: none;"><span class="data">—</span></div>');
             }
         }
     }
@@ -258,6 +259,12 @@ function updatePlayerData(player)
             $('#' + player).find('.name').attr('style', "color: " + color + "!important;")
             // Set border to color
             $('#' + player).find('.border-left-primary').attr('style', "border-left: .25rem solid " + color + "!important;")
+            //
+            $('#' + player).attr('player-color', color)
+        }
+        else
+        {
+            $('#' + player).attr('player-color', '#4e73df')
         }
     };
     resortCards();
@@ -273,18 +280,6 @@ function resortCards()
     if (profile['sort'])
     {
         divList = $(".playerCard");
-
-        // Wait untill all player calls have been made to sort. TODO: Maybe make this a toggle? 
-        // somePlayersUndefined = false;
-        // divList.each(function(a, b){
-        //     // If the div has the uuid attribute defined, it means that the data has been grabbed successfully.
-        //     if(!b.getAttribute('uuid'))
-        //     {
-        //         somePlayersUndefined = true;
-        //         return false;
-        //     }
-        // });
-        // if (somePlayersUndefined){ return false; } // End execution
         
         sortString = profile.sort;
         divList.sort(function(a, b)
@@ -341,7 +336,42 @@ function resortCards()
     }
 
     // Sorting (or lack thereof) is done
+
+    sendDataToOverlay();
 }
+
+function sendDataToOverlay()
+{
+    prof = store.get('profiles')[store.get('active_profile')];
+    headers = ['Player'];
+    headers = headers.concat(Object.keys(prof.stats));
+    
+    finalObject = [];
+
+    finalObject.push(headers);
+
+    colorLine = [];
+    $(".playerCard").each(function(index, card){
+        dataLine = [$(card).attr('player')];
+        colorLine.push($(card).attr('player-color'))
+        $(card).find('.data').each(function(index, data){
+            dataLine = dataLine.concat(data.innerHTML);
+        });
+        finalObject.push(dataLine);
+    });
+
+    finalObject.push(colorLine);
+
+    ipcRenderer.send('overlayData', finalObject);
+}
+
+ipcRenderer.on('overlayRequest', function (event) 
+{
+    sendDataToOverlay();
+});
+
+
+
 
 $.fn.reverse = [].reverse;
 
@@ -349,29 +379,4 @@ function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {
         return prev ? prev[curr] : null
     }, obj || self)
-}
-
-function getColor(player, fkdr, winstreak, uuid)
-{
-    var blacklist = store.get('blacklist')
-    var whitelist = store.get('whitelist')
-    if (blacklist !== undefined)
-    {
-        if (blacklist.includes(player))
-        {
-            return "danger";
-        };
-    }
-    if (whitelist !== undefined)
-    {
-        if (whitelist.includes(player))
-        {
-            return "success";
-        };
-    }
-    if (uuid == "Nick" || uuid == undefined || uuid == "") // Really it should only be the first one, but I dont trust myself so we're doing all 3
-    {
-        return "warning";
-    }
-    return "primary"; // Neither
 }

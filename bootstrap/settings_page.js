@@ -158,6 +158,7 @@ $(function()
     keybinds = store.get('keybinds');
     $( "#kbProfileUp" ).val(keybinds.profUp);
     $( "#kbProfileDown" ).val(keybinds.profDown);
+    $( "#kbFocusOverlay" ).val(keybinds.focusOverlay);
     $( "#kbLobbyMode" ).val(keybinds.lobbyMode);
 
     $( "#kbProfileUp" ).keydown(function(e) 
@@ -181,6 +182,19 @@ $(function()
             $( "#kbProfileDown" ).val(key);
             keybinds = store.get('keybinds');
             keybinds.profDown = key;
+            store.set('keybinds', keybinds);
+            ipcRenderer.send('keybindsChanged');
+        };
+        return false;
+    });
+    $( "#kbFocusOverlay" ).keydown(function(e) 
+    {
+        key  = validateKey(e);
+        if (key !== false)
+        {
+            $( "#kbFocusOverlay" ).val(key);
+            keybinds = store.get('keybinds');
+            keybinds.focusOverlay = key;
             store.set('keybinds', keybinds);
             ipcRenderer.send('keybindsChanged');
         };
@@ -214,6 +228,14 @@ $(function()
         $( "#kbProfileDown" ).val("");
         keybinds = store.get('keybinds');
         keybinds.profDown = "";
+        store.set('keybinds', keybinds);
+        ipcRenderer.send('keybindsChanged');
+    });
+    $('#RMkbFocusOverlay').click(function()
+    {
+        $( "#kbFocusOverlay" ).val("");
+        keybinds = store.get('keybinds');
+        keybinds.focusOverlay = "";
         store.set('keybinds', keybinds);
         ipcRenderer.send('keybindsChanged');
     });

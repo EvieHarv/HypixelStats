@@ -24,6 +24,7 @@ autoUpdater.logger.transports.file.level = 'info';
 log.info('App starting...');
 
 let mainWindow;
+let overlayWindow;
 
 const store = new Store();
 
@@ -99,6 +100,64 @@ app.on('ready', function()
   initalizeGlobalShortcuts();
 });
 
+ipcMain.on('launchOverlay', function(event, data){
+  if (!overlayWindow)
+  {
+    if (process.platform == "win32")
+    {
+        // I made the AHK a compiled script so that you don't have to have AHK installed
+        // You can find the AHK script in node-key-sender/FakeFullscreen.ahk
+        var AHKpath = path.join(__dirname, 'node-key-sender', 'FakeFullscreen.exe');
+        if (__dirname.includes('app.asar')) // A slightly strange way to check if we're in the published executable
+        {
+          AHKpath = path.join(__dirname.split("app.asar")[0], 'FakeFullscreen.exe');
+        }
+        exec(AHKpath, {}, function(error, stdout, stderr) {
+          if (error) {
+            console.log(`error: ${error.message}`);
+          }
+        });
+    }
+    overlayWindow = new BrowserWindow({
+      webPreferences: 
+      {
+        nodeIntegration: true,
+        contextIsolation: false
+      },
+      width: 900,
+      height: 600,
+      resizable: false,
+      frame: false,
+      transparent: true
+    });
+    overlayWindow.loadFile("./overlay/index.html");
+    overlayWindow.setAlwaysOnTop(true, "normal");
+    overlayWindow.on('blur', function()
+    {
+      overlayWindow.webContents.send('lostFocus');
+      overlayWindow.setIgnoreMouseEvents(true);
+    });
+    overlayWindow.on('closed', function(){ overlayWindow = undefined; });
+  }
+});
+
+// Pass data from MainWindow to OverlayWindow
+ipcMain.on('overlayData', function(event, data){
+  if (overlayWindow)
+  {
+    overlayWindow.webContents.send('playerData', data);
+  }
+});
+
+ipcMain.on('requestData', function(event, data){
+  mainWindow.webContents.send('overlayRequest');
+});
+
+ipcMain.on('killOverlay', function(event, data){
+  overlayWindow.close();
+});
+
+
 ipcMain.on('keybindsChanged', function(){
   initalizeGlobalShortcuts();
 });
@@ -107,11 +166,11 @@ ipcMain.on('keybindsChanged', function(){
 function initalizeGlobalShortcuts()
 {
   globalShortcut.unregisterAll();
-  shortcuts = store.get('keybinds');
+  keybinds = store.get('keybinds');
   
-  if (shortcuts.profUp !== null && isAccelerator(shortcuts.profUp)) // We verify that it is valid or null when we set it, but it may be good to validate. Dunno.
+  if (keybinds.profUp !== null && isAccelerator(keybinds.profUp)) // We verify that it is valid or null when we set it, but it may be good to validate. Dunno.
   {
-    const pfu = globalShortcut.register(shortcuts.profUp, () => 
+    const pfu = globalShortcut.register(keybinds.profUp, () => 
     {
       profs = store.get('profiles');
       index = Object.keys(profs).indexOf(store.get('active_profile'));
@@ -126,9 +185,9 @@ function initalizeGlobalShortcuts()
     });  
   };
 
-  if (shortcuts.profDown !== null && isAccelerator(shortcuts.profDown))
+  if (keybinds.profDown !== null && isAccelerator(keybinds.profDown))
   {
-    const pfd = globalShortcut.register(shortcuts.profDown, () => 
+    const pfd = globalShortcut.register(keybinds.profDown, () => 
     {
       profs = store.get('profiles');
       index = Object.keys(profs).indexOf(store.get('active_profile'));
@@ -143,9 +202,21 @@ function initalizeGlobalShortcuts()
     });
   };
 
-  if (shortcuts.lobbyMode !== null && isAccelerator(shortcuts.lobbyMode))
+  if (keybinds.focusOverlay !== null && isAccelerator(keybinds.focusOverlay))
   {
-    const lbm = globalShortcut.register(shortcuts.lobbyMode, () => 
+    const lbm = globalShortcut.register(keybinds.focusOverlay, () => 
+    {
+      if (overlayWindow)
+      {
+        overlayWindow.setIgnoreMouseEvents(false);
+        overlayWindow.focus()
+      }
+    });
+  };
+
+  if (keybinds.lobbyMode !== null && isAccelerator(keybinds.lobbyMode))
+  {
+    const lbm = globalShortcut.register(keybinds.lobbyMode, () => 
     {
       // TODO;
       // mainWindow.webContents.send('lobbyMode', "");
@@ -162,9 +233,9 @@ function checkUndefineds()
     profiles = {
       "Bedwars 4s" : {
         "stats" : {
-          "Winstreak:" : "data.player.stats.Bedwars.winstreak",
-          "FKDR:" : 'Function(\'"use strict"; if (data.player.stats.Bedwars.four_four_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.four_four_final_deaths_bedwars == 0 || data.player.stats.Bedwars.four_four_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.four_four_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.four_four_final_kills_bedwars/data.player.stats.Bedwars.four_four_final_deaths_bedwars;\')(data)',
-          "Stars:" :  "data.player.achievements.bedwars_level"
+          "FKDR" : 'Function(\'"use strict"; if (data.player.stats.Bedwars.four_four_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.four_four_final_deaths_bedwars == 0 || data.player.stats.Bedwars.four_four_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.four_four_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.four_four_final_kills_bedwars/data.player.stats.Bedwars.four_four_final_deaths_bedwars;\')(data)',
+          "Winstreak" : "data.player.stats.Bedwars.winstreak",
+          "Stars" :  "data.player.achievements.bedwars_level"
         },
         "colorConditions" : {
           "blacklist.includes(playerName)" : "#e74a3b",
@@ -178,10 +249,10 @@ function checkUndefineds()
       },
       "UHC/Sumo Duels" : {
         "stats" : {
-          "Sumo Winstreak:" : "data.player.stats.Duels.current_sumo_winstreak",
-          "Sumo W/L:" : "data.player.stats.Duels.sumo_duel_wins/data.player.stats.Duels.sumo_duel_losses",
-          "UHC Winstreak:" : "data.player.stats.Duels.current_uhc_winstreak",
-          "UHC W/L:" : "data.player.stats.Duels.uhc_duel_wins/data.player.stats.Duels.uhc_duel_losses"
+          "Sumo Winstreak" : "data.player.stats.Duels.current_sumo_winstreak",
+          "Sumo W/L" : "data.player.stats.Duels.sumo_duel_wins/data.player.stats.Duels.sumo_duel_losses",
+          "UHC Winstreak" : "data.player.stats.Duels.current_uhc_winstreak",
+          "UHC W/L" : "data.player.stats.Duels.uhc_duel_wins/data.player.stats.Duels.uhc_duel_losses"
         },
         "colorConditions" : {
           "blacklist.includes(playerName)" : "#e74a3b",
@@ -193,11 +264,11 @@ function checkUndefineds()
       },
       "Custom Stats Examples" : {
         "stats" : {
-          "One Specific Stat (Winstreak:)" : "data.player.stats.Bedwars.winstreak",
-          "Simple Math (FKDR):" : "data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars",
-          "Javascript Math (Network Level):" : "(Math.sqrt(data.player.networkExp + 15312.5) - 125/Math.sqrt(2))/(25*Math.sqrt(2))",
-          "Embedded Functions (Fixed FKDR):" : 'Function(\'"use strict"; if (data.player.stats.Bedwars.four_four_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.four_four_final_deaths_bedwars == 0 || data.player.stats.Bedwars.four_four_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.four_four_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.four_four_final_kills_bedwars/data.player.stats.Bedwars.four_four_final_deaths_bedwars;\')(data)',
-          "String Returns:" : 'Function(\'"use strict"; if (data.player.playername == undefined) { return "Nick!"; } else { return undefined; }\')(data)'
+          "One Specific Stat (Winstreak)" : "data.player.stats.Bedwars.winstreak",
+          "Simple Math (FKDR)" : "data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars",
+          "Javascript Math (Network Level)" : "(Math.sqrt(data.player.networkExp + 15312.5) - 125/Math.sqrt(2))/(25*Math.sqrt(2))",
+          "Embedded Functions (Fixed FKDR)" : 'Function(\'"use strict"; if (data.player.stats.Bedwars.four_four_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.four_four_final_deaths_bedwars == 0 || data.player.stats.Bedwars.four_four_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.four_four_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.four_four_final_kills_bedwars/data.player.stats.Bedwars.four_four_final_deaths_bedwars;\')(data)',
+          "String Returns" : 'Function(\'"use strict"; if (data.player.playername == undefined) { return "Nick!"; } else { return undefined; }\')(data)'
         },
         "colorConditions" : {
           "blacklist.includes(playerName)" : "#e74a3b",
@@ -280,7 +351,14 @@ function checkUndefineds()
   // Initalize the toplevel property
   if (store.get('keybinds') == undefined)
   {
-    store.set('keybinds', { "profUp": "Control+U", "profDown" : "Control+I", "lobbyMode": "Control+L" });
+    store.set('keybinds', { "profUp": "Control+U", "profDown" : "Control+I", "focusOverlay": "Control+Shift+G", "lobbyMode": "Control+L" });
+  }
+  keybinds = store.get('keybinds');
+  // Check for stuff that was added after initial commit
+  if (keybinds.focusOverlay == undefined)
+  {
+    keybinds.focusOverlay = "Control+Shift+G";
+    store.set("keybinds", keybinds)
   }
 }
 
