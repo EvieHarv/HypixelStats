@@ -20,7 +20,7 @@ Not associated with Hypixel Inc.
 
 - Automatically detects when you join new game, sends /who to get the full list, and automatically detects when players leave/join and adds/removes them from the list.
     - Auto `/who` should work fine with nothing else on windows, other platforms require Java to be installed in the PATH.
-- Fully configuarable view of stats, with on-the-fly profile switching for easy viewing of any stats you want, at any time.
+- Fully configuarable view of stats, with on-the-fly profile switching (with keybinds!) for easy viewing of any stats you want, at any time.
     - Also includes assignable colors based off of stats, as well as the ability to sort the list by any (numeric) stat.
 - Includes the ability to whitelist/blacklist players for quick identification. By default, whitelisted players appear green and blacklisted players appear red. (This is configurable in the profiles!)
 - Detects nicked players and displays them as yellow by default (also configurable).
@@ -32,7 +32,6 @@ Not associated with Hypixel Inc.
 - Compatibility with vanilla client
     - Won't be adding compatiblity with BLC as I don't support the devs, use lunar or vanilla.
 - Automatic, temporary party whitelisting (toggable)
-- Keybinds for switching profiles and switching into a possible lobby-view mode.
 - Support for custom APIs
     - Default one at hypixelstats.com with reports for a sniper/cheater detection network maybe?
 - Single stat next to name
