@@ -24,6 +24,7 @@ autoUpdater.logger.transports.file.level = 'info';
 log.info('App starting...');
 
 let mainWindow;
+let overlayWindow;
 
 const store = new Store();
 
@@ -97,6 +98,31 @@ app.on('ready', function()
   }
 
   initalizeGlobalShortcuts();
+
+  overlayWindow = new BrowserWindow({
+    webPreferences: 
+    {
+      nodeIntegration: true,
+      contextIsolation: false
+    },
+    width: 900,
+    height: 600,
+    resizable: false,
+    frame: false,
+    transparent: true
+  });
+  overlayWindow.loadFile("./overlay/index.html");
+  overlayWindow.setAlwaysOnTop(true, "normal");
+  overlayWindow.on('blur', function()
+  {
+    overlayWindow.webContents.send('lostFocus');
+    //overlayWindow.setIgnoreMouseEvents(true);
+  });
+});
+
+// Pass data from MainWindow to OverlayWindow
+ipcMain.on('overlayData', function(event, data){
+  overlayWindow.webContents.send('playerData', data);
 });
 
 ipcMain.on('keybindsChanged', function(){
@@ -162,9 +188,9 @@ function checkUndefineds()
     profiles = {
       "Bedwars 4s" : {
         "stats" : {
-          "Winstreak:" : "data.player.stats.Bedwars.winstreak",
-          "FKDR:" : 'Function(\'"use strict"; if (data.player.stats.Bedwars.four_four_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.four_four_final_deaths_bedwars == 0 || data.player.stats.Bedwars.four_four_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.four_four_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.four_four_final_kills_bedwars/data.player.stats.Bedwars.four_four_final_deaths_bedwars;\')(data)',
-          "Stars:" :  "data.player.achievements.bedwars_level"
+          "FKDR" : 'Function(\'"use strict"; if (data.player.stats.Bedwars.four_four_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.four_four_final_deaths_bedwars == 0 || data.player.stats.Bedwars.four_four_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.four_four_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.four_four_final_kills_bedwars/data.player.stats.Bedwars.four_four_final_deaths_bedwars;\')(data)',
+          "Winstreak" : "data.player.stats.Bedwars.winstreak",
+          "Stars" :  "data.player.achievements.bedwars_level"
         },
         "colorConditions" : {
           "blacklist.includes(playerName)" : "#e74a3b",
@@ -178,10 +204,10 @@ function checkUndefineds()
       },
       "UHC/Sumo Duels" : {
         "stats" : {
-          "Sumo Winstreak:" : "data.player.stats.Duels.current_sumo_winstreak",
-          "Sumo W/L:" : "data.player.stats.Duels.sumo_duel_wins/data.player.stats.Duels.sumo_duel_losses",
-          "UHC Winstreak:" : "data.player.stats.Duels.current_uhc_winstreak",
-          "UHC W/L:" : "data.player.stats.Duels.uhc_duel_wins/data.player.stats.Duels.uhc_duel_losses"
+          "Sumo Winstreak" : "data.player.stats.Duels.current_sumo_winstreak",
+          "Sumo W/L" : "data.player.stats.Duels.sumo_duel_wins/data.player.stats.Duels.sumo_duel_losses",
+          "UHC Winstreak" : "data.player.stats.Duels.current_uhc_winstreak",
+          "UHC W/L" : "data.player.stats.Duels.uhc_duel_wins/data.player.stats.Duels.uhc_duel_losses"
         },
         "colorConditions" : {
           "blacklist.includes(playerName)" : "#e74a3b",
@@ -193,11 +219,11 @@ function checkUndefineds()
       },
       "Custom Stats Examples" : {
         "stats" : {
-          "One Specific Stat (Winstreak:)" : "data.player.stats.Bedwars.winstreak",
-          "Simple Math (FKDR):" : "data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars",
-          "Javascript Math (Network Level):" : "(Math.sqrt(data.player.networkExp + 15312.5) - 125/Math.sqrt(2))/(25*Math.sqrt(2))",
-          "Embedded Functions (Fixed FKDR):" : 'Function(\'"use strict"; if (data.player.stats.Bedwars.four_four_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.four_four_final_deaths_bedwars == 0 || data.player.stats.Bedwars.four_four_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.four_four_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.four_four_final_kills_bedwars/data.player.stats.Bedwars.four_four_final_deaths_bedwars;\')(data)',
-          "String Returns:" : 'Function(\'"use strict"; if (data.player.playername == undefined) { return "Nick!"; } else { return undefined; }\')(data)'
+          "One Specific Stat (Winstreak)" : "data.player.stats.Bedwars.winstreak",
+          "Simple Math (FKDR)" : "data.player.stats.Bedwars.four_four_final_kills_bedwars / data.player.stats.Bedwars.four_four_final_deaths_bedwars",
+          "Javascript Math (Network Level)" : "(Math.sqrt(data.player.networkExp + 15312.5) - 125/Math.sqrt(2))/(25*Math.sqrt(2))",
+          "Embedded Functions (Fixed FKDR)" : 'Function(\'"use strict"; if (data.player.stats.Bedwars.four_four_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.four_four_final_deaths_bedwars == 0 || data.player.stats.Bedwars.four_four_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.four_four_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.four_four_final_kills_bedwars/data.player.stats.Bedwars.four_four_final_deaths_bedwars;\')(data)',
+          "String Returns" : 'Function(\'"use strict"; if (data.player.playername == undefined) { return "Nick!"; } else { return undefined; }\')(data)'
         },
         "colorConditions" : {
           "blacklist.includes(playerName)" : "#e74a3b",

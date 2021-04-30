@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HypixelStats Overlay</title>
+    <script type='text/javascript' src="jquery.js"></script>
+    <link rel="stylesheet" href="overlay.css">
+</head>
+<body>
+    <div class='mainBar' id="dragMe" style="border-radius: 5px; font-size: x-large; background-image: linear-gradient(180deg,#4e73df 10%,#224abe 100%); position: absolute; top: 0; right: 0; bottom: 0; left: 0; -webkit-app-region: drag; -webkit-user-select: none; user-select: none;">
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            Drag this window to where you want it! (Don't worry, the blue goes away once you click off.)
+        </div>
+    </div>
+    <div id='mainBody' class='mainBody' style="width: fit-content; height: fit-content;">
+    </div>
+    <script src="overlay.js"></script>
+</body>
+</html>
