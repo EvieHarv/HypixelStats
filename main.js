@@ -103,6 +103,21 @@ app.on('ready', function()
 ipcMain.on('launchOverlay', function(event, data){
   if (!overlayWindow)
   {
+    if (process.platform == "win32")
+    {
+        // I made the AHK a compiled script so that you don't have to have AHK installed
+        // You can find the AHK script in node-key-sender/FakeFullscreen.ahk
+        var AHKpath = path.join(__dirname, 'node-key-sender', 'FakeFullscreen.exe');
+        if (__dirname.includes('app.asar')) // A slightly strange way to check if we're in the published executable
+        {
+          AHKpath = path.join(__dirname.split("app.asar")[0], 'FakeFullscreen.exe');
+        }
+        exec(AHKpath, {}, function(error, stdout, stderr) {
+          if (error) {
+            console.log(`error: ${error.message}`);
+          }
+        });
+    }
     overlayWindow = new BrowserWindow({
       webPreferences: 
       {
