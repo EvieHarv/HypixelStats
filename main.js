@@ -98,32 +98,50 @@ app.on('ready', function()
   }
 
   initalizeGlobalShortcuts();
+});
 
-  overlayWindow = new BrowserWindow({
-    webPreferences: 
-    {
-      nodeIntegration: true,
-      contextIsolation: false
-    },
-    width: 900,
-    height: 600,
-    resizable: false,
-    frame: false,
-    transparent: true
-  });
-  overlayWindow.loadFile("./overlay/index.html");
-  overlayWindow.setAlwaysOnTop(true, "normal");
-  overlayWindow.on('blur', function()
+ipcMain.on('launchOverlay', function(event, data){
+  if (!overlayWindow)
   {
-    overlayWindow.webContents.send('lostFocus');
-    //overlayWindow.setIgnoreMouseEvents(true);
-  });
+    overlayWindow = new BrowserWindow({
+      webPreferences: 
+      {
+        nodeIntegration: true,
+        contextIsolation: false
+      },
+      width: 900,
+      height: 600,
+      resizable: false,
+      frame: false,
+      transparent: true
+    });
+    overlayWindow.loadFile("./overlay/index.html");
+    overlayWindow.setAlwaysOnTop(true, "normal");
+    overlayWindow.on('blur', function()
+    {
+      overlayWindow.webContents.send('lostFocus');
+      overlayWindow.setIgnoreMouseEvents(true);
+    });
+    overlayWindow.on('closed', function(){ overlayWindow = undefined; });
+  }
 });
 
 // Pass data from MainWindow to OverlayWindow
 ipcMain.on('overlayData', function(event, data){
-  overlayWindow.webContents.send('playerData', data);
+  if (overlayWindow)
+  {
+    overlayWindow.webContents.send('playerData', data);
+  }
 });
+
+ipcMain.on('requestData', function(event, data){
+  mainWindow.webContents.send('overlayRequest');
+});
+
+ipcMain.on('killOverlay', function(event, data){
+  overlayWindow.close();
+});
+
 
 ipcMain.on('keybindsChanged', function(){
   initalizeGlobalShortcuts();
@@ -133,11 +151,11 @@ ipcMain.on('keybindsChanged', function(){
 function initalizeGlobalShortcuts()
 {
   globalShortcut.unregisterAll();
-  shortcuts = store.get('keybinds');
+  keybinds = store.get('keybinds');
   
-  if (shortcuts.profUp !== null && isAccelerator(shortcuts.profUp)) // We verify that it is valid or null when we set it, but it may be good to validate. Dunno.
+  if (keybinds.profUp !== null && isAccelerator(keybinds.profUp)) // We verify that it is valid or null when we set it, but it may be good to validate. Dunno.
   {
-    const pfu = globalShortcut.register(shortcuts.profUp, () => 
+    const pfu = globalShortcut.register(keybinds.profUp, () => 
     {
       profs = store.get('profiles');
       index = Object.keys(profs).indexOf(store.get('active_profile'));
@@ -152,9 +170,9 @@ function initalizeGlobalShortcuts()
     });  
   };
 
-  if (shortcuts.profDown !== null && isAccelerator(shortcuts.profDown))
+  if (keybinds.profDown !== null && isAccelerator(keybinds.profDown))
   {
-    const pfd = globalShortcut.register(shortcuts.profDown, () => 
+    const pfd = globalShortcut.register(keybinds.profDown, () => 
     {
       profs = store.get('profiles');
       index = Object.keys(profs).indexOf(store.get('active_profile'));
@@ -169,9 +187,21 @@ function initalizeGlobalShortcuts()
     });
   };
 
-  if (shortcuts.lobbyMode !== null && isAccelerator(shortcuts.lobbyMode))
+  if (keybinds.focusOverlay !== null && isAccelerator(keybinds.focusOverlay))
   {
-    const lbm = globalShortcut.register(shortcuts.lobbyMode, () => 
+    const lbm = globalShortcut.register(keybinds.focusOverlay, () => 
+    {
+      if (overlayWindow)
+      {
+        overlayWindow.setIgnoreMouseEvents(false);
+        overlayWindow.focus()
+      }
+    });
+  };
+
+  if (keybinds.lobbyMode !== null && isAccelerator(keybinds.lobbyMode))
+  {
+    const lbm = globalShortcut.register(keybinds.lobbyMode, () => 
     {
       // TODO;
       // mainWindow.webContents.send('lobbyMode', "");
@@ -306,7 +336,14 @@ function checkUndefineds()
   // Initalize the toplevel property
   if (store.get('keybinds') == undefined)
   {
-    store.set('keybinds', { "profUp": "Control+U", "profDown" : "Control+I", "lobbyMode": "Control+L" });
+    store.set('keybinds', { "profUp": "Control+U", "profDown" : "Control+I", "focusOverlay": "Control+Shift+G", "lobbyMode": "Control+L" });
+  }
+  keybinds = store.get('keybinds');
+  // Check for stuff that was added after initial commit
+  if (keybinds.focusOverlay == undefined)
+  {
+    keybinds.focusOverlay = "Control+Shift+G";
+    store.set("keybinds", keybinds)
   }
 }
 

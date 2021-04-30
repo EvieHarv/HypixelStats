@@ -144,14 +144,17 @@
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-0">
                         <h1 class="h3 mb-0 text-gray-800">Players:</h1>
-                        <ul class="navbar-nav ml-auto" style='width: fit-content;'>
-                            <li class="dropdown">
-                                <a class="btn btn-primary dropdown-toggle pl-1 pr-1" href="javascript:void(0)" id="profileDropdown" role="button" data-toggle="dropdown">Loading Profiles...</a>
-                                <div class="dropdown-menu dropdown-menu-right" id="dropdownMenu">
-                                    <a class="dropdown-item" href="javascript:void(0)">Loading...</a>
-                                </div>
-                            </li>
-                        </ul>
+                        <div style="width: fit-content;">
+                            <button class='btn btn-info mb-0' id='overlayBtn'>Launch Overlay</button>
+                            <ul class="navbar-nav ml-1" style='width: fit-content; display: inline; float: right;'>
+                                <li class="dropdown">
+                                    <a class="btn btn-primary dropdown-toggle pl-1 pr-1" href="javascript:void(0)" id="profileDropdown" role="button" data-toggle="dropdown">Loading Profiles...</a>
+                                    <div class="dropdown-menu dropdown-menu-right" id="dropdownMenu">
+                                        <a class="dropdown-item" href="javascript:void(0)">Loading...</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                     <p class="text-sm mb-4 text-gray-800">Do <code>/who</code> again if not everyone shows up.</p>
                     <!-- Content Row -->
@@ -244,6 +247,35 @@
     $('#updateBtn').click(function()
     { 
         ipcRenderer.send('updateConfirmed');
+    });
+    $("#overlayBtn").click(function()
+    {
+        if (sessionStorage.getItem('overlayActive') == undefined || sessionStorage.getItem('overlayActive') == "false")
+        {   
+            ipcRenderer.send('launchOverlay');
+            sessionStorage.setItem('overlayActive', true);
+            $("#overlayBtn").html('Kill Overlay');
+            $("#overlayBtn").removeClass('btn-info');
+            $("#overlayBtn").addClass('btn-danger');
+        }
+        else
+        {
+            ipcRenderer.send('killOverlay');
+            sessionStorage.setItem('overlayActive', false);
+            $("#overlayBtn").html('Launch Overlay');
+            $("#overlayBtn").removeClass('btn-danger');
+            $("#overlayBtn").addClass('btn-info');
+        }
+    });
+
+    $(function()
+    {
+        if (sessionStorage.getItem('overlayActive') == "true")
+        {
+            $("#overlayBtn").html('Kill Overlay');
+            $("#overlayBtn").removeClass('btn-info');
+            $("#overlayBtn").addClass('btn-danger');
+        };
     });
 
     ipcRenderer.on('downloadJava', function (event) 

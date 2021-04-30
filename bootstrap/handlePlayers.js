@@ -365,6 +365,14 @@ function sendDataToOverlay()
     ipcRenderer.send('overlayData', finalObject);
 }
 
+ipcRenderer.on('overlayRequest', function (event) 
+{
+    sendDataToOverlay();
+});
+
+
+
+
 $.fn.reverse = [].reverse;
 
 function resolve(path, obj) {
