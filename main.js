@@ -281,9 +281,9 @@ function checkUndefineds()
       },
       "Bedwars 3v3v3v3": {
         "stats": {
+          "✫": "data.player.achievements.bedwars_level"
           "Winstreak:": "Function('\"use strict\"; if (data.player.stats.Bedwars.winstreak == undefined) {return 0;}; return data.player.stats.Bedwars.winstreak;')(data)",
           "FKDR:": "Function('\"use strict\"; if (data.player.stats.Bedwars.four_three_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.four_three_final_deaths_bedwars == 0 || data.player.stats.Bedwars.four_three_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.four_three_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.four_three_final_kills_bedwars/data.player.stats.Bedwars.four_three_final_deaths_bedwars;')(data)",
-          "✫": "data.player.achievements.bedwars_level"
         },
         "colorConditions": {
           "blacklist.includes(playerName)": "#e74a3b",
