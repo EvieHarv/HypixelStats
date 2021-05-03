@@ -155,6 +155,24 @@ $(function()
         }
     });
 
+    if (store.get('fakeFullscreen') == true)
+    {
+        $("#fakeFullscreen").prop('checked', true);
+    }
+
+    $("#fakeFullscreen").change(function()
+    {
+        if (this.checked)
+        {
+            $("#fakeFullscreen").prop('checked', true);
+            store.set('fakeFullscreen', true);
+        }
+        else
+        {
+            store.delete('fakeFullscreen');
+        }    
+    });
+
     keybinds = store.get('keybinds');
     $( "#kbProfileUp" ).val(keybinds.profUp);
     $( "#kbProfileDown" ).val(keybinds.profDown);

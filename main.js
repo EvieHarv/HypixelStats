@@ -103,20 +103,21 @@ app.on('ready', function()
 ipcMain.on('launchOverlay', function(event, data){
   if (!overlayWindow)
   {
-    if (process.platform == "win32")
+    if (process.platform == "win32" && store.get('fakeFullscreen') == true)
     {
-        // I made the AHK a compiled script so that you don't have to have AHK installed
-        // You can find the AHK script in node-key-sender/FakeFullscreen.ahk
-        var AHKpath = path.join(__dirname, 'node-key-sender', 'FakeFullscreen.exe');
-        if (__dirname.includes('app.asar')) // A slightly strange way to check if we're in the published executable
-        {
-          AHKpath = path.join(__dirname.split("app.asar")[0], 'FakeFullscreen.exe');
+      console.log('doing fake fullscreen')
+      // I made the AHK a compiled script so that you don't have to have AHK installed
+      // You can find the AHK script in node-key-sender/FakeFullscreen.ahk
+      var AHKpath = path.join(__dirname, 'node-key-sender', 'FakeFullscreen.exe');
+      if (__dirname.includes('app.asar')) // A slightly strange way to check if we're in the published executable
+      {
+        AHKpath = path.join(__dirname.split("app.asar")[0], 'FakeFullscreen.exe');
+      }
+      exec(AHKpath, {}, function(error, stdout, stderr) {
+        if (error) {
+          console.log(`error: ${error.message}`);
         }
-        exec(AHKpath, {}, function(error, stdout, stderr) {
-          if (error) {
-            console.log(`error: ${error.message}`);
-          }
-        });
+      });
     }
     overlayWindow = new BrowserWindow({
       webPreferences: 
@@ -234,8 +235,8 @@ function checkUndefineds()
       "Bedwars Overall": {
         "stats": {
           "✫": "data.player.achievements.bedwars_level",
-          "Winstreak:": "Function('\"use strict\"; if (data.player.stats.Bedwars.winstreak == undefined) {return 0;}; return data.player.stats.Bedwars.winstreak;')(data)",
-          "FKDR:": "Function('\"use strict\"; if (data.player.stats.Bedwars.final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.final_deaths_bedwars == 0 || data.player.stats.Bedwars.final_deaths_bedwars == undefined) { data.player.stats.Bedwars.final_deaths_bedwars = 1; } return data.player.stats.Bedwars.final_kills_bedwars/data.player.stats.Bedwars.final_deaths_bedwars;')(data)"
+          "Winstreak": "Function('\"use strict\"; if (data.player.stats.Bedwars.winstreak == undefined) {return 0;}; return data.player.stats.Bedwars.winstreak;')(data)",
+          "FKDR": "Function('\"use strict\"; if (data.player.stats.Bedwars.final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.final_deaths_bedwars == 0 || data.player.stats.Bedwars.final_deaths_bedwars == undefined) { data.player.stats.Bedwars.final_deaths_bedwars = 1; } return data.player.stats.Bedwars.final_kills_bedwars/data.player.stats.Bedwars.final_deaths_bedwars;')(data)"
         },
         "colorConditions": {
           "blacklist.includes(playerName)": "#e74a3b",
@@ -250,8 +251,8 @@ function checkUndefineds()
       "Bedwars Solos": {
         "stats": {
           "✫": "data.player.achievements.bedwars_level",
-          "Winstreak:": "Function('\"use strict\"; if (data.player.stats.Bedwars.winstreak == undefined) {return 0;}; return data.player.stats.Bedwars.winstreak;')(data)",
-          "FKDR:": "Function('\"use strict\"; if (data.player.stats.Bedwars.eight_one_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.eight_one_final_deaths_bedwars == 0 || data.player.stats.Bedwars.eight_one_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.eight_one_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.eight_one_final_kills_bedwars/data.player.stats.Bedwars.eight_one_final_deaths_bedwars;')(data)"
+          "Winstreak": "Function('\"use strict\"; if (data.player.stats.Bedwars.winstreak == undefined) {return 0;}; return data.player.stats.Bedwars.winstreak;')(data)",
+          "FKDR": "Function('\"use strict\"; if (data.player.stats.Bedwars.eight_one_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.eight_one_final_deaths_bedwars == 0 || data.player.stats.Bedwars.eight_one_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.eight_one_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.eight_one_final_kills_bedwars/data.player.stats.Bedwars.eight_one_final_deaths_bedwars;')(data)"
         },
         "colorConditions": {
           "blacklist.includes(playerName)": "#e74a3b",
@@ -266,8 +267,8 @@ function checkUndefineds()
       "Bedwars Doubles": {
         "stats": {
           "✫": "data.player.achievements.bedwars_level",
-          "Winstreak:": "Function('\"use strict\"; if (data.player.stats.Bedwars.winstreak == undefined) {return 0;}; return data.player.stats.Bedwars.winstreak;')(data)",
-          "FKDR:": "Function('\"use strict\"; if (data.player.stats.Bedwars.eight_two_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.eight_two_final_deaths_bedwars == 0 || data.player.stats.Bedwars.eight_two_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.eight_two_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.eight_two_final_kills_bedwars/data.player.stats.Bedwars.eight_two_final_deaths_bedwars;')(data)"
+          "Winstreak": "Function('\"use strict\"; if (data.player.stats.Bedwars.winstreak == undefined) {return 0;}; return data.player.stats.Bedwars.winstreak;')(data)",
+          "FKDR": "Function('\"use strict\"; if (data.player.stats.Bedwars.eight_two_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.eight_two_final_deaths_bedwars == 0 || data.player.stats.Bedwars.eight_two_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.eight_two_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.eight_two_final_kills_bedwars/data.player.stats.Bedwars.eight_two_final_deaths_bedwars;')(data)"
         },
         "colorConditions": {
           "blacklist.includes(playerName)": "#e74a3b",
@@ -281,8 +282,8 @@ function checkUndefineds()
       },
       "Bedwars 3v3v3v3": {
         "stats": {
-          "Winstreak:": "Function('\"use strict\"; if (data.player.stats.Bedwars.winstreak == undefined) {return 0;}; return data.player.stats.Bedwars.winstreak;')(data)",
-          "FKDR:": "Function('\"use strict\"; if (data.player.stats.Bedwars.four_three_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.four_three_final_deaths_bedwars == 0 || data.player.stats.Bedwars.four_three_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.four_three_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.four_three_final_kills_bedwars/data.player.stats.Bedwars.four_three_final_deaths_bedwars;')(data)",
+          "Winstreak": "Function('\"use strict\"; if (data.player.stats.Bedwars.winstreak == undefined) {return 0;}; return data.player.stats.Bedwars.winstreak;')(data)",
+          "FKDR": "Function('\"use strict\"; if (data.player.stats.Bedwars.four_three_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.four_three_final_deaths_bedwars == 0 || data.player.stats.Bedwars.four_three_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.four_three_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.four_three_final_kills_bedwars/data.player.stats.Bedwars.four_three_final_deaths_bedwars;')(data)",
           "✫": "data.player.achievements.bedwars_level"
         },
         "colorConditions": {
@@ -298,8 +299,8 @@ function checkUndefineds()
       "Bedwars 4v4v4v4": {
         "stats": {
           "✫": "data.player.achievements.bedwars_level",
-          "Winstreak:": "Function('\"use strict\"; if (data.player.stats.Bedwars.winstreak == undefined) {return 0;}; return data.player.stats.Bedwars.winstreak;')(data)",
-          "FKDR:": "Function('\"use strict\"; if (data.player.stats.Bedwars.four_four_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.four_four_final_deaths_bedwars == 0 || data.player.stats.Bedwars.four_four_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.four_four_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.four_four_final_kills_bedwars/data.player.stats.Bedwars.four_four_final_deaths_bedwars;')(data)"
+          "Winstreak": "Function('\"use strict\"; if (data.player.stats.Bedwars.winstreak == undefined) {return 0;}; return data.player.stats.Bedwars.winstreak;')(data)",
+          "FKDR": "Function('\"use strict\"; if (data.player.stats.Bedwars.four_four_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.four_four_final_deaths_bedwars == 0 || data.player.stats.Bedwars.four_four_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.four_four_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.four_four_final_kills_bedwars/data.player.stats.Bedwars.four_four_final_deaths_bedwars;')(data)"
         },
         "colorConditions": {
           "blacklist.includes(playerName)": "#e74a3b",
@@ -314,8 +315,8 @@ function checkUndefineds()
       "Bedwars 4v4": {
         "stats": {
           "✫": "data.player.achievements.bedwars_level",
-          "Winstreak:": "Function('\"use strict\"; if (data.player.stats.Bedwars.winstreak == undefined) {return 0;}; return data.player.stats.Bedwars.winstreak;')(data)",
-          "FKDR:": "Function('\"use strict\"; if (data.player.stats.Bedwars.two_four_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.two_four_final_deaths_bedwars == 0 || data.player.stats.Bedwars.two_four_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.two_four_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.two_four_final_kills_bedwars/data.player.stats.Bedwars.two_four_final_deaths_bedwars;')(data)"
+          "Winstreak": "Function('\"use strict\"; if (data.player.stats.Bedwars.winstreak == undefined) {return 0;}; return data.player.stats.Bedwars.winstreak;')(data)",
+          "FKDR": "Function('\"use strict\"; if (data.player.stats.Bedwars.two_four_final_kills_bedwars == undefined) {return 0;}; if (data.player.stats.Bedwars.two_four_final_deaths_bedwars == 0 || data.player.stats.Bedwars.two_four_final_deaths_bedwars == undefined) { data.player.stats.Bedwars.two_four_final_deaths_bedwars = 1; } return data.player.stats.Bedwars.two_four_final_kills_bedwars/data.player.stats.Bedwars.two_four_final_deaths_bedwars;')(data)"
         },
         "colorConditions": {
           "blacklist.includes(playerName)": "#e74a3b",
@@ -329,9 +330,9 @@ function checkUndefineds()
       },
       "Sumo Duels": {
         "stats": {
-          "Winstreak:": "Function('\"use strict\"; if (data.player.stats.Duels.current_sumo_winstreak == undefined) {return 0;}; return data.player.stats.Duels.current_sumo_winstreak;')(data)",
-          "W/L:": "Function('\"use strict\"; if (data.player.stats.Duels.sumo_duel_wins == undefined) {return 0;}; if (data.player.stats.Duels.sumo_duel_losses == 0 || data.player.stats.Duels.sumo_duel_losses == undefined) { data.player.stats.Duels.sumo_duel_losses = 1; } return data.player.stats.Duels.sumo_duel_wins/data.player.stats.Duels.sumo_duel_losses;')(data)",
-          "K/D:": "Function('\"use strict\"; if (data.player.stats.Duels.sumo_duel_kills == undefined) {return 0;}; if (data.player.stats.Duels.sumo_duel_deaths == 0 || data.player.stats.Duels.sumo_duel_deaths == undefined) { data.player.stats.Duels.sumo_duel_deaths = 1; } return data.player.stats.Duels.sumo_duel_kills/data.player.stats.Duels.sumo_duel_deaths;')(data)"
+          "Winstreak": "Function('\"use strict\"; if (data.player.stats.Duels.current_sumo_winstreak == undefined) {return 0;}; return data.player.stats.Duels.current_sumo_winstreak;')(data)",
+          "W/L": "Function('\"use strict\"; if (data.player.stats.Duels.sumo_duel_wins == undefined) {return 0;}; if (data.player.stats.Duels.sumo_duel_losses == 0 || data.player.stats.Duels.sumo_duel_losses == undefined) { data.player.stats.Duels.sumo_duel_losses = 1; } return data.player.stats.Duels.sumo_duel_wins/data.player.stats.Duels.sumo_duel_losses;')(data)",
+          "K/D": "Function('\"use strict\"; if (data.player.stats.Duels.sumo_duel_kills == undefined) {return 0;}; if (data.player.stats.Duels.sumo_duel_deaths == 0 || data.player.stats.Duels.sumo_duel_deaths == undefined) { data.player.stats.Duels.sumo_duel_deaths = 1; } return data.player.stats.Duels.sumo_duel_kills/data.player.stats.Duels.sumo_duel_deaths;')(data)"
         },
         "colorConditions": {
           "blacklist.includes(playerName)": "#e74a3b",
@@ -343,9 +344,9 @@ function checkUndefineds()
       },
       "UHC Duels": {
         "stats": {
-          "Winstreak:": "Function('\"use strict\"; if (data.player.stats.Duels.current_uhc_winstreak == undefined) {return 0;}; return data.player.stats.Duels.current_uhc_winstreak;')(data)",
-          "W/L:": "Function('\"use strict\"; if (data.player.stats.Duels.uhc_duel_wins == undefined) {return 0;}; if (data.player.stats.Duels.uhc_duel_losses == 0 || data.player.stats.Duels.uhc_duel_losses == undefined) { data.player.stats.Duels.uhc_duel_losses = 1; } return data.player.stats.Duels.uhc_duel_wins/data.player.stats.Duels.uhc_duel_losses;')(data)",
-          "K/D:": "Function('\"use strict\"; if (data.player.stats.Duels.uhc_duel_kills == undefined) {return 0;}; if (data.player.stats.Duels.uhc_duel_deaths == 0 || data.player.stats.Duels.uhc_duel_deaths == undefined) { data.player.stats.Duels.uhc_duel_deaths = 1; } return data.player.stats.Duels.uhc_duel_kills/data.player.stats.Duels.uhc_duel_deaths;')(data)"
+          "Winstreak": "Function('\"use strict\"; if (data.player.stats.Duels.current_uhc_winstreak == undefined) {return 0;}; return data.player.stats.Duels.current_uhc_winstreak;')(data)",
+          "W/L": "Function('\"use strict\"; if (data.player.stats.Duels.uhc_duel_wins == undefined) {return 0;}; if (data.player.stats.Duels.uhc_duel_losses == 0 || data.player.stats.Duels.uhc_duel_losses == undefined) { data.player.stats.Duels.uhc_duel_losses = 1; } return data.player.stats.Duels.uhc_duel_wins/data.player.stats.Duels.uhc_duel_losses;')(data)",
+          "K/D": "Function('\"use strict\"; if (data.player.stats.Duels.uhc_duel_kills == undefined) {return 0;}; if (data.player.stats.Duels.uhc_duel_deaths == 0 || data.player.stats.Duels.uhc_duel_deaths == undefined) { data.player.stats.Duels.uhc_duel_deaths = 1; } return data.player.stats.Duels.uhc_duel_kills/data.player.stats.Duels.uhc_duel_deaths;')(data)"
         },
         "colorConditions": {
           "blacklist.includes(playerName)": "#e74a3b",
@@ -357,9 +358,9 @@ function checkUndefineds()
       },
       "Bridge Duels": {
         "stats": {
-          "Winstreak:": "Function('\"use strict\"; if (data.player.stats.Duels.current_bridge_winstreak == undefined) {return 0;}; return data.player.stats.Duels.current_bridge_winstreak;')(data)",
-          "W/L:": "Function('\"use strict\"; if (data.player.stats.Duels.bridge_duel_wins == undefined) {return 0;}; if (data.player.stats.Duels.bridge_duel_losses == 0 || data.player.stats.Duels.bridge_duel_losses == undefined) { data.player.stats.Duels.bridge_duel_losses = 1; } return data.player.stats.Duels.bridge_duel_wins/data.player.stats.Duels.bridge_duel_losses;')(data)",
-          "K/D:": "Function('\"use strict\"; if (data.player.stats.Duels.bridge_duel_kills == undefined) {return 0;}; if (data.player.stats.Duels.bridge_duel_deaths == 0 || data.player.stats.Duels.bridge_duel_deaths == undefined) { data.player.stats.Duels.bridge_duel_deaths = 1; } return data.player.stats.Duels.bridge_duel_kills/data.player.stats.Duels.bridge_duel_deaths;')(data)"
+          "Winstreak": "Function('\"use strict\"; if (data.player.stats.Duels.current_bridge_winstreak == undefined) {return 0;}; return data.player.stats.Duels.current_bridge_winstreak;')(data)",
+          "W/L": "Function('\"use strict\"; if (data.player.stats.Duels.bridge_duel_wins == undefined) {return 0;}; if (data.player.stats.Duels.bridge_duel_losses == 0 || data.player.stats.Duels.bridge_duel_losses == undefined) { data.player.stats.Duels.bridge_duel_losses = 1; } return data.player.stats.Duels.bridge_duel_wins/data.player.stats.Duels.bridge_duel_losses;')(data)",
+          "K/D": "Function('\"use strict\"; if (data.player.stats.Duels.bridge_duel_kills == undefined) {return 0;}; if (data.player.stats.Duels.bridge_duel_deaths == 0 || data.player.stats.Duels.bridge_duel_deaths == undefined) { data.player.stats.Duels.bridge_duel_deaths = 1; } return data.player.stats.Duels.bridge_duel_kills/data.player.stats.Duels.bridge_duel_deaths;')(data)"
         },
         "colorConditions": {
           "blacklist.includes(playerName)": "#e74a3b",
@@ -371,9 +372,9 @@ function checkUndefineds()
       },
       "OP Duels": {
         "stats": {
-          "Winstreak:": "Function('\"use strict\"; if (data.player.stats.Duels.current_op_winstreak == undefined) {return 0;}; return data.player.stats.Duels.current_op_winstreak;')(data)",
-          "W/L:": "Function('\"use strict\"; if (data.player.stats.Duels.op_duel_wins == undefined) {return 0;}; if (data.player.stats.Duels.op_duel_losses == 0 || data.player.stats.Duels.op_duel_losses == undefined) { data.player.stats.Duels.op_duel_losses = 1; } return data.player.stats.Duels.op_duel_wins/data.player.stats.Duels.op_duel_losses;')(data)",
-          "K/D:": "Function('\"use strict\"; if (data.player.stats.Duels.op_duel_kills == undefined) {return 0;}; if (data.player.stats.Duels.op_duel_deaths == 0 || data.player.stats.Duels.op_duel_deaths == undefined) { data.player.stats.Duels.op_duel_deaths = 1; } return data.player.stats.Duels.op_duel_kills/data.player.stats.Duels.op_duel_deaths;')(data)"
+          "Winstreak": "Function('\"use strict\"; if (data.player.stats.Duels.current_op_winstreak == undefined) {return 0;}; return data.player.stats.Duels.current_op_winstreak;')(data)",
+          "W/L": "Function('\"use strict\"; if (data.player.stats.Duels.op_duel_wins == undefined) {return 0;}; if (data.player.stats.Duels.op_duel_losses == 0 || data.player.stats.Duels.op_duel_losses == undefined) { data.player.stats.Duels.op_duel_losses = 1; } return data.player.stats.Duels.op_duel_wins/data.player.stats.Duels.op_duel_losses;')(data)",
+          "K/D": "Function('\"use strict\"; if (data.player.stats.Duels.op_duel_kills == undefined) {return 0;}; if (data.player.stats.Duels.op_duel_deaths == 0 || data.player.stats.Duels.op_duel_deaths == undefined) { data.player.stats.Duels.op_duel_deaths = 1; } return data.player.stats.Duels.op_duel_kills/data.player.stats.Duels.op_duel_deaths;')(data)"
         },
         "colorConditions": {
           "blacklist.includes(playerName)": "#e74a3b",
@@ -385,9 +386,9 @@ function checkUndefineds()
       },
       "Classic Duels": {
         "stats": {
-          "Winstreak:": "Function('\"use strict\"; if (data.player.stats.Duels.current_classic_winstreak == undefined) {return 0;}; return data.player.stats.Duels.current_classic_winstreak;')(data)",
-          "W/L:": "Function('\"use strict\"; if (data.player.stats.Duels.classic_duel_wins == undefined) {return 0;}; if (data.player.stats.Duels.classic_duel_losses == 0 || data.player.stats.Duels.classic_duel_losses == undefined) { data.player.stats.Duels.classic_duel_losses = 1; } return data.player.stats.Duels.classic_duel_wins/data.player.stats.Duels.classic_duel_losses;')(data)",
-          "K/D:": "Function('\"use strict\"; if (data.player.stats.Duels.classic_duel_kills == undefined) {return 0;}; if (data.player.stats.Duels.classic_duel_deaths == 0 || data.player.stats.Duels.classic_duel_deaths == undefined) { data.player.stats.Duels.classic_duel_deaths = 1; } return data.player.stats.Duels.classic_duel_kills/data.player.stats.Duels.classic_duel_deaths;')(data)"
+          "Winstreak": "Function('\"use strict\"; if (data.player.stats.Duels.current_classic_winstreak == undefined) {return 0;}; return data.player.stats.Duels.current_classic_winstreak;')(data)",
+          "W/L": "Function('\"use strict\"; if (data.player.stats.Duels.classic_duel_wins == undefined) {return 0;}; if (data.player.stats.Duels.classic_duel_losses == 0 || data.player.stats.Duels.classic_duel_losses == undefined) { data.player.stats.Duels.classic_duel_losses = 1; } return data.player.stats.Duels.classic_duel_wins/data.player.stats.Duels.classic_duel_losses;')(data)",
+          "K/D": "Function('\"use strict\"; if (data.player.stats.Duels.classic_duel_kills == undefined) {return 0;}; if (data.player.stats.Duels.classic_duel_deaths == 0 || data.player.stats.Duels.classic_duel_deaths == undefined) { data.player.stats.Duels.classic_duel_deaths = 1; } return data.player.stats.Duels.classic_duel_kills/data.player.stats.Duels.classic_duel_deaths;')(data)"
         },
         "colorConditions": {
           "blacklist.includes(playerName)": "#e74a3b",
