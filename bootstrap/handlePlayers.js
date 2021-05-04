@@ -179,6 +179,7 @@ function updatePlayerData(player)
     // Get the active profile and the user data
     profile = store.get('profiles')[store.get('active_profile')];
     data = $("#" + player).data('data');
+    // TODO: Possibly assign before this point so it actually sticks. I do like how this keeps stuff up-to-date though. TBD.
     data.internal.blacklist = store.get('blacklist');
     data.internal.whitelist = store.get('whitelist');
     data.internal.seenPlayers = sessionStorage.getItem('seenPlayers').split(',').filter(function (el) {return el != "";}); // I hate how scuffed this is.
@@ -188,6 +189,8 @@ function updatePlayerData(player)
     worker.postMessage([profile, data]);
     worker.onmessage = function (e) 
     {
+        data = $("#" + player).data('data'); // Need to re-get because otherwise the worker threads collide.
+
         // Delete the worker to free system resources
         e.target.terminate();
 

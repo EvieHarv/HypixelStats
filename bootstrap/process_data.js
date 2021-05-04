@@ -19,7 +19,8 @@ function handlePlayer(profile, data)
     returnObject.stats = {};
     // Iterate through the stats and assign them to returnObject.stats. (e.g., returnObject.stats.FKDR)
     for (var entry in profile["stats"])
-    {        
+    {
+        if (profile.stats[entry].includes('("data.')){ console.warn("HEY! It looks like you're using an R-function incorrectly—don't start it with 'data.'! Just get straight to the stat. (e.g. 'player.etc'). If you know what you're doing, you can ignore this message."); }
         value = undefined;
         // Wrap in a try/catch because idk what these people are gonna put
         try{ value = Function('"use strict"; var data = arguments[0]; return ' + profile.stats[entry] + ';')(data); }
