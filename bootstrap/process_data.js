@@ -23,7 +23,7 @@ function handlePlayer(profile, data)
         value = undefined;
         // Wrap in a try/catch because idk what these people are gonna put
         try{ value = Function('"use strict"; var data = arguments[0]; return ' + profile.stats[entry] + ';')(data); }
-        catch(error){ console.error(error); }
+        catch(error){ console.error(error); console.warn('The error above was encountered while processing the stat "' + entry + '" for ' + data.internal.name); }
 
         // If it's numeric, fix it to 2 decimals.
         if (typeof value === 'number') {
@@ -64,7 +64,7 @@ function handlePlayer(profile, data)
                 // If {condition == true}, return {color}.
                 // Can error out for the user, still want to continue going if it does.
                 try { color = Function('"use strict"; var data = arguments[0]; if (' + condition + ') { return ("' + profile.colorConditions[condition] + '"); } ')(data); }
-                catch(error){ console.error(error); }; 
+                catch(error){ console.error(error); console.warn('The error above was encountered while processing the color condition "' + condition + '" for ' + data.internal.name); }; 
             }
         }
         // A color was found
@@ -89,7 +89,7 @@ function handlePlayer(profile, data)
     {
         value = undefined;
         try{ value = Function('"use strict"; var data = arguments[0]; return (' + profile.sort + ')')(data); }
-        catch(error){ console.error(error); }
+        catch(error){ console.error(error); console.warn('The error above was encountered while sorting ' + data.internal.name); }
 
         if (value == undefined)
         {
@@ -97,7 +97,8 @@ function handlePlayer(profile, data)
         }
         else if (!(typeof value === 'number')) // MUST be numeric. Return 0.
         {
-            console.error("Sort values must be numeric");
+            console.error("Sort values must be numeric.");
+            console.warn('The error above was encountered while sorting ' + data.internal.name);
             returnObject.sortValue = 0;
         }
         else 
