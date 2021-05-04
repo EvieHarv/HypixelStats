@@ -56,7 +56,8 @@ async function callApis(player, key)
             }
             else
             {
-                console.error("Nick Detected! Name: " + player);        
+                console.error("Nick Detected! Name: " + player);
+                postMessage([null, player, null]);  
             }
         }
     })
