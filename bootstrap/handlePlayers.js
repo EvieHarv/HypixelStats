@@ -112,13 +112,13 @@ function updatePlayerArea(playerList)
             var playerName = e.data[1];
             var playerUUID = e.data[2];
 
-            playerData.internal = {};
-
+            
             doesResolve = resolve('player.displayname', playerData); // using resolve() so it doesn't error out
-
+            
             // The data is invalid somehow
             if (doesResolve)
             {
+                playerData.internal = {};
                 playerData.internal.isNick = false;
                 playerData.internal.name = playerName;
                 // Assign the data we go to the playerCard div. It's just a jquery thing, so handle it all in jquery
@@ -138,8 +138,6 @@ function updatePlayerArea(playerList)
 
                 $("#" + playerName).attr('uuid', "Nick");
 
-                // TODO: CHANGE THIS FOR OVERLAY
-                $("#" + playerName).find('.playerDataHolder').html('<div class="h5 mb-0 font-weight-bold text-warning">Nick</div>');
                 updatePlayerData(playerName);
             }
         }
@@ -205,33 +203,44 @@ function updatePlayerData(player)
 
         // Enter data
         $("#" + player).find('.playerDataHolder').html('');
+
+        if (data.internal.isNick) // TODO: Maybe some configuration options here.
+        {
+            $("#" + player).find('.playerDataHolder').append('<div class="h5 mb-0 font-weight-bold text-warning">Nick</div>');
+        }
+
         for (var entry in profile["stats"])
         {
-            value = pData.stats[entry];
-            hide = false;
-            if (value == undefined || Number.isNaN(value))
+            if (data.internal.isNick) 
+            { $("#" + player).find('.playerDataHolder').append('<div class="h5 mb-0 font-weight-bold text-gray-800" style="display: none;"><span class="data">—</span></div>'); }
+            else
             {
-                if (store.get('undefinedBehavior') == "blank")
+                value = pData.stats[entry];
+                hide = false;
+                if (value == undefined || Number.isNaN(value))
                 {
-                    value = "";
+                    if (store.get('undefinedBehavior') == "blank")
+                    {
+                        value = "";
+                    }
+                    else if (store.get('undefinedBehavior') == "na")
+                    {
+                        value = "N/A";
+                    }
+                    else
+                    {
+                        hide = true;
+                    }
                 }
-                else if (store.get('undefinedBehavior') == "na")
+                // Add the data to the player card
+                if (!hide)
                 {
-                    value = "N/A";
+                    $("#" + player).find('.playerDataHolder').append('<div class="h5 mb-0 font-weight-bold text-gray-800">' + entry + " <span class='data'>" + value + '</span></div>');
                 }
-                else
+                else // We still want it to *be* there, just hidden
                 {
-                    hide = true;
+                    $("#" + player).find('.playerDataHolder').append('<div class="h5 mb-0 font-weight-bold text-gray-800" style="display: none;"><span class="data">—</span></div>');
                 }
-            }
-            // Add the data to the player card
-            if (!hide)
-            {
-                $("#" + player).find('.playerDataHolder').append('<div class="h5 mb-0 font-weight-bold text-gray-800">' + entry + ": <span class='data'>" + value + '</span></div>');
-            }
-            else // We still want it to *be* there, just hidden
-            {
-                $("#" + player).find('.playerDataHolder').append('<div class="h5 mb-0 font-weight-bold text-gray-800" style="display: none;"><span class="data">—</span></div>');
             }
         }
         
