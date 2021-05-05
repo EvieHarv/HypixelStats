@@ -2,6 +2,18 @@ var ipcRenderer = require('electron').ipcRenderer;
 const Store = require('electron-store');
 const store = new Store();
 
+var timeout;
+
+var has_focus = true;
+window.onblur = function(){  
+    has_focus=false;
+    doFade();
+}  
+window.onfocus = function(){  
+    has_focus=true;
+    $('.mainBody').fadeIn('fast');
+}
+
 $(function()
 {
     if (store.get('hasUsedOverlay') == undefined)
@@ -31,7 +43,7 @@ $(function()
 
 ipcRenderer.on('playerData', function (event, data)
 {
-    console.log(data);
+    $('.mainBody').fadeIn('fast');
     $('.mainBody').html("<table class='profDisplay'><tbody><th style='text-align: center;'><u>" + store.get("active_profile") + "</u></th></tbody></table>"); // a bit hack-y
     $('.mainBody').append(makeTable(data));
     $('tr').each(function(index, row)
@@ -45,7 +57,25 @@ ipcRenderer.on('playerData', function (event, data)
             $(row).find('td:first').css('color', data[data.length - 1][index - 1 - 1])
         }
     });
+
+    doFade();
 });
+
+function doFade()
+{
+    clearTimeout(timeout);
+    if (has_focus)
+    {
+        doFade();
+    }
+    else
+    {   
+        timeout = setTimeout(function()
+        { 
+            $('.mainBody').fadeOut('slow'); 
+        }, 15000); // TODO: Configurable time
+    };
+}
 
 function makeTable(data) {
     var table = $("<table/>").addClass('TableGen');
