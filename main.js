@@ -228,9 +228,29 @@ function initalizeGlobalShortcuts()
 // Make sure store values are defined
 function checkUndefineds()
 {
+  if (store.get('updateMigrationStore') == undefined)
+  {
+    store.set('updateMigrationStore', {});
+  }
+  if (store.get('updateMigrationStore').rfuncProfiles == undefined && store.get('profiles') != undefined)
+  {
+    // User has profiles, BUT they aren't the new ones.
+    // Honestly, I think about one person has used the tool by this point, so moving data around without a flashy screen isn't a huge concern, but this is horrible practice.
+    // Future updates should take that into concern.
+    fs.writeFile(path.join(__dirname, 'old_profiles.json'), 
+      JSON.stringify(store.get('profiles'), null, 2), function (err) {
+        if (err) throw err;
+        console.log('Saved Profiles');
+      }
+    );
+    store.delete('profiles');
+  }
   // Set up default profile for a new user
   if (store.get('profiles') == undefined)
   {
+    u = store.get('updateMigrationStore');
+    u.rfuncProfiles = true;
+    store.set('updateMigrationStore', u);
     profiles = 
     {
       "Bedwars Overall": {
