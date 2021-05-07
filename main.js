@@ -122,7 +122,7 @@ function toggleFakeFullscreen()
 ipcMain.on('launchOverlay', function(event, data){
   if (!overlayWindow)
   {
-    if (process.platform == "win32" && store.get('fakeFullscreen') == true)
+    if (process.platform == "win32" && store.get('fakeFullscreen') == true && store.get('hasUsedOverlay'))
     {
       // I made the AHK a compiled script so that you don't have to have AHK installed
       // You can find the AHK script in node-key-sender/FakeFullscreen.ahk
