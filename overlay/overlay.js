@@ -23,9 +23,9 @@ $(function()
             <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 800px;">\
                 Hey! It looks like this is your first time using the overlay.<br>\
                 You can move this window around by clicking and dragging. Once you click off, its position is set. To re-position it, do <span id="keybind"></span><script>$("#keybind").html(store.get("keybinds").focusOverlay)</script> and drag it again.<br><br>\
-                Note: Make sure you have your minecraft client in windowed mode!<br><br>\
-                If you don\'t like playing in windowed mode, MAKE SURE you\'re in it anyways before launching the overlay, and you can use the "Fake Fullscreen" option in Applcation Settings to force it to be fullscreen in a way the tool can handle. (It looks identical to fullscreen and has almost no downsides).<br><br>\
-                If you want that, use the "Kill Overlay" button on the main page to get rid of this window, set minecraft to "Fullscreen: Off", change the setting, and re-launch the overlay. Otherwise, you just have to play in windowed mode.\
+                <h1>Note: Make sure you have your minecraft client in windowed mode!</h1><br><br>\
+                If you don\'t like playing in windowed mode, MAKE SURE you\'re in it anyways before launching the overlay, and you can use the "Fake Fullscreen" option in Application Settings to force it to be fullscreen in a way the tool can handle. (It looks identical to fullscreen and has almost no downsides).<br><br>\
+                You can do <span id="keybind2"></span><script>$("#keybind2").html(store.get("keybinds").toggleFakeFullscreen)</script> to toggle fake fullscreen on and off.\
             </div>\
         </div>\
         ');

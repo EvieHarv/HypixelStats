@@ -80,4 +80,5 @@ tr
 .profDisplay
 {
     margin-bottom: -10;
+    width: 105%; /* ??? For some reason this is the only way to size it right. */
 }

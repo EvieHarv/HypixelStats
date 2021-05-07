@@ -26,6 +26,8 @@ log.info('App starting...');
 let mainWindow;
 let overlayWindow;
 
+var fakeFullscreenOn = false;
+
 const store = new Store();
 
 // Start when app ready
@@ -100,12 +102,28 @@ app.on('ready', function()
   initalizeGlobalShortcuts();
 });
 
+function toggleFakeFullscreen()
+{
+  var executable = fakeFullscreenOn ? "UnFakeFullscreen.exe" : "FakeFullscreen.exe"
+  fakeFullscreenOn = !fakeFullscreenOn;
+  // You can find the AHK scripts in node-key-sender/FakeFullscreen.ahk
+  var AHKpath = path.join(__dirname, 'node-key-sender', executable);
+  if (__dirname.includes('app.asar')) // A slightly strange way to check if we're in the published executable
+  {
+    AHKpath = path.join(__dirname.split("app.asar")[0], executable);
+  }
+  exec(AHKpath, {}, function(error, stdout, stderr) {
+    if (error) {
+      console.log(`error: ${error.message}`);
+    }
+  });
+}
+
 ipcMain.on('launchOverlay', function(event, data){
   if (!overlayWindow)
   {
     if (process.platform == "win32" && store.get('fakeFullscreen') == true)
     {
-      console.log('doing fake fullscreen')
       // I made the AHK a compiled script so that you don't have to have AHK installed
       // You can find the AHK script in node-key-sender/FakeFullscreen.ahk
       var AHKpath = path.join(__dirname, 'node-key-sender', 'FakeFullscreen.exe');
@@ -118,6 +136,8 @@ ipcMain.on('launchOverlay', function(event, data){
           console.log(`error: ${error.message}`);
         }
       });
+      fakeFullscreenOn = true;
+      // (I would just use toggleFullscreen here, but I want this to *always* set it to the on state.)
     }
     overlayWindow = new BrowserWindow({
       webPreferences: 
@@ -212,6 +232,14 @@ function initalizeGlobalShortcuts()
         overlayWindow.setIgnoreMouseEvents(false);
         overlayWindow.focus()
       }
+    });
+  };
+
+  if (keybinds.toggleFakeFullscreen !== null && isAccelerator(keybinds.toggleFakeFullscreen))
+  {
+    const lbm = globalShortcut.register(keybinds.toggleFakeFullscreen, () => 
+    {
+      toggleFakeFullscreen();
     });
   };
 
@@ -451,13 +479,18 @@ function checkUndefineds()
   // Initalize the toplevel property
   if (store.get('keybinds') == undefined)
   {
-    store.set('keybinds', { "profUp": "Control+U", "profDown" : "Control+I", "focusOverlay": "Control+Shift+G", "lobbyMode": "Control+L" });
+    store.set('keybinds', { "profUp": "Control+U", "profDown" : "Control+I", "focusOverlay": "Control+Shift+G", "lobbyMode": "Control+L", "toggleFakeFullscreen": "Control+F4" });
   }
   keybinds = store.get('keybinds');
   // Check for stuff that was added after initial commit
   if (keybinds.focusOverlay == undefined)
   {
     keybinds.focusOverlay = "Control+Shift+G";
+    store.set("keybinds", keybinds)
+  }
+  if (keybinds.toggleFakeFullscreen == undefined)
+  {
+    keybinds.toggleFakeFullscreen = "Control+F4";
     store.set("keybinds", keybinds)
   }
 }

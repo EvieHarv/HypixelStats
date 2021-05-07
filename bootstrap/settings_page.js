@@ -177,6 +177,7 @@ $(function()
     $( "#kbProfileUp" ).val(keybinds.profUp);
     $( "#kbProfileDown" ).val(keybinds.profDown);
     $( "#kbFocusOverlay" ).val(keybinds.focusOverlay);
+    $( "#kbFakeFullscreen" ).val(keybinds.toggleFakeFullscreen);
     $( "#kbLobbyMode" ).val(keybinds.lobbyMode);
 
     $( "#kbProfileUp" ).keydown(function(e) 
@@ -218,6 +219,19 @@ $(function()
         };
         return false;
     });
+    $( "#kbFakeFullscreen" ).keydown(function(e) 
+    {
+        key  = validateKey(e);
+        if (key !== false)
+        {
+            $( "#kbFakeFullscreen" ).val(key);
+            keybinds = store.get('keybinds');
+            keybinds.toggleFakeFullscreen = key;
+            store.set('keybinds', keybinds);
+            ipcRenderer.send('keybindsChanged');
+        };
+        return false;
+    });
     $( "#kbLobbyMode" ).keydown(function(e) 
     {
         key  = validateKey(e);
@@ -254,6 +268,14 @@ $(function()
         $( "#kbFocusOverlay" ).val("");
         keybinds = store.get('keybinds');
         keybinds.focusOverlay = "";
+        store.set('keybinds', keybinds);
+        ipcRenderer.send('keybindsChanged');
+    });
+    $('#RMkbFakeFullscreen').click(function()
+    {
+        $( "#kbFakeFullscreen" ).val("");
+        keybinds = store.get('keybinds');
+        keybinds.toggleFakeFullscreen = "";
         store.set('keybinds', keybinds);
         ipcRenderer.send('keybindsChanged');
     });
