@@ -139,7 +139,21 @@ ipcMain.on('launchOverlay', function(event, data){
       fakeFullscreenOn = true;
       // (I would just use toggleFullscreen here, but I want this to *always* set it to the on state.)
     }
+
+    owX = 510;
+    owY = 240;
+
+    // Default to last position when closed
+    pos = store.get('overlayWindowPosition');
+    if (pos)
+    {
+      owX = pos[0];
+      owY = pos[1];
+    }
+
     overlayWindow = new BrowserWindow({
+      x: owX,
+      y: owY,
       webPreferences: 
       {
         nodeIntegration: true,
@@ -158,7 +172,16 @@ ipcMain.on('launchOverlay', function(event, data){
       overlayWindow.webContents.send('lostFocus');
       overlayWindow.setIgnoreMouseEvents(true);
     });
-    overlayWindow.on('closed', function(){ overlayWindow = undefined; });
+
+    overlayWindow.on('close', function()
+    {
+      store.set('overlayWindowPosition', overlayWindow.getPosition());
+    })
+
+    overlayWindow.on('closed', function()
+    { 
+      overlayWindow = undefined; 
+    });
   }
 });
 
