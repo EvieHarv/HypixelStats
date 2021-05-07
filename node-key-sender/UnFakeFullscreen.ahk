@@ -5,4 +5,3 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 WinSet, Style, +0xC00000, ahk_exe javaw.exe
 WinMove, ahk_exe javaw.exe, , 528, 295, 870, 519 
-WinActivate, ahk_exe javaw.exe
