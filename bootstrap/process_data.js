@@ -23,8 +23,15 @@ function handlePlayer(profile, data)
         if (profile.stats[entry].includes('("data.')){ console.warn("HEY! It looks like you're using an R-function incorrectly—don't start it with 'data.'! Just get straight to the stat. (e.g. 'player.etc'). If you know what you're doing, you can ignore this message."); }
         value = undefined;
         // Wrap in a try/catch because idk what these people are gonna put
-        try{ value = Function('"use strict"; var data = arguments[0]; return ' + profile.stats[entry] + ';')(data); }
-        catch(error){ console.error(error); console.warn('The error above was encountered while processing the stat "' + entry + '" for ' + data.internal.name); }
+        if (data.internal.isNick == true)
+        {
+            value = null
+        }
+        else
+        {
+            try{ value = Function('"use strict"; var data = arguments[0]; return ' + profile.stats[entry] + ';')(data); }
+            catch(error){ console.error(error); console.warn('The error above was encountered while processing the stat "' + entry + '" for ' + data.internal.name); }
+        }
 
         // If it's numeric, fix it to 2 decimals.
         if (typeof value === 'number') {
