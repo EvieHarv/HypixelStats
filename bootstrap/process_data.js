@@ -11,7 +11,7 @@ Number.prototype.toFixedDown = function(digits) {
 function handlePlayer(profile, data)
 {
     // Yes, this is probably horrible. I'm just using this so it ensures the returned string is *relatively* safe
-    regexFromHell = /^[a-zA-Z0-9_~`!@#$%^&* ()\[\]\{\}\\|;:'",.?\/-]*$/gm;
+    regexFromHell = /[<>]/gm;
 
     returnObject = {};
     
@@ -41,11 +41,11 @@ function handlePlayer(profile, data)
             // If it's a string, ensure it contains at least vaguely safe characters (pretty much no <>)
             if (value.match(regexFromHell))
             {
-                returnObject.stats[entry] = value;
+                returnObject.stats[entry] = null;
             }
             else
             {
-                returnObject.stats[entry] = null;
+                returnObject.stats[entry] = value;
             }
         }
         else // It's defined.
