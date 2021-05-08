@@ -4,5 +4,4 @@ SendMode Input  ; Recommended for new scripts due to its superior speed and reli
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
 WinSet, Style, -0xC00000, ahk_exe javaw.exe
-WinMinimize, ahk_exe javaw.exe
 WinMaximize, ahk_exe javaw.exe
