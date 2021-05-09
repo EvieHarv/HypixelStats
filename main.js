@@ -516,6 +516,11 @@ function checkUndefineds()
     keybinds.toggleFakeFullscreen = "Control+F4";
     store.set("keybinds", keybinds)
   }
+
+  if (store.get('overlayAutoHide') == undefined)
+  {
+    store.set('overlayAutoHide', 15);
+  }
 }
 
 ipcMain.on('updateCheck', function(){ // Check update like this to make sure page is fully loaded before checking

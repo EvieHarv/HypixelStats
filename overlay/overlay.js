@@ -63,18 +63,28 @@ ipcRenderer.on('playerData', function (event, data)
 
 function doFade()
 {
-    clearTimeout(timeout);
-    if (has_focus)
+    hideTime = store.get("overlayAutoHide") * 1000;
+
+    if (hideTime == 0)
     {
-        doFade();
+        clearTimeout(timeout);
+        return; // Never fade if overlayAutoHide == 0 seconds
     }
     else
-    {   
-        timeout = setTimeout(function()
-        { 
-            $('.mainBody').fadeOut('slow'); 
-        }, 15000); // TODO: Configurable time
-    };
+    {
+        clearTimeout(timeout);
+        if (has_focus)
+        {
+            doFade();
+        }
+        else
+        {   
+            timeout = setTimeout(function()
+            { 
+                $('.mainBody').fadeOut('slow'); 
+            }, hideTime); // TODO: Configurable time
+        };
+    }
 }
 
 function makeTable(data) {

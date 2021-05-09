@@ -173,6 +173,24 @@ $(function()
         }    
     });
 
+    $("#overlayAutoHide").val(store.get('overlayAutoHide'));
+
+    $("#overlayAutoHide").change(function()
+    {
+        num = $(this).val();
+
+        if (num <= 60 && num >= 0 && num != "") // Max of 60 is kinda arbitrary.
+        {
+            store.set('overlayAutoHide', num);
+        }
+        else
+        {
+            $(this).val(50);
+            store.set('overlayAutoHide', 50);
+            return false;
+        }
+    });
+
     keybinds = store.get('keybinds');
     $( "#kbProfileUp" ).val(keybinds.profUp);
     $( "#kbProfileDown" ).val(keybinds.profDown);
