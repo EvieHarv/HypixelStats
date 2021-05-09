@@ -46,6 +46,14 @@
       {
         "from": "./node-key-sender/AutoWho.exe",
         "to": "./resources/AutoWho.exe"
+      },
+      {
+        "from": "./node-key-sender/FakeFullscreen.exe",
+        "to": "./resources/FakeFullscreen.exe"
+      },
+      {
+        "from": "./node-key-sender/UnFakeFullscreen.exe",
+        "to": "./resources/UnFakeFullscreen.exe"
       }
     ],
     "publish": [
