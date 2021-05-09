@@ -255,11 +255,20 @@ function saveAllChanges()
         return null;
     };
 
-    // Delete the old profile and substitute it with the new one.
-    // Order is not preserved, and while this could be easily fixed by just iterating through and adding as we go, I think I actually prefer order not be obeyed.
-    delete profiles[activeProfile];
-    profiles[newProfile.name] = newProfile.properties;
-    store.set('profiles', profiles);
+    // Preserve object order
+    newProfilesList = {};
+    for (var profile in profiles)
+    {
+        if (profile == activeProfile)
+        {
+            newProfilesList[newProfile.name] = newProfile.properties;
+        }
+        else
+        {
+            newProfilesList[profile] = profiles[profile];
+        }
+    }
+    store.set('profiles', newProfilesList);
     store.set('active_profile', newProfile.name)
     profileLoad();
     infoBarMessage('text-success', 'Success!', 'Profile settings saved.', 2000);
