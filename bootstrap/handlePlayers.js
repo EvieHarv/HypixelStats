@@ -12,6 +12,10 @@ ipcRenderer.on('outOfGame', function (event,outOfGame)
 
 function updatePlayerArea(playerList)
 {
+    if (playerList.length > 0)
+    {
+        $("#initialJoinDiv").remove();
+    }
     // Could possibly do this aliasing stuff in main.js so it happens less. Keeping it here for now for ease of debugging in the render process
     if (store.get('aliases') == undefined)
     {

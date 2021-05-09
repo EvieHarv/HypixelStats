@@ -215,6 +215,7 @@
     {
         if ((store.get('hypixel_key') == undefined) || (store.get('logPath') == undefined)) // User not set up yet! Show them what they need
         $('.playerList').html('\
+            <div id="initialJoinDiv">\
             <div style="padding-left: 12px;">\
             <div class="card shadow mb-4" id="infoBar">\
                 <div class="card-header py-3">\
@@ -222,15 +223,10 @@
                 </div>\
                 <div class="card-body py-3">\
                     <p>\
-                        Make sure you have your API key <b class="text-danger">AND</b> your path set in \
-                        <code>Settings -> <a href="./bootstrap/settings.html">Application Settings</a></code>,\
-                        <br>\
-                        Once both are set, and you restart the app, you can start joining games!\
-                        <br>\
-                        As long as you hava Java installed, it will do <code>/who</code> automatically when you join a game! If you don\'t have Java installed,\
-                        you\'ll have to do it manually every time. It will pick up new player joins/leaves automatically no matter what though, so you only have to do it once.\
+                        Watch <a href="https://www.youtube.com/watch?v=dnQOkYA3pNE" target="_blank">this video</a> to learn how to set up and use HypixelStats!\
                     </p>\
                 </div>\
+            </div>\
             </div>\
             </div>'
         );
