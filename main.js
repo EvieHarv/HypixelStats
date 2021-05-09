@@ -104,19 +104,23 @@ app.on('ready', function()
 
 function toggleFakeFullscreen()
 {
-  var executable = fakeFullscreenOn ? "UnFakeFullscreen.exe" : "FakeFullscreen.exe"
-  fakeFullscreenOn = !fakeFullscreenOn;
-  // You can find the AHK scripts in node-key-sender/FakeFullscreen.ahk
-  var AHKpath = path.join(__dirname, 'node-key-sender', executable);
-  if (__dirname.includes('app.asar')) // A slightly strange way to check if we're in the published executable
+  if (process.platform == "win32" )
   {
-    AHKpath = path.join(__dirname.split("app.asar")[0], executable);
-  }
-  exec(AHKpath, {}, function(error, stdout, stderr) {
-    if (error) {
-      console.log(`error: ${error.message}`);
+    var executable = fakeFullscreenOn ? "UnFakeFullscreen.exe" : "FakeFullscreen.exe"
+    fakeFullscreenOn = !fakeFullscreenOn;
+    // You can find the AHK scripts in node-key-sender/FakeFullscreen.ahk
+    var AHKpath = path.join(__dirname, 'node-key-sender', executable);
+    if (__dirname.includes('app.asar')) // A slightly strange way to check if we're in the published executable
+    {
+      AHKpath = path.join(__dirname.split("app.asar")[0], executable);
     }
-  });
+    exec(AHKpath, {}, function(error, stdout, stderr) {
+      if (error) {
+        console.log(`error: ${error.message}`);
+      }
+    });
+  }
+  // TODO: Come up with something for other platforms.
 }
 
 ipcMain.on('launchOverlay', function(event, data){
