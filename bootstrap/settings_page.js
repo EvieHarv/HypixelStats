@@ -252,7 +252,7 @@ $(function()
         };
         return false;
     });
-    $( "#kbFakeFullscreen" ).keydown(function(e) 
+    $( "#kbShowOverlay" ).keydown(function(e) 
     {
         key  = validateKey(e);
         if (key !== false)
