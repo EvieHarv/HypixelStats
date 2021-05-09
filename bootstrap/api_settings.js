@@ -6,15 +6,29 @@ $(function()
 {
     profileLoad(); // Load in all existing profiles to start
     var statsDiv = document.getElementById('statCardsDiv')
-    var sortable = Sortable.create(statsDiv, 
+    var sortableStats = Sortable.create(statsDiv, 
         {
             animation: 150
         });
     var colorDiv = document.getElementById('colorDiv')
-    var sortable = Sortable.create(colorDiv, 
+    var sortableColor = Sortable.create(colorDiv, 
         {
             animation: 150
         });
+
+    var profDiv = document.getElementById('profileDropdownMenu')
+    var sortableProfs = Sortable.create(profDiv, 
+        {
+            animation: 150,
+            onEnd: function(e){ 
+                div = e.target; 
+                profs = store.get('profiles'); 
+                newprofs = {}; 
+                $(div).find('a').each(function(index, prof){ newprofs[prof.innerHTML] = profs[prof.innerHTML]; }); 
+                store.set('profiles', newprofs); 
+            }
+        });
+    
     
     $("#saveAllChanges").click(function(){ 
         saveAllChanges();
