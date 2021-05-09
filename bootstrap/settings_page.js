@@ -191,11 +191,13 @@ $(function()
         }
     });
 
+    // TODO: At some point, make this system iterate through instead of just defining one-by-one.
     keybinds = store.get('keybinds');
     $( "#kbProfileUp" ).val(keybinds.profUp);
     $( "#kbProfileDown" ).val(keybinds.profDown);
     $( "#kbFocusOverlay" ).val(keybinds.focusOverlay);
     $( "#kbFakeFullscreen" ).val(keybinds.toggleFakeFullscreen);
+    $( "#kbShowOverlay" ).val(keybinds.showOverlay);
     $( "#kbLobbyMode" ).val(keybinds.lobbyMode);
 
     $( "#kbProfileUp" ).keydown(function(e) 
@@ -250,6 +252,19 @@ $(function()
         };
         return false;
     });
+    $( "#kbFakeFullscreen" ).keydown(function(e) 
+    {
+        key  = validateKey(e);
+        if (key !== false)
+        {
+            $( "#kbShowOverlay" ).val(key);
+            keybinds = store.get('keybinds');
+            keybinds.showOverlay = key;
+            store.set('keybinds', keybinds);
+            ipcRenderer.send('keybindsChanged');
+        };
+        return false;
+    });
     $( "#kbLobbyMode" ).keydown(function(e) 
     {
         key  = validateKey(e);
@@ -294,6 +309,14 @@ $(function()
         $( "#kbFakeFullscreen" ).val("");
         keybinds = store.get('keybinds');
         keybinds.toggleFakeFullscreen = "";
+        store.set('keybinds', keybinds);
+        ipcRenderer.send('keybindsChanged');
+    });
+    $('#RMkbShowOverlay').click(function()
+    {
+        $( "#kbShowOverlay" ).val("");
+        keybinds = store.get('keybinds');
+        keybinds.showOverlay = "";
         store.set('keybinds', keybinds);
         ipcRenderer.send('keybindsChanged');
     });

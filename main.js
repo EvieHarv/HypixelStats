@@ -266,6 +266,14 @@ function initalizeGlobalShortcuts()
     });
   };
 
+  if (keybinds.showOverlay !== null && isAccelerator(keybinds.showOverlay))
+  {
+    const lbm = globalShortcut.register(keybinds.showOverlay, () => 
+    {
+      mainWindow.webContents.send('overlayRequest');
+    });
+  };
+
   if (keybinds.lobbyMode !== null && isAccelerator(keybinds.lobbyMode))
   {
     const lbm = globalShortcut.register(keybinds.lobbyMode, () => 
@@ -502,7 +510,7 @@ function checkUndefineds()
   // Initalize the toplevel property
   if (store.get('keybinds') == undefined)
   {
-    store.set('keybinds', { "profUp": "Control+U", "profDown" : "Control+I", "focusOverlay": "Control+Shift+G", "lobbyMode": "Control+L", "toggleFakeFullscreen": "Control+F4" });
+    store.set('keybinds', { "profUp": "Control+U", "profDown" : "Control+I", "focusOverlay": "Control+Shift+G", "lobbyMode": "Control+L", "toggleFakeFullscreen": "Control+F4", "showOverlay": "Control+N" });
   }
   keybinds = store.get('keybinds');
   // Check for stuff that was added after initial commit
@@ -516,6 +524,14 @@ function checkUndefineds()
     keybinds.toggleFakeFullscreen = "Control+F4";
     store.set("keybinds", keybinds)
   }
+  if (keybinds.showOverlay == undefined)
+  {
+    keybinds.showOverlay = "Control+N";
+    store.set("keybinds", keybinds)
+  }
+
+
+
 
   if (store.get('overlayAutoHide') == undefined)
   {
