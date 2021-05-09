@@ -22,6 +22,7 @@ Not associated with Hypixel Inc.
     - Auto `/who` should work fine with nothing else on windows, other platforms require Java to be installed in the PATH.
 - Fully configuarable view of stats, with on-the-fly profile switching (with keybinds!) for easy viewing of any stats you want, at any time.
     - Also includes assignable colors based off of stats, as well as the ability to sort the list by any (numeric) stat.
+- An overlay for easy stat-viewing
 - Includes the ability to whitelist/blacklist players for quick identification. By default, whitelisted players appear green and blacklisted players appear red. (This is configurable in the profiles!)
 - Detects nicked players and displays them as yellow by default (also configurable).
 - Keeps track of every player you've run into since you opened the app (single-session), for ease of blacklisting or whitelisting players you've recently played with.
@@ -31,16 +32,10 @@ Not associated with Hypixel Inc.
 
 - Compatibility with vanilla client
     - Won't be adding compatiblity with BLC as I don't support the devs, use lunar or vanilla.
-- Automatic, temporary party whitelisting (toggable)
+- Automatic, temporary party whitelisting with `/p list` (toggable)
 - Support for custom APIs
-    - Default one at hypixelstats.com with reports for a sniper/cheater detection network maybe?
+    - A custom api.hypixelstats.com database, with reporting features to identify hackers/snipers.
 - Single stat next to name
-- Reach goal: make into an overlay, similar to BedwarsStats overlay.
-
-To be clear—I have nothing against the BedwarsStats overlay, and I'm not trying to cut into its success! I greatly respect the developer and all the hard work he has put in, especially regarding the sniper detection network. While this program is very similar, it has come out of a need for a cross-platform solution, because BedwarsStats is windows-only. Open-source is also a plus.
-
-If you only have a single monitor, BedwarsStats is still superior. If you have two+ monitors, it's your choice of which one is easier to read and gives more relevent information. 
-
 
 ## Installing, Getting Set Up, and Updating
 
