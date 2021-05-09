@@ -158,7 +158,6 @@
                                     <a class="dropdown-item" href="javascript:void(0)">Loading...</a>
                                 </div>
                             </li>
-                            <span class="text-sm mt-1" style='text-align: center;'>Drag to re-order!</span>
                         </ul>
                     </div>
                     <p class='mb-4 text-danger'>Read the <a target="_blank" href='https://github.com/EthanHarv/HypixelStats/wiki/API-Settings'>wiki</a> on Github to get started. <a target="_blank" href="" id="apiViewMethods">View sample stats data.</a></p>
@@ -251,6 +250,12 @@
     .sortable-drag {
         opacity: 0;
     }
-</style>
+    </style>
+<script src="./bootstrap/shortcut.js"></script>
+<script>
+    shortcut.add("ctrl+s", function() {
+        $("#saveAllChanges").click();
+    });   
+</script>
 <script src='./bootstrap/api_settings.js'></script>
 </body></html>

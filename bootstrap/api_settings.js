@@ -14,21 +14,7 @@ $(function()
     var sortableColor = Sortable.create(colorDiv, 
         {
             animation: 150
-        });
-
-    var profDiv = document.getElementById('profileDropdownMenu')
-    var sortableProfs = Sortable.create(profDiv, 
-        {
-            animation: 150,
-            onEnd: function(e){ 
-                div = e.target; 
-                profs = store.get('profiles'); 
-                newprofs = {}; 
-                $(div).find('a').each(function(index, prof){ newprofs[prof.innerHTML] = profs[prof.innerHTML]; }); 
-                store.set('profiles', newprofs); 
-            }
-        });
-    
+        });    
     
     $("#saveAllChanges").click(function(){ 
         saveAllChanges();
@@ -78,15 +64,30 @@ function profileLoad()
     $('#profileNameField').val(profile);
     $('#profileDropdown').html(profile);
     $('#profileDropdownMenu').html('');
+    $('#profileDropdownMenu').append('<div style="padding: .05rem 1.5rem; font-size: 14px;" class="text-danger">Drag to re-order!</div><div class="dropdown-divider"></div><div id="profileDropdownMenuProfiles"></div>');
     for (var p in listProfile)
     {
-        $('#profileDropdownMenu').append('<a class="dropdown-item" href="javascript:void(0)">' + listProfile[p] + '</a>');
+        $('#profileDropdownMenuProfiles').append('<a class="dropdown-item" href="javascript:void(0)">' + listProfile[p] + '</a>');
     }
     $('.dropdown-item').on('click', function(e){ 
         selected = e.target.innerHTML;
         store.set('active_profile', selected);
         profileLoad();
     });
+
+    var profDiv = document.getElementById('profileDropdownMenuProfiles')
+    var sortableProfs = Sortable.create(profDiv, 
+        {
+            animation: 150,
+            onEnd: function(e){ 
+                div = e.target; 
+                profs = store.get('profiles'); 
+                newprofs = {}; 
+                $(div).find('a').each(function(index, prof){ newprofs[prof.innerHTML] = profs[prof.innerHTML]; }); 
+                store.set('profiles', newprofs); 
+            }
+        });
+
     $('#statCardsDiv').html('');
     // Probably a better way to do this, but if I put it manually as a value="" it breaks on quotes.
     i = 0;
