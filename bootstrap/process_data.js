@@ -84,12 +84,12 @@ function handlePlayer(profile, data)
         else
         {
             // Assign default color if no other was found
-            returnObject.color = '#4e73df'; // TODO: Make configurable
+            returnObject.color = '#4e73df'; // This default can be overridden by just setting the last condition to be "true"
         }
     }
     else
     {
-        returnObject.color = '#4e73df'; // TODO: Make configurable
+        returnObject.color = '#4e73df'; // This default can be overridden by just setting the last condition to be "true"
     }
 
     // Get the numerical value that will be used for sorting.
