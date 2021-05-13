@@ -14,6 +14,10 @@ Not associated with Hypixel Inc.
 
 [![Main Page](https://media.discordapp.net/attachments/821280850061819945/836355148669911050/unknown.png)](https://github.com/EthanHarv/HypixelStats/releases/latest)
 
+[![Overlay Bedwars](https://media.discordapp.net/attachments/821280850061819945/842210554940751932/unknown.png)](https://github.com/EthanHarv/HypixelStats/releases/latest)
+
+[![Overlay Duels](https://media.discordapp.net/attachments/833380433076813824/842209825999814687/unknown.png)](https://github.com/EthanHarv/HypixelStats/releases/latest)
+
 ## Features
 
 ### <b>NOTE: HypixelStats is only currently compatible with Lunar Client. Support for other clients coming soon!</b>
