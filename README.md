@@ -10,6 +10,8 @@ Not associated with Hypixel Inc.
 
 [Join the discord!](http://discord.gg/yAAz4UkNb5)
 
+[Watch the Getting Started guide!](https://www.youtube.com/watch?v=dnQOkYA3pNE)
+
 ## [Download the latest release here](https://github.com/EthanHarv/HypixelStats/releases/latest)
 
 [![Main Page](https://media.discordapp.net/attachments/821280850061819945/836355148669911050/unknown.png)](https://github.com/EthanHarv/HypixelStats/releases/latest)
