@@ -51,8 +51,8 @@ $(function()
     // Check for unsaved changes
     $('.leavePageLink').click(function(e){ return validateLeave(e); });
 
-    // TODO: Possibly grab owner uuid instead of hardcoding this one
-    $('#apiViewMethods').attr('href', "https://api.hypixel.net/player?key=" + store.get('hypixel_key') + "&uuid=b876ec32-e396-476b-a115-8438d83c67d4")
+    // Open a browswer tab with the hypixel API call
+    $('#apiViewMethods').attr('href', "https://api.hypixel.net/player?key=" + store.get('hypixel_key') + "&uuid=" + store.get('key_owner_uuid'))
 });
 
 function profileLoad()

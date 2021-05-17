@@ -82,7 +82,7 @@ function doFade()
             timeout = setTimeout(function()
             { 
                 $('.mainBody').fadeOut('slow'); 
-            }, hideTime); // TODO: Configurable time
+            }, hideTime);
         };
     }
 }
