@@ -52,7 +52,7 @@ Not associated with Hypixel Inc.
     - Complete the installer.
     - The installer should automatically create a Desktop Icon. You can run the program from there.
 - If you're on linux, use the `.AppImage` and you're done.
-- If you're on MAC, good luck. Run it with node.
+- If you're on MAC, reference the [Building](https://github.com/EthanHarv/HypixelStats/wiki/Building) article.
 
 ### Setup
 
