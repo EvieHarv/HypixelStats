@@ -41,7 +41,6 @@ Not associated with Hypixel Inc.
 - Automatic, temporary party whitelisting with `/p list` (toggable)
 - Support for custom APIs
     - A custom api.hypixelstats.com database, with reporting features to identify hackers/snipers.
-- Single stat next to name
 
 ## Installing, Getting Set Up, and Updating
 
