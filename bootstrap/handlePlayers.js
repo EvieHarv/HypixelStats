@@ -107,7 +107,7 @@ function updatePlayerArea(playerList)
         {
             $(".playerList").html("Please set your hypixel API key in Settings -> API Settings -> Hypixel Key");
         };
-        worker.postMessage([player, store.get('hypixel_key')]);
+        worker.postMessage([player, store.get('hypixel_key'), store.get('customAPIs')]);
         worker.onmessage = function (e) 
         {
             e.target.terminate(); // Free system resources. Think this lead to some crashes before I added this.

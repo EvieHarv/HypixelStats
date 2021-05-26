@@ -2,10 +2,10 @@ importScripts("./fakeDom.js");
 importScripts('./jquery.js');
 
 self.addEventListener("message", function(e) {
-    callApis(e.data[0], e.data[1])
+    callApis(e.data[0], e.data[1], e.data[2])
 }, false);
 
-async function callApis(player, key)
+async function callApis(player, key, APIs) // Player name, owner key, custom APIs
 {
     var uuidUrl = "https://api.mojang.com/users/profiles/minecraft/" + player;
     var hypxUrl = "https://api.hypixel.net/player?key=" + key + "&uuid=";
@@ -67,17 +67,19 @@ async function callApis(player, key)
         uuid = null;
         console.error("Nick Detected! Name: " + player);
     });
-    var data = null;
+
     if (uuid)
     {
+        var data = null;
+        
         $.ajax({
             url: hypxUrl + uuid,
             contentType: "application/json",
+            async: false,
             dataType: 'json',
             tryCount: 0,
             success: function(result){
                 data = result;
-                postMessage([data, player, uuid]);
             },
             error: function (data, textStatus, errorThrown) 
             {
@@ -91,11 +93,70 @@ async function callApis(player, key)
                 {
                     console.log('Err: ' + errorThrown);
                     console.error("API Failed. Nick Detected! Name: " + player);    
-                    postMessage([null, player, uuid]);
+                    data = null;
                 }
             },
             timeout: 1500 // TODO: Maybe make customizable?
         });
+
+
+        if (data !== null) // Checks if hypixel data was fetched 
+        {
+            // Do custom API calls
+            if (APIs)
+            {
+                data.c = {};
+                Object.keys(APIs).forEach(apiName => 
+                    {
+                        api = APIs[apiName];
+    
+                        if (api.on)
+                        {
+                            url = api.url;
+                            // We assume we're dealing with safe data by this point.
+                            add = "?"; // Easy way to add on paramaters with & if there is more than 1 argument sent.
+                            if (api.sends.playerName) { url += add + "name=" + player; add = "&"; };
+                            if (api.sends.playerUUID) { url += add + "uuid=" + uuid; add = "&"; };
+                            if (api.sends.userKey) { /* TODO */ };
+
+                            apiData = null;
+    
+                            $.ajax({
+                                url: url,
+                                contentType: "application/json",
+                                async: false,
+                                dataType: 'json',
+                                success: function(result){
+                                    apiData = result;
+                                },
+                                error: function (apiData, textStatus, errorThrown) 
+                                {
+                                    console.warn('Custom API "' + apiName + '" failed to resolve.');
+                                    apiData = null; // Only run these custom ones once. Maybe add customization in the future.
+                                },
+                                timeout: api.timeout
+                            });
+                            
+                            // Add custom data under "c".
+                            // Ex: "data.c.isSniper.data"
+                            // It's a bit cumbersome, but it seems like the more clear method to me.
+                            data.c[apiName] = apiData;
+                        }
+                    });
+
+                postMessage([data, player, uuid]);    
+            }
+            else
+            {
+                postMessage([data, player, uuid]);
+            }
+        }
+        else
+        {
+            // I'm assuming if hypixel doesn't resolve, we don't need to resolve anything else.
+            // If any evidence for this not being the case comes up, I can re-write this.
+            postMessage([null, player, uuid]);
+        }
     }
     else
     {

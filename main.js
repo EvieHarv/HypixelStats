@@ -448,6 +448,27 @@ function checkUndefineds()
     store.set('active_profile', 'Bedwars Overall');
   };
 
+  if (store.get('customAPIs') == undefined)
+  {
+    var APIs = 
+    {
+      "isSniper":
+      {
+        "on": true,
+        "url": "api.hypixelstats.com/sniper",
+        "description": "Default sniper detection, courtesy of bwstats! discord.gg/bwstats. This is just a JSON wrapper for his API.",
+        "timeout": 1000,
+        "sends": 
+        {
+          "playerName" : true,
+          "playerUUID" : false,
+          "userKey" : false
+        }
+      }
+    }
+    store.set('customAPIs', APIs);
+  }
+
   // Alias list
   if (store.get('aliases') == undefined)
   {
