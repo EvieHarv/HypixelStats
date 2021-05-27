@@ -109,18 +109,18 @@ async function callApis(player, key, APIs) // Player name, owner key, custom API
                 Object.keys(APIs).forEach(apiName => 
                     {
                         api = APIs[apiName];
-    
+
                         if (api.on)
                         {
                             url = api.url;
                             // We assume we're dealing with safe data by this point.
                             add = "?"; // Easy way to add on paramaters with & if there is more than 1 argument sent.
+                            if (api.sends.userKey) { url += add + "key=" + key; add = "&"; };
                             if (api.sends.playerName) { url += add + "name=" + player; add = "&"; };
                             if (api.sends.playerUUID) { url += add + "uuid=" + uuid; add = "&"; };
-                            if (api.sends.userKey) { /* TODO */ };
 
                             apiData = null;
-    
+
                             $.ajax({
                                 url: url,
                                 contentType: "application/json",
