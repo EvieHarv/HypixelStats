@@ -460,9 +460,9 @@ function checkUndefineds()
         "timeout": 1000,
         "sends": 
         {
+          "userKey" : false,
           "playerName" : true,
-          "playerUUID" : false,
-          "userKey" : false
+          "playerUUID" : false
         }
       }
     }
