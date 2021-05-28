@@ -73,17 +73,13 @@ function doFade()
     else
     {
         clearTimeout(timeout);
-        if (has_focus)
+        if (!has_focus)
         {
-            doFade();
-        }
-        else
-        {   
             timeout = setTimeout(function()
             { 
                 $('.mainBody').fadeOut('slow'); 
             }, hideTime);
-        };
+        }
     }
 }
 
