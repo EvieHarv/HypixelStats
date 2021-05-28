@@ -181,3 +181,19 @@ function r1n0(path, obj) {
     }
     return v;
 }
+
+// Resolve json data. If it equals 0 or false, return undefined.
+function r1d0(path, obj) {
+    v = path.split('.').reduce(function(prev, curr) {
+        return prev ? prev[curr] : null
+    }, obj || self);
+    if (v == 0)
+    {
+        return undefined;
+    }
+    if (v == false)
+    {
+        return undefined;
+    }
+    return v;
+}
