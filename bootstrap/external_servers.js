@@ -25,7 +25,7 @@ function createPageFromStore()
 
         // Create main card
         $('#mainArea').append('\
-        <div class="card shadow mb-4" id="apiCard' + apiName + '">\
+        <div class="card shadow mb-4 apiCard" id="apiCard' + apiName + '">\
             <a href="#card' + apiName + '" class="d-block card-header py-3" data-toggle="collapse" role="button" style="user-select: none!important; -webkit-user-drag: none; ">\
                 <input style="width: 375px; display: inline;" type="text" class="form-control form-control-user ml-1 apiURL" placeholder="URL" value="">\
             </a>\
@@ -141,14 +141,49 @@ function createPageFromStore()
 function buildListFromPage()
 {
     // Create an "APIs" object, same format as store.get('customAPIs');
-    // TODO
+    
+    var APIs = {};
+
+    // Iterate through cards
+    $('.apiCard').each(function(index, cardTarget)
+    {
+        // Make into jquery object
+        var card = $(cardTarget); 
+
+        // Assign data
+        // At this point we assume all data is safe.
+        const url = card.find('.apiURL').val();
+        const on = card.find('.onOff').prop('checked');
+        const apiName = card.find('.apiName').val(); // aka refName
+        const description = card.find('.apiDescription').val();
+        const timeout = card.find('.apiTimeout').val();
+        const sendsKey = card.find('.playerKey').prop('checked');
+        const sendsName = card.find('.playerName').prop('checked');
+        const sendsUUID = card.find('.playerUUID').prop('checked');
+
+        APIs[apiName] = 
+        {
+            "on" : on,
+            "url" : url,
+            "description" : description,
+            "timeout" : Number(timeout),
+            "sends":
+            {
+                "userKey" : sendsKey,
+                "playerName" : sendsName,
+                "playerUUID" : sendsUUID
+            }
+        }
+    });
+
+    return APIs;
 }
 
 function saveConfigToStore()
 {
     APIs = buildListFromPage();
-    // TODO
-    infoBarMessage('text-success', 'Success!', 'Profile settings saved.', 1250);
+    store.set('customAPIs', APIs)
+    infoBarMessage('text-success', 'Saved!', 'Profile settings saved.', 1250);
 }
 
 function addNewServer()
