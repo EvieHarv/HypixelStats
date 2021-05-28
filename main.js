@@ -452,7 +452,7 @@ function checkUndefineds()
   {
     var APIs = 
     {
-      "isSniper":
+      "sniperCheck":
       {
         "on": true,
         "url": "api.hypixelstats.com/sniper",
