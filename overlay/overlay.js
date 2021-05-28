@@ -84,16 +84,58 @@ function doFade()
 }
 
 function makeTable(data) {
+    // If an entire column of data is undefined, act like it doesn't exist.
+    // Useful for default "sniper" term, so it doesn't show when nothing of interest is to be shown.
+    // This also adds more visual clarity when something important like a sniper joins, as a whole new column is added.
+    badIndicies = getUndefinedColumns(data);
+    
     var table = $("<table/>").addClass('TableGen');
     $.each(data, function(rowIndex, r) {
         if (rowIndex < data.length - 1)
         {
             var row = $("<tr/>");
             $.each(r, function(colIndex, c) { 
-                row.append($("<t"+(rowIndex == 0 ?  "h" : "d")+"/>").text(c));
+                if (!badIndicies.includes(colIndex))
+                {
+                    row.append($("<t"+(rowIndex == 0 ?  "h" : "d")+"/>").text(c));
+                }
             });
             table.append(row);
         }
     });
     return table;
+}
+
+// Gets all columns where every datapoint is undefined.
+function getUndefinedColumns(data)
+{
+    const datalen = data[0][0].length;
+
+    var badIndicies = [];
+
+    // Iterate through every column and check if each variable is undefined. If all are undefined, 
+    for (let i = 0; i < datalen; i++) 
+    {
+        var columnIsUndefined = true;
+        
+        // Iterate through all rows with this column.
+        for (let b = 1; b < data.length - 1; b++) 
+        {
+            const element = data[b][i];
+        
+            if (element !== "—") // The "—" means undefined
+            {
+                // At least one element is defined, break and move on.
+                columnIsUndefined = false;
+                break;
+            }
+        }
+
+        if (columnIsUndefined)
+        {
+            badIndicies.push(i);
+        }
+    }
+
+    return badIndicies;
 }
