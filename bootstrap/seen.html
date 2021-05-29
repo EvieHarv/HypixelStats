@@ -256,7 +256,7 @@
             const playerName = player.target.getAttribute('player');
             store.set('blacklist', [...new Set([...store.get("blacklist"),...[playerName]])]);
             var array = store.get('whitelist');
-            const index = array.indexOf(playerName); // Remove from blacklist, player is whitelisted
+            const index = array.indexOf(playerName); // Remove from whitelist, player is blacklisted
             if (index > -1) {
                 array.splice(index, 1);
             }
