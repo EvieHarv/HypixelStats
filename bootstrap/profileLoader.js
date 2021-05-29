@@ -12,9 +12,9 @@ function profileLoad()
     $('#dropdownMenu').html('');
     for (var p in listProfile)
     {
-        $('#dropdownMenu').append('<a class="dropdown-item" href="javascript:void(0)">' + listProfile[p] + '</a>');
+        $('#dropdownMenu').append('<a class="dropdown-item profileDropdown" href="javascript:void(0)">' + listProfile[p] + '</a>');
     }
-    $('.dropdown-item').on('click', function(e){ 
+    $('.profileDropdown').on('click', function(e){ 
         selected = e.target.innerHTML;
         store.set('active_profile', selected);
         profileLoad();
