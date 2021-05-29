@@ -203,6 +203,17 @@
     $(function()
     {
         updateList();
+
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const player = urlParams.get('player')
+        if (player)
+        {
+            // Put name in nick field
+            $('#inputNick').val(player);
+            $('#inputReal').focus();
+            
+        }
     });
     function updateList()
     {
