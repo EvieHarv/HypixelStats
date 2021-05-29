@@ -148,15 +148,14 @@
                         <h1 class="h3 mb-0 text-gray-800">Player Lookup:</h1>
                     </div>
                     <!-- Content Row -->
-                    <div class="row" style='padding-left: 10px;'>
+                    <div class="row mb-2" style='padding-left: 10px;'>
                         <input style='width: 500px;' type="text" class="form-control form-control-user" id="inputName" placeholder="Player Name">
                         <div style="padding-left: 5px;">
-                            <button class="btn btn-primary mb-4" type="button" id="lookupPlayer">
+                            <button class="btn btn-primary mb-0" type="button" id="lookupPlayer">
                                 Lookup
                             </button>
                         </div>
                     </div>
-                    <br>
                     <webview src="" style="width: 100%; height: 75%;" id="webView"></webview>
                 <!-- /.container-fluid -->
             </div>
@@ -192,6 +191,20 @@
 <script src='./bootstrap/logged_in.js'></script>
 <script src='./bootstrap/infoBar.js'></script>
 <script>
+
+    $(function()
+    {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const player = urlParams.get('player')
+        if (player)
+        {
+            // Put in name and click button
+            $('#inputName').val(player);
+            $('#lookupPlayer').click();
+        }
+    });
+
     $('#lookupPlayer').click(function()
     {
         $("#webView").attr('src', "https://plancke.io/hypixel/player/stats/" + $('#inputName').val());
