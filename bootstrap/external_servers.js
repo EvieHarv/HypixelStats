@@ -44,7 +44,7 @@ function createPageFromStore()
                     <div class="card-body shadow mt-1 sendsCard">\
                         <span class="text-lg">Sends:</span><br>\
                         <div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input playerKey" id="playerKey' + apiName + '"><label class="custom-control-label" for="playerKey' + apiName + '">Hypixel Key <span class="text-danger">(Make sure you trust this server!)</span> <code>(key=)</code></label></div>\
-                        <div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input playerName" id="playerName' + apiName + '"><label class="custom-control-label" for="playerName' + apiName + '">Player Name <code>(player=)</code></label></div>\
+                        <div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input playerName" id="playerName' + apiName + '"><label class="custom-control-label" for="playerName' + apiName + '">Player Name <code>(name=)</code></label></div>\
                         <div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input playerUUID" id="playerUUID' + apiName + '"><label class="custom-control-label" for="playerUUID' + apiName + '">Player UUID <code>(uuid=)</code></label></div>\
                     </div>\
                 </div>\
