@@ -183,7 +183,14 @@ function updatePlayerData(player)
     // Get the active profile and the user data
     profile = store.get('profiles')[store.get('active_profile')];
     data = $("#" + player).data('data');
-    // TODO: Possibly assign before this point so it actually sticks. I do like how this keeps stuff up-to-date though. TBD.
+    // Possibly unneeded
+    if (data.internal == undefined)
+    {
+        console.error('HEY! Data.internal was undefined here for ' + player + ', it reads: ' + data + '. Check out why.')
+        console.trace();
+        // This bug has cropped up a few times while testing, and while I'm unable to reproduce in production, I'm throwing this in to define it so execution can continue.
+        data.internal = {};
+    }
     data.internal.blacklist = store.get('blacklist');
     data.internal.whitelist = store.get('whitelist');
     data.internal.seenPlayers = sessionStorage.getItem('seenPlayers').split(',').filter(function (el) {return el != "";}); // I hate how scuffed this is.
