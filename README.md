@@ -8,9 +8,9 @@ Works for more than just bedwars! You can define exactly what you want to see an
 
 Not associated with Hypixel Inc.
 
-[Join the discord!](http://discord.gg/yAAz4UkNb5)
-
 [Watch the Getting Started guide!](https://www.youtube.com/watch?v=dnQOkYA3pNE)
+
+[Join the discord!](http://discord.gg/yAAz4UkNb5)
 
 ## [Download the latest release here](https://github.com/EthanHarv/HypixelStats/releases/latest)
 
@@ -70,8 +70,4 @@ You can now join a game and see all the stats!
 
 ### Updates
 
-When a new update is available, you'll see a prompt in the top right of the dashboard to update. Click it, and you're done! It's that easy.
-
-## Disclaimer
-
-This is my first time using node, electron, and a bunch of other web-like technologies. I'm completely self-teaching and just trying to build something that <i>works</i>, so maybe the best practices aren't always used. If you notice something off, feel free to submit an issue! I'm always willing to learn where I went wrong and what the better way to do it is.
+When a new update is available (Windows + Linux, MAC users reference [Building](https://github.com/EthanHarv/HypixelStats/wiki/Building)), you'll see a prompt in the top right of the dashboard to update. Click it, and you're done! It's that easy.
