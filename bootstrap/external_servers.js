@@ -39,7 +39,7 @@ function createPageFromStore()
                     <hr>\
                     <div class="custom-control custom-checkbox mt-2"><input type="checkbox" class="custom-control-input onOff" id="onOff' + apiName + '"><label class="custom-control-label" for="onOff' + apiName + '">Enabled</label></div>\
                     <div class="mt-1">Reference Name: <input style="width: 375px; display: inline;" type="text" class="form-control form-control-user text-primary apiName" placeholder="API Reference Name (one word)" value="">  <span class="text-xs text-danger">(no spaces)</span></div>\
-                    <div class="mt-1">Description: <input style="width: 525px; display: inline;" type="text" class="form-control form-control-user ml-1 apiDescription" placeholder="Description" value=""></div>\
+                    <div class="mt-1">Description: <input style="width: 525px; display: inline;" type="text" class="form-control form-control-user ml-1 text-primary apiDescription" placeholder="Description" value=""></div>\
                     <div class="mt-1"><label for="overlayAutoHide">Timeout (ms):</label> <input class="apiTimeout" type="number" min="50" max="10000" value=' + api.timeout + '></div>\
                     <div class="card-body shadow mt-1 sendsCard">\
                         <span class="text-lg">Sends:</span><br>\
