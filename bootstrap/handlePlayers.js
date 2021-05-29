@@ -91,6 +91,23 @@ function updatePlayerArea(playerList)
                     <div class="card-body">\
                         <div class="row no-gutters align-items-center">\
                             <div class="col mr-2">\
+                                <div style="position: relative; float: right; margin-right: 5px;">\
+                                    <div class="dropdown no-arrow" style="position: absolute; float: right;">\
+                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" style="font-size: 18px;">\
+                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>\
+                                        </a>\
+                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" style="">\
+                                            <div class="dropdown-header text-lg">' + player + '</div>\
+                                            <div class="dropdown-divider"></div>\
+                                            <a class="dropdown-item text-danger dropdownBlacklist" href="javascript:void(0)">Blacklist</a>\
+                                            <a class="dropdown-item text-success dropdownWhitelist" href="javascript:void(0)">Whitelist</a>\
+                                            <a class="dropdown-item text-primary dropdownNeutral" href="javascript:void(0)">Neutral</a>\
+                                            <div class="dropdown-divider"></div>\
+                                            <a class="dropdown-item text-info dropdownPlancke" href="javascript:void(0)">Lookup on Plancke</a>\
+                                            <a class="dropdown-item text-warning dropdownAlias" href="javascript:void(0)" style="display: none;">Add Alias/Nick</a>\
+                                        </div>\
+                                    </div>\
+                                </div>\
                                 <div class="font-weight-bold text-primary mb-1 name">' + player + '</div>\
                                 <div class="h5 mb-0 font-weight-bold text-gray-800 playerDataHolder">Loading...</div>\
                             </div>\
@@ -98,7 +115,13 @@ function updatePlayerArea(playerList)
                     </div>\
                 </div>\
             </div>\
-        ')
+        ');
+        // Register dropdown buttons
+        $("#" + player).find('.dropdownBlacklist').click(function(e){ playerName = $(e.target).closest('.playerCard').attr('player'); blacklistPlayer(playerName); });
+        $("#" + player).find('.dropdownWhitelist').click(function(e){ playerName = $(e.target).closest('.playerCard').attr('player'); whitelistPlayer(playerName); });
+        $("#" + player).find('.dropdownNeutral').click(function(e){ playerName = $(e.target).closest('.playerCard').attr('player'); neutralPlayer(playerName); });
+        $("#" + player).find('.dropdownPlancke').click(function(e){ playerName = $(e.target).closest('.playerCard').attr('player'); window.location.replace("./bootstrap/lookup.html?player=" + playerName); });
+        $("#" + player).find('.dropdownAlias').click(function(e){ playerName = $(e.target).closest('.playerCard').attr('player'); window.location.replace("./bootstrap/aliases.html?player=" + playerName); });
     });
     playerList.forEach(function(player) 
     {
@@ -146,6 +169,45 @@ function updatePlayerArea(playerList)
             }
         }
     });
+}
+
+function blacklistPlayer(player)
+{
+    store.set('blacklist', [...new Set([...store.get("blacklist"),...[player]])]);
+    var array = store.get('whitelist');
+    const index = array.indexOf(player); // Remove from whitelist, player is blacklisted
+    if (index > -1) {
+        array.splice(index, 1);
+    }
+    store.set('whitelist', array);
+    updateAllPlayerData();
+}
+function whitelistPlayer(player)
+{
+    store.set('whitelist', [...new Set([...store.get("whitelist"),...[player]])]);
+    var array = store.get('blacklist');
+    const index = array.indexOf(player); // Remove from blacklist, player is whitelisted
+    if (index > -1) {
+        array.splice(index, 1);
+    }
+    store.set('blacklist', array);
+    updateAllPlayerData();
+}
+function neutralPlayer(player)
+{
+    var array = store.get('blacklist');
+    var index = array.indexOf(player); // Remove from blacklist
+    if (index > -1) {
+        array.splice(index, 1);
+    }
+    store.set('blacklist', array);
+    var array = store.get('whitelist');
+    var index = array.indexOf(player); // Remove from whitelist
+    if (index > -1) {
+        array.splice(index, 1);
+    }
+    store.set('whitelist', array);
+    updateAllPlayerData();
 }
 
 // Obscure playercards
@@ -221,6 +283,8 @@ function updatePlayerData(player)
         if (data.internal.isNick) // TODO: Maybe some configuration options here.
         {
             $("#" + player).find('.playerDataHolder').append('<div class="h5 mb-0 font-weight-bold text-warning">Nick</div>');
+            $("#" + player).find('.dropdownPlancke').hide();
+            $("#" + player).find('.dropdownAlias').show();
         }
 
         for (var entry in profile["stats"])
