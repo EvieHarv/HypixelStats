@@ -491,7 +491,7 @@ function deleteProfile()
 
     $("#notificationBox").html('\
     <div class="mb-4" id="confirmDeleteProfile" style="display: block; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: auto; z-index: 3;">\
-        <div class="card border-bottom-danger shadow h-100 py-2">\
+        <div class="card border-danger shadow h-100 py-2">\
             <div class="card-body">\
                 <div class="no-gutters align-items-center">\
                     <div class="mr-2" style="width: 100%;">\
@@ -630,7 +630,7 @@ function validateLeave(target)
     // Show notif box asking if they want to leave
     $("#notificationBox").html('\
     <div class="mb-4" id="confirmLeavePage" style="display: block; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: auto; z-index: 3;">\
-        <div class="card border-bottom-danger shadow h-100 py-2">\
+        <div class="card border-danger shadow h-100 py-2">\
             <div class="card-body">\
                 <div class="no-gutters align-items-center">\
                     <div class="mr-2" style="width: 100%;">\
