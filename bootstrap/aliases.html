@@ -264,6 +264,7 @@
         });
         $('.updateAlias').click(function(e)
         {
+            // We intentionally don't check for conflicting reals. It's intended behavior to be able to have multiple nicks mapped to one real, just its so uncommon that normal inputs replace them.
             var oldNick = e.target.getAttribute('nick');
             var newNick = $("#nick" + e.target.getAttribute('nick')).val();
             var oldReal = $("#real" + e.target.getAttribute('nick')).attr('initReal');
@@ -357,10 +358,20 @@
         };
         if (Object.keys(aliases).includes(nick))
         {
-            infoBarMessage('text-danger', "Nick already in use", "You already have that nick set! Please update the existing one.", 5000);
-            return false;
+            infoBarMessage('text-danger', "Nick already in use", "You already have that nick set! The existing one has been updated.", 5000);
         };
-        // Intentionally don't check for duplicate real usernames.
+        var updateNick = undefined;
+        Object.keys(aliases).forEach(function(e)
+        {
+            if (aliases[e] == real)
+            {
+                updateNick = e;
+            }
+        });
+        if (updateNick !== undefined)
+        {
+            delete aliases[updateNick];
+        }
         aliases[nick] = real;
         store.set('aliases', aliases)
         updateList();
