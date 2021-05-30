@@ -216,10 +216,15 @@ function buildListFromPage()
 
 function setConfigFromCardUrl(card)
 {
-    const url = card.find('.apiURL').val();
+    var url = card.find('.apiURL').val();
     const currentAPIs = store.get('customAPIs');
 
     var apiData;
+
+    // Add https if not present
+    if (!/^http?:\/\//i.test(url)) {
+        url = 'https://' + url;
+    }
 
     $.ajax({
         url: url + "?getConfig",
