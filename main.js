@@ -308,11 +308,44 @@ function checkUndefineds()
     );
     store.delete('profiles');
   }
+  if (store.get('updateMigrationStore').sniperDetectionProfiles == undefined && store.get('profiles') != undefined)
+  {
+    // User has profiles, BUT they dont have sniper detection yet.
+    // We're gonna append the data to each profile.
+    // this is SUPER jank, but its what we're working with here.
+    profs = store.get('profiles');
+    Object.keys(profs).forEach(function(e)
+    {
+        if (e.includes('Bedwars'))
+        {
+            profs[e].stats["Reports:"] = "rd0(\"c.sniperCheck.report\", data)";
+            profs[e].stats["Sniper:"] = "rd0(\"c.sniperCheck.sniper\", data)";
+        };
+        oldColorC = profs[e].colorConditions;
+        profs[e].colorConditions = {};
+        doNext = false;
+        Object.keys(oldColorC).forEach(function(a)
+        {
+            if (doNext)
+            {
+                profs[e].colorConditions["(data.c.sniperCheck.report > 0) || (data.c.sniperCheck.sniper == true)"] = "#e228d2";
+                doNext = false;
+            }
+            profs[e].colorConditions[a] = oldColorC[a];
+            if (a == "data.internal.whitelist.includes(data.internal.name)")
+            {
+                doNext = true;
+            }
+        });
+    });
+    store.set('profiles', profs);
+  };
   // Set up default profile for a new user
   if (store.get('profiles') == undefined)
   {
     u = store.get('updateMigrationStore');
     u.rfuncProfiles = true;
+    u.sniperDetectionProfiles = true;
     store.set('updateMigrationStore', u);
     profiles = 
     {
@@ -320,11 +353,14 @@ function checkUndefineds()
         "stats": {
           "FKDR:": "r0(\"player.stats.Bedwars.final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.final_deaths_bedwars\", data)",
           "Winstreak:": "r0(\"player.stats.Bedwars.winstreak\", data)",
-          "✫": "data.player.achievements.bedwars_level"
+          "✫": "data.player.achievements.bedwars_level",
+          "Reports:": "rd0(\"c.sniperCheck.report\", data)",
+          "Sniper:": "rd0(\"c.sniperCheck.sniper\", data)"
         },
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
+          "(data.c.sniperCheck.report > 0) || (data.c.sniperCheck.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "data.player.channel == 'PARTY'": "#36b9cc",
           "(r0(\"player.stats.Bedwars.final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.final_deaths_bedwars\", data)) > 5": "#e74a3b"
@@ -336,11 +372,14 @@ function checkUndefineds()
         "stats": {
           "FKDR:": "r0(\"player.stats.Bedwars.eight_one_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.eight_one_final_deaths_bedwars\", data)",
           "Winstreak:": "r0(\"player.stats.Bedwars.winstreak\", data)",
-          "✫": "data.player.achievements.bedwars_level"
+          "✫": "data.player.achievements.bedwars_level",
+          "Reports:": "rd0(\"c.sniperCheck.report\", data)",
+          "Sniper:": "rd0(\"c.sniperCheck.sniper\", data)"
         },
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
+          "(data.c.sniperCheck.report > 0) || (data.c.sniperCheck.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "data.player.channel == 'PARTY'": "#36b9cc",
           "(r0(\"player.stats.Bedwars.eight_one_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.eight_one_final_deaths_bedwars\", data)) > 5": "#e74a3b"
@@ -352,11 +391,14 @@ function checkUndefineds()
         "stats": {
           "FKDR:": "r0(\"player.stats.Bedwars.eight_two_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.eight_two_final_deaths_bedwars\", data)",
           "Winstreak:": "r0(\"player.stats.Bedwars.winstreak\", data)",
-          "✫": "data.player.achievements.bedwars_level"
+          "✫": "data.player.achievements.bedwars_level",
+          "Reports:": "rd0(\"c.sniperCheck.report\", data)",
+          "Sniper:": "rd0(\"c.sniperCheck.sniper\", data)"
         },
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
+          "(data.c.sniperCheck.report > 0) || (data.c.sniperCheck.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "data.player.channel == 'PARTY'": "#36b9cc",
           "(r0(\"player.stats.Bedwars.eight_two_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.eight_two_final_deaths_bedwars\", data)) > 5": "#e74a3b"
@@ -368,11 +410,14 @@ function checkUndefineds()
         "stats": {
           "FKDR:": "r0(\"player.stats.Bedwars.four_three_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.four_three_final_deaths_bedwars\", data)",
           "Winstreak:": "r0(\"player.stats.Bedwars.winstreak\", data)",
-          "✫": "data.player.achievements.bedwars_level"
+          "✫": "data.player.achievements.bedwars_level",
+          "Reports:": "rd0(\"c.sniperCheck.report\", data)",
+          "Sniper:": "rd0(\"c.sniperCheck.sniper\", data)"
         },
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
+          "(data.c.sniperCheck.report > 0) || (data.c.sniperCheck.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "data.player.channel == 'PARTY'": "#36b9cc",
           "(r0(\"player.stats.Bedwars.four_three_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.four_three_final_deaths_bedwars\", data)) > 5": "#e74a3b"
@@ -384,11 +429,14 @@ function checkUndefineds()
         "stats": {
           "FKDR:": "r0(\"player.stats.Bedwars.four_four_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.four_four_final_deaths_bedwars\", data)",
           "Winstreak:": "r0(\"player.stats.Bedwars.winstreak\", data)",
-          "✫": "data.player.achievements.bedwars_level"
+          "✫": "data.player.achievements.bedwars_level",
+          "Reports:": "rd0(\"c.sniperCheck.report\", data)",
+          "Sniper:": "rd0(\"c.sniperCheck.sniper\", data)"
         },
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
+          "(data.c.sniperCheck.report > 0) || (data.c.sniperCheck.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "data.player.channel == 'PARTY'": "#36b9cc",
           "(r0(\"player.stats.Bedwars.four_four_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.four_four_final_deaths_bedwars\", data)) > 5": "#e74a3b"
@@ -400,11 +448,14 @@ function checkUndefineds()
         "stats": {
           "FKDR:": "r0(\"player.stats.Bedwars.two_four_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.two_four_final_deaths_bedwars\", data)",
           "Winstreak:": "r0(\"player.stats.Bedwars.winstreak\", data)",
-          "✫": "data.player.achievements.bedwars_level"
+          "✫": "data.player.achievements.bedwars_level",
+          "Reports:": "rd0(\"c.sniperCheck.report\", data)",
+          "Sniper:": "rd0(\"c.sniperCheck.sniper\", data)"
         },
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
+          "(data.c.sniperCheck.report > 0) || (data.c.sniperCheck.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "data.player.channel == 'PARTY'": "#36b9cc",
           "(r0(\"player.stats.Bedwars.two_four_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.two_four_final_deaths_bedwars\", data)) > 5": "#e74a3b"
@@ -422,6 +473,7 @@ function checkUndefineds()
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
+          "(data.c.sniperCheck.report > 0) || (data.c.sniperCheck.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "(r0(\"player.stats.Duels.sumo_duel_wins\", data) / r1n0(\"player.stats.Duels.sumo_duel_losses\", data)) > 3 || (r0(\"player.stats.Duels.uhc_duel_wins\", data) / r1n0(\"player.stats.Duels.uhc_duel_losses\", data)) > 3": "#e74a3b"
         },
@@ -437,6 +489,7 @@ function checkUndefineds()
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
+          "(data.c.sniperCheck.report > 0) || (data.c.sniperCheck.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "(r0(\"player.stats.Duels.bridge_duel_wins\", data) / r1n0(\"player.stats.Duels.bridge_duel_losses\", data)) > 3 || r0(\"player.stats.Duels.bridge_duel_kills\", data) / r1n0(\"player.stats.Duels.bridge_duel_deaths\", data) > 3": "#e74a3b"
         },

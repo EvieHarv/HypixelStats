@@ -28,7 +28,9 @@ Not associated with Hypixel Inc.
     - Auto `/who` should work fine with nothing else on windows, other platforms require Java to be installed in the PATH.
 - Fully configuarable view of stats, with on-the-fly profile switching (with keybinds!) for easy viewing of any stats you want, at any time.
     - Also includes assignable colors based off of stats, as well as the ability to sort the list by any (numeric) stat.
-- An overlay for easy stat-viewing
+- An overlay for easy stat-viewing.
+- Connects to a sniper network, courtesy of bwstats! discord.gg/bwstats. (This is run through a json wrapper, and can be found at api.hypixelstats.com/sniper)
+    - Shows snipers and reported players.
 - Includes the ability to whitelist/blacklist players for quick identification. By default, whitelisted players appear green and blacklisted players appear red. (This is configurable in the profiles!)
 - Detects nicked players and displays them as yellow by default (also configurable).
 - Keeps track of every player you've run into since you opened the app (single-session), for ease of blacklisting or whitelisting players you've recently played with.
@@ -39,8 +41,6 @@ Not associated with Hypixel Inc.
 - Compatibility with vanilla client
     - Won't be adding compatiblity with BLC as I don't support the devs, use lunar or vanilla.
 - Automatic, temporary party whitelisting with `/p list` (toggable)
-- Support for custom APIs
-    - A custom api.hypixelstats.com database, with reporting features to identify hackers/snipers.
 
 ## Installing, Getting Set Up, and Updating
 
