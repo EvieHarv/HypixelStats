@@ -627,7 +627,7 @@ function fileUpdated(path)
       });
 };
 
-var playerList = []; // Is this bad practice in javascript, or is this okay? I'm gonna go with it being okay, because it works.
+var playerList = [];
 var outOfGame = [];
 
 const arrayEquals = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
@@ -704,7 +704,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
       {
         playerNames[i] = playerNames[i].replace(",", "").trim(); // It works fine on linux without the .trim(), but windows sneaks in a newline character
       };
-      playerList = playerList.concat(playerNames.filter((name) => playerList.indexOf(name) < 0));
+      playerList = playerNames; // Fully re-set list to the /who, because /who will always be the full story anyways.
     };
 
 
@@ -769,10 +769,17 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
     }
   });
 
-  // Reset frontend list entirely if in a new lobby
-  if (largestCount > playerList.length && !arrayEquals(playerList, playerListTemp))
+  // Reset frontend list entirely if in a new lobby (largestCount > playerList.length).
+  // This works because we reset the playerList back to just the owner when a new lobby is detected.
+  // The (largestCount < playerList.length) will occur when someone is aliased wrong. We don't like that still, but we can handle it here.
+  // I know this is programmically the same as (largestCount !== playerList.length), but I like it this way for the concept of it
+  if ((largestCount > playerList.length || largestCount < playerList.length) && !arrayEquals(playerList, playerListTemp))
   {
-    mainWindow.webContents.send('playerList', []); // Clear the page so that the key owner's stats can update
+    // We only want to do this during normal operation
+    if (largestCount > playerList.length)
+    {
+      mainWindow.webContents.send('playerList', []); // Clear the page so that the key owner's stats can update
+    }
 
     // User must have java and /who must not have been sent in the last 3 seconds
     if ((hasJava || process.platform == "win32") && !autoWhoInUse && (store.get('disableAutoWho') != true)) // The "disableAutoWho" nomenclature is slightly confusing, but we use it so we don't have to verify it's existance.
