@@ -115,9 +115,12 @@ async function callApis(player, key, APIs) // Player name, owner key, custom API
                             url = api.url;
 
                             // Add https if not already there.
-                            if (!/^http?:\/\//i.test(url)) {
+                            if (!/^https?:\/\//i.test(url)) {
                                 url = 'https://' + url;
                             }
+
+                            console.log(url);
+
                             // We assume we're dealing with safe data by this point.
                             add = "?"; // Easy way to add on paramaters with & if there is more than 1 argument sent.
                             if (api.sends.userKey) { url += add + "key=" + key; add = "&"; };

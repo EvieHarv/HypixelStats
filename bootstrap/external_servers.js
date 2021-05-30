@@ -222,7 +222,7 @@ function setConfigFromCardUrl(card)
     var apiData;
 
     // Add https if not present
-    if (!/^http?:\/\//i.test(url)) {
+    if (!/^https?:\/\//i.test(url)) {
         url = 'https://' + url;
     }
 
