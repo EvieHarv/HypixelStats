@@ -339,6 +339,10 @@ function checkUndefineds()
         });
     });
     store.set('profiles', profs);
+    u = store.get('updateMigrationStore');
+    u.sniperDetectionProfiles = true;
+    store.set('updateMigrationStore', u);
+
   };
   // Set up default profile for a new user
   if (store.get('profiles') == undefined)
