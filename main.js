@@ -95,8 +95,10 @@ var mostRecentSize = 0;
 var timesRead = 0;
 var fileLocation;
 var readLoopStarted = false;
+var loopCount = 0;
 const readLogFile = async () => 
 {
+  loopCount++;
   try
   {
     // Modifed from https://github.com/imconnorngl/overlay/blob/60aba3d04601284a7ddfac7652a0071db1bb5660/js/playerUpdater.js#L28
@@ -105,6 +107,17 @@ const readLogFile = async () =>
     // Seems like an all-around better method than Chokidar.
     readLoopStarted = true;
     var newSize = fs.fstatSync(fileLocation).size;
+    if (loopCount >= 250) // 250 is arbitrary, takes around 3.8 seconds for every check. Want to reduce the strain on the filesystem.
+    {
+      loopCount = 0;
+      var filePath = store.get('logPath');
+      testSize = fs.statSync(filePath).size;
+      if (newSize != testSize)
+      {
+        console.log('It appears the log file has changed. This may be due to a restarted client. Attempting to re-set it...');
+        setFileWatcher();
+      }
+    }
     if (timesRead == 0) 
     {
       mostRecentSize = newSize;
