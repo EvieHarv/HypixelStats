@@ -1,6 +1,6 @@
 {
   "name": "hypixelstats",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Cross-platform and open-source Hypixel stattracker",
   "main": "main.js",
   "scripts": {
@@ -23,7 +23,6 @@
     "electron-builder": "^22.10.5"
   },
   "dependencies": {
-    "chokidar": "^3.5.1",
     "electron-is-accelerator": "^0.2.0",
     "electron-log": "^4.3.2",
     "electron-store": "^7.0.2",

@@ -1,6 +1,5 @@
 const { app, webContents, BrowserWindow, Menu, MessageChannelMain, ipcMain, globalShortcut } = require('electron');
 const process = require('process');
-const chokidar = require('chokidar');
 const readLastLines = require('read-last-lines');
 const console = require('console');
 const Store = require('electron-store');
@@ -68,17 +67,7 @@ app.on('ready', function()
   // Make sure store values are defined
   checkUndefineds();
 
-  
-  if (store.get('logPath') !== undefined)
-  {
-    const watcher = chokidar.watch(store.get('logPath'),
-    {
-      persistent: true,
-      usePolling: true // Unfortunately higher CPU usage, but seems required to get it to work consistently
-    });
-    watcher.on('change', path => fileUpdated(path));
-  }
-
+  setFileWatcher();
 
   if (!(process.platform == "win32"))
   {
@@ -100,6 +89,75 @@ app.on('ready', function()
   }
 
   initalizeGlobalShortcuts();
+});
+
+var mostRecentSize = 0;
+var timesRead = 0;
+var fileLocation;
+var readLoopStarted = false;
+const readLogFile = async () => 
+{
+  try
+  {
+    // Modifed from https://github.com/imconnorngl/overlay/blob/60aba3d04601284a7ddfac7652a0071db1bb5660/js/playerUpdater.js#L28
+    // Only just found this repo (and statsify in general, idk how I never heard of it before).
+    // Can't find a license, but hoping we're chill if I take and adapt this method of file updating into the program. 
+    // Seems like an all-around better method than Chokidar.
+    readLoopStarted = true;
+    var newSize = fs.fstatSync(fileLocation).size;
+    if (timesRead == 0) 
+    {
+      mostRecentSize = newSize;
+      timesRead++;
+      setTimeout(readLogFile, 10);
+    } 
+    else if (newSize < mostRecentSize + 1) 
+    {
+      setTimeout(readLogFile, 10);
+    } 
+    else 
+    {
+      fs.read(fileLocation, Buffer.alloc(2056), 0, 2056, mostRecentSize, (err, bytecount, buff) => {
+        mostRecentSize += bytecount;
+  
+        const lines = buff.toString().split(/\r?\n/).slice(0, -1);
+        checkForPlayer(lines);
+        readLogFile();
+      });
+    }  
+  }
+  catch(err)
+  {
+    console.error("File reading failed");
+    console.error(err);
+  }
+};
+
+function setFileWatcher()
+{
+  var filePath = store.get('logPath');
+  fs.open(filePath, 'r', (err, fd) => {
+    if (!err) 
+    {
+      if (fileLocation)
+      {
+        fs.close(fileLocation);
+      };
+      mostRecentSize = 0;
+      timesRead = 0;
+      fileLocation = fd;
+      if (!readLoopStarted) readLogFile();
+    }
+    else 
+    { 
+      console.error('File failed to set'); 
+    }; 
+  });
+}
+
+ipcMain.on('logPathChanged', function(event)
+{
+  setFileWatcher();
 });
 
 function toggleFakeFullscreen()
@@ -542,25 +600,6 @@ function checkUndefineds()
       store.set('whitelist', []);
   };
 
-  // Set the path default to "C:\Users\[USER]\.lunarclient\logs\launcher\renderer.log" if the file exists (or linux equivilent)
-  if (store.get('logPath') == undefined)
-  {
-    // TODO: Don't hardcode this as lunar
-    var logPath;
-    if (process.platform == "win32")
-    {
-      var logPath = path.join(process.env['USERPROFILE'], ".lunarclient\\logs\\launcher\\renderer.log");
-    }
-    else
-    {
-      var logPath = path.join(process.env['HOME'], ".lunarclient/logs/launcher/renderer.log");
-    }
-    if (fs.existsSync(logPath)) {
-      //file exists
-      store.set('logPath', logPath)
-    };  
-  }
-
   // If key owner exists but no UUID has been grabbed (from prev. versions of the tool), build that information.
   if (store.get("key_owner") && !(store.get('key_owner_uuid')))
   {
@@ -670,20 +709,6 @@ const mainMenuTemplate =
   }
 ];
 
-function fileUpdated(path)
-{
-  const lines = 25; // This isn't an exact science here, but 25 seems to work. Performace is fine still, so there's wiggle room.
-
-  readLastLines.read(path, lines) // I wish I could just do line-by-line, but it misses it when they go too quickly, so we check multiple lines every update.
-      .then((lastLines)=> {
-        // Split lines into array, and remove blank values
-          checkForPlayer(lastLines.split('\n').filter(function(l){return l != '';}))
-      })
-      .catch((err)=> {
-          console.error(err)
-      });
-};
-
 var playerList = [];
 var outOfGame = [];
 
@@ -701,7 +726,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
 
   new_api_key = null;
 
-  // Loop through the past 25 lines and check each for new players (we use the past 25 because sometimes when many join at once the event will skip)
+  // Loop through the given lines and check each for new players
   lines.forEach(function(line)
   {
     // Detect new API key and do relevent work
@@ -709,7 +734,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
     if (line.includes("[Client thread/INFO]: [CHAT] Your new API key is ") && (line.indexOf("[Client thread/INFO]: [CHAT]") == line.lastIndexOf("[Client thread/INFO]: [CHAT]")))
     {
       new_api_key = line.split('[Client thread/INFO]: [CHAT] Your new API key is ')[1];
-      // I would just set it here, but we do it after all 25 lines are checked to ensure that someone who did `/api new` twice in a short spam wont cause bugs
+      // I would just set it here, but we do it after all lines are checked to ensure that someone who did `/api new` twice in a short spam wont cause bugs
     };
     var nickDetect = false;
     // Detects if we join a new match through [Client thread/INFO]: [CHAT] Sending you to && [CHAT] (nicked_alias) has joined

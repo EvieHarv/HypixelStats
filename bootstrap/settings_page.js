@@ -1,6 +1,9 @@
 //store should already be set
 
 const isAccelerator = require("electron-is-accelerator");
+const dialog = require('electron').remote.dialog;
+const path = require('path');
+const fs = require('fs');
 
 $('#setKeyButton').click(function()
 { 
@@ -381,8 +384,28 @@ $('#inputPath').on("keypress", function(e) {
 
 $('#setPathButton').click(function()
 {
-    store.set('logPath', $('#inputPath').val());
-    infoBarMessage('text-success', "Success", "Path Set Successfully!", 5000);
+    defPath = $('#inputPath').val();
+    if (!fs.existsSync(defPath))
+    {
+        defPath = process.env['USERPROFILE'];
+    }
+    dialog.showOpenDialog(
+        { 
+            title: 'Select Path',
+            defaultPath: defPath,
+            properties: ['openFile'],
+            properties: []
+        }
+    ).then(result => {
+        if (!result.canceled) {
+            $('#inputPath').val(result.filePaths[0]);
+            store.set('logPath', result.filePaths[0]);
+            infoBarMessage('text-success', "Success", "Path Set!", 5000);
+            ipcRenderer.send('logPathChanged');
+        }
+    }).catch(err => {
+        console.error(err);
+    });
 });
 
 ipcRenderer.on('setNewAPIKey', function (event,new_api_key)
