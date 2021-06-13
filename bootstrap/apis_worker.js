@@ -119,13 +119,13 @@ async function callApis(player, key, APIs) // Player name, owner key, custom API
                                 url = 'https://' + url;
                             }
 
-                            console.log(url);
-
                             // We assume we're dealing with safe data by this point.
                             add = "?"; // Easy way to add on paramaters with & if there is more than 1 argument sent.
                             if (api.sends.userKey) { url += add + "key=" + key; add = "&"; };
                             if (api.sends.playerName) { url += add + "name=" + player; add = "&"; };
-                            if (api.sends.playerUUID) { url += add + "uuid=" + uuid; add = "&"; };
+                            // I hate doing this, but hypixel just cannot be consistent with their API, and I don't want to wrap it.
+                            // This is hopefully the only exception I'll ever have to make.
+                            if (api.sends.playerUUID) { url += add + ((url.includes("api.hypixel.net/guild")) ? "player=" : "uuid=") + uuid; add = "&"; };
 
                             apiData = null;
 
