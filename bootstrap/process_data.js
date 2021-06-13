@@ -197,3 +197,8 @@ function rd0(path, obj) {
     }
     return v;
 }
+
+function f(func, data)
+{
+    return Function('\"use strict\"; let data = arguments[0]; ' + func)(data);
+}
