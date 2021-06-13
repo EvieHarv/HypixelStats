@@ -762,7 +762,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
       });
     }
     // Detects if we join a new match through [Client thread/INFO]: [CHAT] Sending you to && [CHAT] (key_owner) has joined
-    if (nickDetect || line.includes("[Client thread/INFO]: [CHAT] " + key_owner + " has joined" || line.includes("[Client thread/INFO]: [CHAT] Sending you to "))) // When we join a new match
+    if (nickDetect || line.includes("[Client thread/INFO]: [CHAT] " + key_owner + " has joined") || line.includes("[Client thread/INFO]: [CHAT] Sending you to ")) // When we join a new match
     {
       // Still not completely consistent for an nicked, un-aliased account. Should be consistent enough to give them the warning, though.
       playerList = []; // Re-initalize list
