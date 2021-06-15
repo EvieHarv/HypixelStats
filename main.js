@@ -111,11 +111,14 @@ const readLogFile = async () =>
     {
       loopCount = 0;
       var filePath = store.get('logPath');
-      testSize = fs.statSync(filePath).size;
-      if (newSize != testSize)
+      if (filePath)
       {
-        console.log('It appears the log file has changed. This may be due to a restarted client. Attempting to re-set it...');
-        setFileWatcher();
+        testSize = fs.statSync(filePath).size;
+        if (newSize != testSize)
+        {
+          console.log('It appears the log file has changed. This may be due to a restarted client. Attempting to re-set it...');
+          setFileWatcher();
+        }  
       }
     }
     if (timesRead == 0) 

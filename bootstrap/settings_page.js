@@ -382,6 +382,45 @@ $('#inputPath').on("keypress", function(e) {
     }
 });
 
+$('.clientSelect').click(function(e)
+{
+    setClient(e.target.id);
+});
+
+function setClient(clientName)
+{
+    var home;
+    if (process.platform == "win32")
+    {
+        home = process.env['USERPROFILE'];
+    }
+    else
+    {
+        home = process.env['HOME'];
+    }
+    var logPath;
+    if (clientName == "clientVanillaForge") { logPath = path.join(home, "/AppData/Roaming/.minecraft/logs/latest.log"); }
+    // Ok, I really dont like supporting badlion because of some of their history, but I realize that not doing so only hurts the users.
+    // I don't support the devs, but I can't imagine this helps them too much.
+    else if (clientName == "clientBadlion") { logPath = path.join(home, "/AppData/Roaming/.minecraft/logs/blclient/minecraft/latest.log"); }
+    else if (clientName == "clientLunar") { logPath = path.join(home, "/.lunarclient/offline/1.8/logs/latest.log"); }
+    else if (clientName == "clientPVPLounge") { logPath = path.join(home, "/AppData/Roaming/.pvplounge/logs/latest.log"); }
+    console.log(logPath);
+    if (!fs.existsSync(logPath))
+    {
+        console.log('Logfile does not exist.');
+        infoBarMessage('text-danger', 'Logfile Path Not Found', 'The path was not found! Make sure you\'ve started this client before. If you need help, join our Discord.', 7500);
+    }
+    else
+    {
+        $('#inputPath').val(logPath);
+        store.set('logPath', logPath);
+        ipcRenderer.send('logPathChanged');
+        infoBarMessage('text-success', 'Success', 'The path was set!', 5000);
+    }
+}
+
+
 $('#setPathButton').click(function()
 {
     defPath = $('#inputPath').val();

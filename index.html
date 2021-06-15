@@ -24,9 +24,13 @@
 -->
 
 </head><body id="page-top">
+    <div id="overlay" style='position: fixed; display: none; width: 100%;height: 100%;top: 0;left: 0;right: 0;bottom: 0;background-color: rgba(0,0,0,0.5);z-index: 2;cursor: pointer;'></div>
 
     <!-- Page Wrapper -->
     <div id="wrapper">
+
+        <div id='notificationBox'>
+        </div>
 
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
@@ -212,6 +216,49 @@
     <script src="./bootstrap/handlePlayers.js"></script>
     <script src="./bootstrap/profileLoader.js"></script>
 <script>
+    function dimPage() {
+        document.getElementById("overlay").style.display = "block";
+    }
+  
+    function undimPage() {
+        document.getElementById("overlay").style.display = "none";
+    }
+
+    const path = require('path');
+    const fs = require('fs');
+
+    function setClient(clientName)
+    {
+        var home;
+        if (process.platform == "win32")
+        {
+            home = process.env['USERPROFILE'];
+        }
+        else
+        {
+            home = process.env['HOME'];
+        }
+        var logPath;
+        if (clientName == "clientVanillaForge") { logPath = path.join(home, "/AppData/Roaming/.minecraft/logs/latest.log"); }
+        // Ok, I really dont like supporting badlion because of some of their history, but I realize that not doing so only hurts the users.
+        // I don't support the devs, but I can't imagine this helps them too much.
+        else if (clientName == "clientBadlion") { logPath = path.join(home, "/AppData/Roaming/.minecraft/logs/blclient/minecraft/latest.log"); }
+        else if (clientName == "clientLunar") { logPath = path.join(home, "/.lunarclient/offline/1.8/logs/latest.log"); }
+        else if (clientName == "clientPVPLounge") { logPath = path.join(home, "/AppData/Roaming/.pvplounge/logs/latest.log"); }
+        console.log(logPath);
+        if (!fs.existsSync(logPath))
+        {
+            console.log('Logfile does not exist.');
+            infoBarMessage('text-danger', 'Logfile Path Not Found', 'The path was not found! Please go to application settings and set your path. (If you need help, join our Discord.)', 7500);
+        }
+        else
+        {
+            store.set('logPath', logPath);
+            ipcRenderer.send('logPathChanged');
+            infoBarMessage('text-success', 'Path set!', 'The path was set successfully!', 5000);
+        }
+    }
+
     $(function()
     {
         if ((store.get('hypixel_key') == undefined) || (store.get('logPath') == undefined)) // User not set up yet! Show them what they need
@@ -231,6 +278,34 @@
             </div>\
             </div>'
         );
+        if (store.get('logPath') == undefined)
+        {
+            dimPage();
+            $("#notificationBox").html('\
+            <div class="mb-4" id="selectClientScreen" style="display: block; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: auto; z-index: 3;">\
+                <div class="card border-primary shadow h-100 py-2">\
+                    <div class="card-body">\
+                        <div class="no-gutters align-items-center">\
+                            <div class="mr-2" style="width: 100%;">\
+                                <div class="mb-3"><h1 class="text-primary mb-0">Select your client!</h1>\
+                                <span class="text-primary">This can be changed later.</span></div>\
+                                <button class="btn btn-primary mb-0 clientSelect" id="clientVanillaForge" type="button">Vanilla/Forge</button>\
+                                <button class="btn btn-primary mb-0 clientSelect" id="clientLunar" type="button">Lunar</button>\
+                                <button class="btn btn-primary mb-0 clientSelect" id="clientBadlion" type="button">Badlion</button>\
+                                <button class="btn btn-primary mb-0 clientSelect" id="clientPVPLounge" type="button">PVPLounge</button>\
+                            </div>\
+                        </div>\
+                    </div>\
+                </div>\
+            </div>\
+            ');
+            $('.clientSelect').click(function(e)
+            {
+                undimPage();
+                $("#notificationBox").html('');
+                setClient(e.target.id);
+            });
+        }
     });
 </script>
 <script>
