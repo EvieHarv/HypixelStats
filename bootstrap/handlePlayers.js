@@ -1,6 +1,8 @@
 // store already defined by this point
 var ipcRenderer = require('electron').ipcRenderer;
 
+var partyMembers = [];
+
 ipcRenderer.on('playerList', function (event,playerList) 
 {
     updatePlayerArea(playerList);
@@ -8,6 +10,10 @@ ipcRenderer.on('playerList', function (event,playerList)
 ipcRenderer.on('outOfGame', function (event,outOfGame) 
 {
     outOfGameUpdate(outOfGame);
+});
+ipcRenderer.on('partyList', function (event,partyList) 
+{
+    partyUpdate(partyList);
 });
 
 function updatePlayerArea(playerList)
@@ -233,7 +239,7 @@ function outOfGameUpdate(list)
 
 // Parse the data for all players
 // Used in profileLoader.js
-function updateAllPlayerData() // DO NOT DELETE
+function updateAllPlayerData()
 {
     $(".playerCard").each(function(index, card){
         updatePlayerData(card.id);
@@ -257,6 +263,10 @@ function updatePlayerData(player)
     }
     data.internal.blacklist = store.get('blacklist');
     data.internal.whitelist = store.get('whitelist');
+    if (partyMembers.length > 0)
+    {
+        data.internal.whitelist = data.internal.whitelist.concat(partyMembers)
+    }
     data.internal.seenPlayers = sessionStorage.getItem('seenPlayers').split(',').filter(function (el) {return el != "";}); // I hate how scuffed this is.
 
     // Call a new worker and post a message
@@ -410,6 +420,32 @@ function resortCards()
     // Sorting (or lack thereof) is done
 
     sendDataToOverlay();
+}
+
+
+function partyUpdate(partyList)
+{
+    // Don't include key owner
+    const index = partyList.indexOf(store.get('key_owner'));
+    if (index > -1) {
+      partyList.splice(index, 1);
+    }
+    // Make sure it's enabled.
+    if (store.get('doPartyWhitelisting') == true)
+    {
+        // Set the global list
+        partyMembers = partyList;
+        updateAllPlayerData();
+        if (partyList.length > 0)
+        {
+            $('#partyList').html(partyList.join("<span class='text-secondary'>,</span> "));
+            $('#partyListWholeDiv').show();
+        }
+        else
+        {
+            $('#partyListWholeDiv').hide();
+        };    
+    }
 }
 
 function sendDataToOverlay()

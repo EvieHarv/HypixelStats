@@ -85,6 +85,26 @@ $(function()
             store.set('disableAutoWho', true)
         }
     });
+    
+    if(store.get('doPartyWhitelisting') == true) // We want it on by default
+    {
+        
+        $('#enablePartyWhitelisting').prop('checked', true)
+    }
+    else
+    {
+        $('#enablePartyWhitelisting').prop('checked', false)
+    }
+
+    $("#enablePartyWhitelisting").change(function() {
+        if(this.checked) {
+            store.set('doPartyWhitelisting', true)
+        }
+        else
+        {
+            store.set('doPartyWhitelisting', false)
+        }
+    });
 
 
     udbState = store.get("undefinedBehavior");

@@ -674,6 +674,11 @@ function checkUndefineds()
   {
     store.set('overlayAutoHide', 15);
   }
+
+  if (store.get('doPartyWhitelisting') == undefined)
+  {
+    store.set('doPartyWhitelisting', true);
+  }
 }
 
 ipcMain.on('updateCheck', function(){ // Check update like this to make sure page is fully loaded before checking
@@ -727,6 +732,7 @@ const mainMenuTemplate =
 
 var playerList = [];
 var outOfGame = [];
+var partyList = [];
 
 const arrayEquals = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
 
@@ -745,6 +751,11 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
   // Loop through the given lines and check each for new players
   lines.forEach(function(line)
   {
+    if (line.split('[CHAT]')[1] && (line.split('[CHAT]')[1].includes(':') && !line.split('[CHAT]')[1].startsWith(' You\'ll be partying with: ') && !line.split('[CHAT]')[1].startsWith(' ONLINE: ') && !line.split('[CHAT]')[1].startsWith(' Party ')))
+    {
+      // ignore player chat, but allow party and ONLINE: to bypass
+      return false;
+    }
     // Detect new API key and do relevent work
     // The indexOf checking is needed to ensure that nobody can just type in chat "[Client thread/INFO]: [CHAT] Your new API key is [xyz]" and inject a fake key
     if (line.includes("[Client thread/INFO]: [CHAT] Your new API key is ") && (line.indexOf("[Client thread/INFO]: [CHAT]") == line.lastIndexOf("[Client thread/INFO]: [CHAT]")))
@@ -836,6 +847,122 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
           outOfGame.splice(index, 1);
         };
       }
+    }
+
+
+
+    /////////////////
+    // Party Stuff //
+    /////////////////
+
+    // Detect new party
+    if (line.includes('You have joined') && line.includes('party!')) // Another Player joins, add them to playerList
+    {
+      // Reset
+      partyList = [];
+      // Get leader name
+      var matchStr = line.match(/\b\w+'s\b/);
+      if (!matchStr)
+      {
+        // this happens if their name ends in s
+        // is there probably a better way to do this? definately
+        // am i gonna do it? not right now probably later when i eventually refactor this whole mistake of a function
+        matchStr = line.match(/\b\w+'/);
+        matchStr = matchStr[0].slice(0, -1);
+      }
+      else
+      {
+        matchStr = matchStr[0].slice(0, -2);
+      }
+
+      // Push to list
+      if (matchStr) partyList.push(matchStr.trim());
+    }
+    // Detect existing players in party (on join)
+    if (line.includes('You\'ll be partying with: '))
+    {
+      var names = line.split('You\'ll be partying with:')[1];
+      names = names.match(/ \w+/g);
+      // I'm not very good at regex, but I'm trying
+      for (let i = 0; i < names.length; i++) { names[i] = names[i].trim(); }
+      names.forEach(name => { partyList.push(name); });
+    }
+    // new player joined
+    if (line.includes(' joined the party.'))
+    {
+      var name = line.split('[CHAT]')[1].match(/\b(?<!\[)\w+\b/);
+      partyList.push(name[0]);
+    };
+    // player left
+    if (line.includes(' has left the party.'))
+    {
+      // get name
+      var name = line.split('[CHAT]')[1].match(/\b(?<!\[)\w+\b/);
+      // remove from list
+      const index = partyList.indexOf(name[0]);
+      if (index > -1) {
+        partyList.splice(index, 1);
+      }
+    };
+    // kicks
+    if (line.includes(' has been removed from the party.'))
+    {
+      var name = line.split('[CHAT]')[1].match(/\b(?<!\[)\w+\b/);
+      const index = partyList.indexOf(name[0]);
+      if (index > -1) {
+        partyList.splice(index, 1);
+      }  
+    };
+    // disconnect kicks
+    if (line.includes(' was removed from your party.'))
+    {
+      var name = line.split('[CHAT]')[1].match(/\b(?<!\[)\w+\b/);
+      const index = partyList.indexOf(name[0]);
+      if (index > -1) {
+        partyList.splice(index, 1);
+      }  
+    };
+
+    // `/p list` ones:
+    if (line.includes('Party Leader: '))
+    {
+      var names = line.split('Party Leader:')[1];
+      var name = names.match(/ \w+/)[0].trim();
+      if (!partyList.includes(name)) partyList.push(name);
+    };
+    if (line.includes('Party Moderators: '))
+    {
+      var names = line.split('Party Moderators:')[1];
+      names = names.match(/ \w+/g);
+      // I'm not very good at regex, but I'm trying
+      for (let i = 0; i < names.length; i++) { names[i] = names[i].trim(); }
+      names.forEach(name => { if (!partyList.includes(name)) partyList.push(name); });
+    };
+    if (line.includes('Party Members: '))
+    {
+      var names = line.split('Party Members:')[1];
+      names = names.match(/ \w+/g);
+      // I'm not very good at regex, but I'm trying
+      for (let i = 0; i < names.length; i++) { names[i] = names[i].trim(); }
+      names.forEach(name => { if (!partyList.includes(name)) partyList.push(name); });
+    };
+
+    // disband/leave
+    if (line.includes('has disbanded the party!') || line.includes('The party was disbanded because all invites'))
+    {
+      partyList = [];
+    };
+    if (line.includes('You left the party.'))
+    {
+      partyList = [];
+    };
+    if (line.includes('You are not currently in a party.'))
+    {
+      partyList = [];
+    };
+    if (line.includes('You have been kicked from the party'))
+    {
+      partyList = [];
     }
   });
 
@@ -938,6 +1065,7 @@ function updateFrontend()
 {
   mainWindow.webContents.send('playerList', playerList);
   mainWindow.webContents.send('outOfGame', outOfGame);
+  mainWindow.webContents.send('partyList', partyList);
 };
 
 ipcMain.on('sendListAgain', function(){ // Re-sending player list on page load

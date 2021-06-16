@@ -138,12 +138,16 @@
                     <div id='infoBarHolder'>
                     </div>
 
-                    <div>
+                    <div class='mb-1'>
                         Versions: 
                         HypixelStats <script>document.write(require("electron").remote.app.getVersion());</script>,
                         Node <script>document.write(process.versions.node)</script>,
                         Chrome <script>document.write(process.versions.chrome)</script>,
-                        and Electron <script>document.write(process.versions.electron)</script>.                
+                        and Electron <script>document.write(process.versions.electron)</script>.
+                        <span id='partyListWholeDiv' style='float: right; display: none;'>
+                            <span class='text-secondary'>Current Party:</span>
+                            <span id='partyList' class='text-success'></span>
+                        </span>    
                     </div>
 
                     <!-- Page Heading -->
