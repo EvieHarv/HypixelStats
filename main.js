@@ -152,23 +152,26 @@ const readLogFile = async () =>
 function setFileWatcher()
 {
   var filePath = store.get('logPath');
-  fs.open(filePath, 'r', (err, fd) => {
-    if (!err) 
-    {
-      if (fileLocation)
+  if (filePath)
+  {
+    fs.open(filePath, 'r', (err, fd) => {
+      if (!err) 
       {
-        fs.close(fileLocation);
-      };
-      mostRecentSize = 0;
-      timesRead = 0;
-      fileLocation = fd;
-      if (!readLoopStarted) readLogFile();
-    }
-    else 
-    { 
-      console.error('File failed to set'); 
-    }; 
-  });
+        if (fileLocation)
+        {
+          fs.close(fileLocation);
+        };
+        mostRecentSize = 0;
+        timesRead = 0;
+        fileLocation = fd;
+        if (!readLoopStarted) readLogFile();
+      }
+      else 
+      { 
+        console.error('File failed to set'); 
+      }; 
+    });
+  }
 }
 
 ipcMain.on('logPathChanged', function(event)
