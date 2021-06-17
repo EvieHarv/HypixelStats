@@ -241,6 +241,7 @@ function outOfGameUpdate(list)
 // Used in profileLoader.js
 function updateAllPlayerData()
 {
+    console.trace();
     $(".playerCard").each(function(index, card){
         updatePlayerData(card.id);
     });
@@ -431,7 +432,7 @@ function partyUpdate(partyList)
       partyList.splice(index, 1);
     }
     // Make sure it's enabled.
-    if (store.get('doPartyWhitelisting') == true)
+    if (store.get('doPartyWhitelisting') == true && !arraysEqual(partyList, partyMembers))
     {
         // Set the global list
         partyMembers = partyList;
@@ -488,3 +489,19 @@ function resolve(path, obj) {
         return prev ? prev[curr] : null
     }, obj || self)
 }
+
+function arraysEqual(a, b) {
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length !== b.length) return false;
+  
+    // If you don't care about the order of the elements inside
+    // the array, you should sort both arrays here.
+    // Please note that calling sort on an array will modify that array.
+    // you might want to clone your array first.
+  
+    for (var i = 0; i < a.length; ++i) {
+      if (a[i] !== b[i]) return false;
+    }
+    return true;
+  }
