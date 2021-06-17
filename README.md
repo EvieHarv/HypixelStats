@@ -8,9 +8,9 @@ Works for more than just bedwars! You can define exactly what you want to see an
 
 Not associated with Hypixel Inc.
 
-[Watch the Getting Started guide!](https://www.youtube.com/watch?v=dnQOkYA3pNE)
+[Watch the Getting Started Video!](https://www.hypixelstats.com/setup_video.html)
 
-[Join the discord!](http://discord.gg/yAAz4UkNb5)
+[Join the Discord!](http://discord.gg/yAAz4UkNb5)
 
 ## [Download the latest release here](https://github.com/EthanHarv/HypixelStats/releases/latest)
 
