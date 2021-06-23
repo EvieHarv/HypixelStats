@@ -22,8 +22,6 @@ Not associated with Hypixel Inc.
 
 ## Features
 
-### <b>NOTE: HypixelStats is only currently compatible with Lunar Client. Support for other clients coming soon!</b>
-
 - Automatically detects when you join new game, sends /who to get the full list, and automatically detects when players leave/join and adds/removes them from the list.
     - Auto `/who` should work fine with nothing else on windows, other platforms require Java to be installed in the PATH.
 - Fully configuarable view of stats, with on-the-fly profile switching (with keybinds!) for easy viewing of any stats you want, at any time.
@@ -38,9 +36,9 @@ Not associated with Hypixel Inc.
 
 ## Features in the works
 
-- Compatibility with vanilla client
-    - Won't be adding compatiblity with BLC as I don't support the devs, use lunar or vanilla.
-- Automatic, temporary party whitelisting with `/p list` (toggable)
+- A lobby mode
+- Easier profile management system
+- More robust default profiles
 
 ## Installing, Getting Set Up, and Updating
 
@@ -58,15 +56,13 @@ Not associated with Hypixel Inc.
 1. To get started, get your hypixel key. You can do this just by joining hypixel and doing `/api key`. Then, go to `Settings -> Application Settings`, and put it in.
     - Any time you switch to an alt account, make sure to do `/api new` and it will ***automatically*** detect it and set it for you. (You don't even have to be on the Settings page! It'll pick it up anywhere). It can break things if you don't do this.
 
-2. You will also need to set your log path. Open the lunar client launcher, go to the "about" tab, and click "open logs folder in file explorer." Here you should see a `renderer.log` file. Make sure to give the <b>FULL</b> path to this file, e.g. `C:\Users\me\.lunarclient\logs\renderer.log`
-
-3. Once your log location is set, close the app entirely and start it again. (I know, it's a bit annoying, but you only have to do this once.)
+2. You will also need to set your log path. You can just click your client in Application Settings. If you use a custom logfile path, you can set that here too.
 
 Done!
 
 You can now join a game and see all the stats!
 
-***NOTE***: If you ever play nicked, make sure to go to the Aliases tab and set your nickname! It can break things if you don't.
+***NOTE***: If you ever play nicked, make sure to go to the Aliases tab and set your nickname! It'll automatically change your name in the tool so you can see your stats (i.e. winstreak) update.
 
 ### Updates
 
