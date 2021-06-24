@@ -760,26 +760,26 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
       return false;
     }
     // Detect new API key and do relevent work
-    // The indexOf checking is needed to ensure that nobody can just type in chat "[Client thread/INFO]: [CHAT] Your new API key is [xyz]" and inject a fake key
-    if (line.includes("[Client thread/INFO]: [CHAT] Your new API key is ") && (line.indexOf("[Client thread/INFO]: [CHAT]") == line.lastIndexOf("[Client thread/INFO]: [CHAT]")))
+    // The indexOf checking is needed to ensure that nobody can just type in chat " [CHAT] Your new API key is [xyz]" and inject a fake key
+    if (line.includes(" [CHAT] Your new API key is ") && (line.indexOf(" [CHAT]") == line.lastIndexOf(" [CHAT]")))
     {
-      new_api_key = line.split('[Client thread/INFO]: [CHAT] Your new API key is ')[1];
+      new_api_key = line.split(' [CHAT] Your new API key is ')[1];
       // I would just set it here, but we do it after all lines are checked to ensure that someone who did `/api new` twice in a short spam wont cause bugs
     };
     var nickDetect = false;
-    // Detects if we join a new match through [Client thread/INFO]: [CHAT] Sending you to && [CHAT] (nicked_alias) has joined
+    // Detects if we join a new match through  [CHAT] Sending you to && [CHAT] (nicked_alias) has joined
     if (aliases !== undefined && Object.values(aliases).includes(key_owner))
     {
       Object.keys(aliases).filter(function(key) {return aliases[key] === key_owner}).forEach(function (nick) // Could be multiple, so we forEach it. I can't imagine this being very many.
       {
-        if (line.includes("[Client thread/INFO]: [CHAT] " + nick + " has joined"))
+        if (line.includes(" [CHAT] " + nick + " has joined"))
         {
           nickDetect = true;
         }
       });
     }
-    // Detects if we join a new match through [Client thread/INFO]: [CHAT] Sending you to && [CHAT] (key_owner) has joined
-    if (nickDetect || line.includes("[Client thread/INFO]: [CHAT] " + key_owner + " has joined") || line.includes("[Client thread/INFO]: [CHAT] Sending you to ")) // When we join a new match
+    // Detects if we join a new match through  [CHAT] Sending you to && [CHAT] (key_owner) has joined
+    if (nickDetect || line.includes(" [CHAT] " + key_owner + " has joined") || line.includes(" [CHAT] Sending you to ")) // When we join a new match
     {
       // Still not completely consistent for an nicked, un-aliased account. Should be consistent enough to give them the warning, though.
       playerList = []; // Re-initalize list
@@ -788,20 +788,20 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
 
 
     // Detects a new player through [PLAYER] has joined!
-    if (line.includes('[Client thread/INFO]: [CHAT] ') && line.includes('has joined')) // Another Player joins, add them to playerList
+    if (line.includes(' [CHAT] ') && line.includes('has joined')) // Another Player joins, add them to playerList
     {
-      var playerName = line.split("[Client thread/INFO]: [CHAT] ")[1].split(" ")[0];
+      var playerName = line.split(" [CHAT] ")[1].split(" ")[0];
       if(!playerList.includes(playerName)) 
       {
         playerList.push(playerName);
       }
       // Gets the x from (x/16)! (or (x/8), whatever) and assigns it to largestCount
-      largestCount = parseInt(line.split("[Client thread/INFO]: [CHAT] ")[1].split(" ")[3].split('/')[0].replace('(', ''));
+      largestCount = parseInt(line.split(" [CHAT] ")[1].split(" ")[3].split('/')[0].replace('(', ''));
     }
     // Detection through [PLAYER] has quit!
-    else if (line.includes('[Client thread/INFO]: [CHAT] ') && line.includes('has quit!')) // Another Player leaves, remove them from playerList
+    else if (line.includes(' [CHAT] ') && line.includes('has quit!')) // Another Player leaves, remove them from playerList
     {
-      var playerName = line.split("[Client thread/INFO]: [CHAT] ")[1].split(" ")[0];
+      var playerName = line.split(" [CHAT] ")[1].split(" ")[0];
       const index = playerList.indexOf(playerName);
       if (index > -1) {
         playerList.splice(index, 1);
@@ -809,22 +809,23 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
       largestCount--;
     }
     // Detection through /who
-    else if (line.includes('[Client thread/INFO]: [CHAT] ONLINE: '))
+    else if (line.includes(' [CHAT] ONLINE: '))
     {
-      var playerNames = line.split("[Client thread/INFO]: [CHAT] ONLINE: ")[1].split(" "); // TODO: Add all to player list (without doubles)
+      var playerNames = line.split(" [CHAT] ONLINE: ")[1].split(" "); // TODO: Add all to player list (without doubles)
       for(var i = 0; i < playerNames.length; i++)
       {
         playerNames[i] = playerNames[i].replace(",", "").trim(); // It works fine on linux without the .trim(), but windows sneaks in a newline character
       };
       playerList = playerNames; // Fully re-set list to the /who, because /who will always be the full story anyways.
+      outOfGame = [];
     };
 
 
 
     // Check for finals
-    if (line.includes('[Client thread/INFO]: [CHAT] ') && line.includes('FINAL KILL!')) // Another Player joins, add them to playerList
+    if (line.includes(' [CHAT] ') && line.includes('FINAL KILL!')) // Another Player joins, add them to playerList
     {
-      var playerName = line.split("[Client thread/INFO]: [CHAT] ")[1].split(" ")[0];
+      var playerName = line.split(" [CHAT] ")[1].split(" ")[0];
       if(!outOfGame.includes(playerName)) 
       {
         outOfGame.push(playerName);
@@ -832,17 +833,17 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
     }
 
     // Check for leaves
-    if (line.includes('[Client thread/INFO]: [CHAT] ') && line.includes('disconnected')) // Another Player joins, add them to playerList
+    if (line.includes(' [CHAT] ') && line.includes('disconnected')) // Another Player joins, add them to playerList
     {
-      var playerName = line.split("[Client thread/INFO]: [CHAT] ")[1].split(" ")[0];
+      var playerName = line.split(" [CHAT] ")[1].split(" ")[0];
       if(!outOfGame.includes(playerName)) 
       {
         outOfGame.push(playerName);
       }
     }
-    if (line.includes('[Client thread/INFO]: [CHAT] ') && line.includes('reconnected.')) // Another Player joins, add them to playerList
+    if (line.includes(' [CHAT] ') && line.includes('reconnected.')) // Another Player joins, add them to playerList
     {
-      var playerName = line.split("[Client thread/INFO]: [CHAT] ")[1].split(" ")[0];
+      var playerName = line.split(" [CHAT] ")[1].split(" ")[0];
       if(outOfGame.includes(playerName)) 
       {
         const index = outOfGame.indexOf(playerName);
