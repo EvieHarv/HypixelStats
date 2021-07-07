@@ -749,6 +749,8 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
   var key_owner = store.get('key_owner');
   var aliases = store.get('aliases');
 
+  var isNewGame = false;
+
   new_api_key = null;
 
   // Loop through the given lines and check each for new players
@@ -784,6 +786,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
       // Still not completely consistent for an nicked, un-aliased account. Should be consistent enough to give them the warning, though.
       playerList = []; // Re-initalize list
       outOfGame = [];
+      isNewGame = true;
     }
 
 
@@ -926,6 +929,15 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
         partyList.splice(index, 1);
       }  
     };
+    // /p kickoffline
+    if (line.includes(' because they were offline.') && line.includes('Kicked '))
+    {
+      var name = line.split('Kicked ')[1].match(/\b(?<!\[)\w+\b/);
+      const index = partyList.indexOf(name[0]);
+      if (index > -1) {
+        partyList.splice(index, 1);
+      }  
+    };
 
     // `/p list` ones:
     if (line.includes('Party Leader: '))
@@ -1002,7 +1014,7 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
   // This works because we reset the playerList back to just the owner when a new lobby is detected.
   // The (largestCount < playerList.length) will occur when someone is aliased wrong. We don't like that still, but we can handle it here.
   // I know this is programmically the same as (largestCount !== playerList.length), but I like it this way for the concept of it
-  if ((largestCount > playerList.length || largestCount < playerList.length) && !arrayEquals(playerList, playerListTemp))
+  if (isNewGame || (largestCount > playerList.length || largestCount < playerList.length) && !arrayEquals(playerList, playerListTemp))
   {
     // We only want to do this during normal operation
     if (largestCount > playerList.length)
