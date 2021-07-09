@@ -241,7 +241,6 @@ function outOfGameUpdate(list)
 // Used in profileLoader.js
 function updateAllPlayerData()
 {
-    console.trace();
     $(".playerCard").each(function(index, card){
         updatePlayerData(card.id);
     });
@@ -254,20 +253,19 @@ function updatePlayerData(player)
     // Get the active profile and the user data
     profile = store.get('profiles')[store.get('active_profile')];
     data = $("#" + player).data('data');
-    // Possibly unneeded
-    if (data.internal == undefined)
+    // This occurs if the playerCard is attempted to update before it's populated with information.
+    // This most commonly happens when partyUpdate() calls it, but can also happen from unexpected profile switches etc.
+    if (data == undefined || data.internal == undefined)
     {
-        console.error('HEY! Data.internal was undefined here for ' + player + ', it reads: ' + data + '. Check out why.')
-        console.trace();
-        // This bug has cropped up a few times while testing, and while I'm unable to reproduce in production, I'm throwing this in to define it so execution can continue.
-        data.internal = {};
+        return false;
     }
     data.internal.blacklist = store.get('blacklist');
     data.internal.whitelist = store.get('whitelist');
     if (partyMembers.length > 0)
     {
-        data.internal.whitelist = data.internal.whitelist.concat(partyMembers)
+        data.internal.whitelist = data.internal.whitelist.concat(partyMembers);
     }
+    data.internal.whitelist.push(store.get('key_owner'));
     data.internal.seenPlayers = sessionStorage.getItem('seenPlayers').split(',').filter(function (el) {return el != "";}); // I hate how scuffed this is.
 
     // Call a new worker and post a message
