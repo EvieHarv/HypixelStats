@@ -1,3 +1,14 @@
+
+// Note to the reader:
+// This was, effectively, my first Node & Electron project. It's... a bit messy, to put it lightly.
+// Help cleaning up would be massively helpful, and pushes to use best practices are always appreciated.
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+////////////////////////// Misc Init Stuff ///////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
 const { app, webContents, BrowserWindow, Menu, MessageChannelMain, ipcMain, globalShortcut } = require('electron');
 const process = require('process');
 const readLastLines = require('read-last-lines');
@@ -90,6 +101,14 @@ app.on('ready', function()
 
   initalizeGlobalShortcuts();
 });
+
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+////////////////////// File and IPC Functions ////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
 
 var mostRecentSize = 0;
 var timesRead = 0;
@@ -365,7 +384,88 @@ function initalizeGlobalShortcuts()
   };
 }
 
-// Make sure store values are defined
+ipcMain.on('updateCheck', function(){ // Check update like this to make sure page is fully loaded before checking
+  log.info('Checking for update... (from render process)')
+  autoUpdater.checkForUpdates();
+});
+
+autoUpdater.on('update-available', (info) => {
+  mainWindow.webContents.send('updateAvailable');
+});
+
+ipcMain.once('updateConfirmed', function()
+{
+  log.info("Downloading Update");
+  autoUpdater.downloadUpdate();
+});
+
+autoUpdater.on('update-downloaded', (info) => {
+  autoUpdater.quitAndInstall();
+});
+
+function javaversion(callback) {
+  var spawn = require('child_process').spawn('java', ['-version']);
+  spawn.on('error', function(err){
+    return callback(err, null);
+  })
+
+  var scriptOutput = "";
+
+  spawn.stderr.on('data', function(data) {
+    data=data.toString();
+    scriptOutput+=data;
+  });
+  
+  spawn.on('close', function(exitCode){
+    data = scriptOutput.split('\n')[0];
+    var javaVersion = new RegExp('(java|openjdk) version').test(data) ? data.split(' ')[2].replace(/"/g, '') : false;
+    if (javaVersion != false) {
+      // We have Java installed
+      return callback(null, javaVersion);
+    } 
+    else {
+      // We don't have Java installed. Sad.
+      return callback(null, null);
+    }
+  });
+}
+
+// Menu Template
+const mainMenuTemplate = 
+[
+  {
+    label:'Edit',
+    submenu:
+    [
+      {
+        label: 'Devtools',
+        accelerator: "Ctrl+Shift+I",
+        click(item, focusedwindow)
+        {
+          focusedwindow.webContents.toggleDevTools();
+        }
+      },
+      {
+        label: 'Quit',
+        accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q',
+        click()
+        {
+          app.quit();
+        }
+      },
+      {
+        role: "reload"
+      }
+    ]
+  }
+];
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+////////////////////// Ensure Store is Setup /////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
 function checkUndefineds()
 {
   if (store.get('updateMigrationStore') == undefined)
@@ -395,8 +495,8 @@ function checkUndefineds()
     {
         if (e.includes('Bedwars'))
         {
-            profs[e].stats["Reports:"] = "rd0(\"c.sniperCheck.report\", data)";
-            profs[e].stats["Sniper:"] = "rd0(\"c.sniperCheck.sniper\", data)";
+            profs[e].stats["Reports:"] = "rd0(\"c.hystats.report\", data)";
+            profs[e].stats["Sniper:"] = "rd0(\"c.hystats.sniper\", data)";
         };
         oldColorC = profs[e].colorConditions;
         profs[e].colorConditions = {};
@@ -405,7 +505,7 @@ function checkUndefineds()
         {
             if (doNext)
             {
-                profs[e].colorConditions["(data.c.sniperCheck.report > 0) || (data.c.sniperCheck.sniper == true)"] = "#e228d2";
+                profs[e].colorConditions["(data.c.hystats.report > 0) || (data.c.hystats.sniper == true)"] = "#e228d2";
                 doNext = false;
             }
             profs[e].colorConditions[a] = oldColorC[a];
@@ -428,6 +528,7 @@ function checkUndefineds()
     u.rfuncProfiles = true;
     u.sniperDetectionProfiles = true;
     store.set('updateMigrationStore', u);
+    // TODO: Should honestly move this out to a seperate file...
     profiles = 
     {
       "Bedwars Overall": {
@@ -435,13 +536,13 @@ function checkUndefineds()
           "FKDR:": "r0(\"player.stats.Bedwars.final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.final_deaths_bedwars\", data)",
           "Winstreak:": "r0(\"player.stats.Bedwars.winstreak\", data)",
           "✫": "data.player.achievements.bedwars_level",
-          "Reports:": "rd0(\"c.sniperCheck.report\", data)",
-          "Sniper:": "rd0(\"c.sniperCheck.sniper\", data)"
+          "Reports:": "rd0(\"c.hystats.report\", data)",
+          "Sniper:": "rd0(\"c.hystats.sniper\", data)"
         },
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
-          "(data.c.sniperCheck.report > 0) || (data.c.sniperCheck.sniper == true)": "#e228d2",
+          "(data.c.hystats.report > 0) || (data.c.hystats.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "data.player.channel == 'PARTY'": "#36b9cc",
           "(r0(\"player.stats.Bedwars.final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.final_deaths_bedwars\", data)) > 5": "#e74a3b"
@@ -454,13 +555,13 @@ function checkUndefineds()
           "FKDR:": "r0(\"player.stats.Bedwars.eight_one_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.eight_one_final_deaths_bedwars\", data)",
           "Winstreak:": "r0(\"player.stats.Bedwars.winstreak\", data)",
           "✫": "data.player.achievements.bedwars_level",
-          "Reports:": "rd0(\"c.sniperCheck.report\", data)",
-          "Sniper:": "rd0(\"c.sniperCheck.sniper\", data)"
+          "Reports:": "rd0(\"c.hystats.report\", data)",
+          "Sniper:": "rd0(\"c.hystats.sniper\", data)"
         },
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
-          "(data.c.sniperCheck.report > 0) || (data.c.sniperCheck.sniper == true)": "#e228d2",
+          "(data.c.hystats.report > 0) || (data.c.hystats.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "data.player.channel == 'PARTY'": "#36b9cc",
           "(r0(\"player.stats.Bedwars.eight_one_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.eight_one_final_deaths_bedwars\", data)) > 5": "#e74a3b"
@@ -473,13 +574,13 @@ function checkUndefineds()
           "FKDR:": "r0(\"player.stats.Bedwars.eight_two_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.eight_two_final_deaths_bedwars\", data)",
           "Winstreak:": "r0(\"player.stats.Bedwars.winstreak\", data)",
           "✫": "data.player.achievements.bedwars_level",
-          "Reports:": "rd0(\"c.sniperCheck.report\", data)",
-          "Sniper:": "rd0(\"c.sniperCheck.sniper\", data)"
+          "Reports:": "rd0(\"c.hystats.report\", data)",
+          "Sniper:": "rd0(\"c.hystats.sniper\", data)"
         },
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
-          "(data.c.sniperCheck.report > 0) || (data.c.sniperCheck.sniper == true)": "#e228d2",
+          "(data.c.hystats.report > 0) || (data.c.hystats.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "data.player.channel == 'PARTY'": "#36b9cc",
           "(r0(\"player.stats.Bedwars.eight_two_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.eight_two_final_deaths_bedwars\", data)) > 5": "#e74a3b"
@@ -492,13 +593,13 @@ function checkUndefineds()
           "FKDR:": "r0(\"player.stats.Bedwars.four_three_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.four_three_final_deaths_bedwars\", data)",
           "Winstreak:": "r0(\"player.stats.Bedwars.winstreak\", data)",
           "✫": "data.player.achievements.bedwars_level",
-          "Reports:": "rd0(\"c.sniperCheck.report\", data)",
-          "Sniper:": "rd0(\"c.sniperCheck.sniper\", data)"
+          "Reports:": "rd0(\"c.hystats.report\", data)",
+          "Sniper:": "rd0(\"c.hystats.sniper\", data)"
         },
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
-          "(data.c.sniperCheck.report > 0) || (data.c.sniperCheck.sniper == true)": "#e228d2",
+          "(data.c.hystats.report > 0) || (data.c.hystats.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "data.player.channel == 'PARTY'": "#36b9cc",
           "(r0(\"player.stats.Bedwars.four_three_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.four_three_final_deaths_bedwars\", data)) > 5": "#e74a3b"
@@ -511,13 +612,13 @@ function checkUndefineds()
           "FKDR:": "r0(\"player.stats.Bedwars.four_four_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.four_four_final_deaths_bedwars\", data)",
           "Winstreak:": "r0(\"player.stats.Bedwars.winstreak\", data)",
           "✫": "data.player.achievements.bedwars_level",
-          "Reports:": "rd0(\"c.sniperCheck.report\", data)",
-          "Sniper:": "rd0(\"c.sniperCheck.sniper\", data)"
+          "Reports:": "rd0(\"c.hystats.report\", data)",
+          "Sniper:": "rd0(\"c.hystats.sniper\", data)"
         },
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
-          "(data.c.sniperCheck.report > 0) || (data.c.sniperCheck.sniper == true)": "#e228d2",
+          "(data.c.hystats.report > 0) || (data.c.hystats.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "data.player.channel == 'PARTY'": "#36b9cc",
           "(r0(\"player.stats.Bedwars.four_four_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.four_four_final_deaths_bedwars\", data)) > 5": "#e74a3b"
@@ -530,13 +631,13 @@ function checkUndefineds()
           "FKDR:": "r0(\"player.stats.Bedwars.two_four_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.two_four_final_deaths_bedwars\", data)",
           "Winstreak:": "r0(\"player.stats.Bedwars.winstreak\", data)",
           "✫": "data.player.achievements.bedwars_level",
-          "Reports:": "rd0(\"c.sniperCheck.report\", data)",
-          "Sniper:": "rd0(\"c.sniperCheck.sniper\", data)"
+          "Reports:": "rd0(\"c.hystats.report\", data)",
+          "Sniper:": "rd0(\"c.hystats.sniper\", data)"
         },
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
-          "(data.c.sniperCheck.report > 0) || (data.c.sniperCheck.sniper == true)": "#e228d2",
+          "(data.c.hystats.report > 0) || (data.c.hystats.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "data.player.channel == 'PARTY'": "#36b9cc",
           "(r0(\"player.stats.Bedwars.two_four_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.two_four_final_deaths_bedwars\", data)) > 5": "#e74a3b"
@@ -554,7 +655,7 @@ function checkUndefineds()
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
-          "(data.c.sniperCheck.report > 0) || (data.c.sniperCheck.sniper == true)": "#e228d2",
+          "(data.c.hystats.report > 0) || (data.c.hystats.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "(r0(\"player.stats.Duels.sumo_duel_wins\", data) / r1n0(\"player.stats.Duels.sumo_duel_losses\", data)) > 3 || (r0(\"player.stats.Duels.uhc_duel_wins\", data) / r1n0(\"player.stats.Duels.uhc_duel_losses\", data)) > 3": "#e74a3b"
         },
@@ -570,7 +671,7 @@ function checkUndefineds()
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
-          "(data.c.sniperCheck.report > 0) || (data.c.sniperCheck.sniper == true)": "#e228d2",
+          "(data.c.hystats.report > 0) || (data.c.hystats.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "(r0(\"player.stats.Duels.bridge_duel_wins\", data) / r1n0(\"player.stats.Duels.bridge_duel_losses\", data)) > 3 || r0(\"player.stats.Duels.bridge_duel_kills\", data) / r1n0(\"player.stats.Duels.bridge_duel_deaths\", data) > 3": "#e74a3b"
         },
@@ -586,17 +687,17 @@ function checkUndefineds()
   {
     var APIs = 
     {
-      "sniperCheck":
+      "htstats":
       {
         "on": true,
         "url": "api.hypixelstats.com/sniper",
-        "description": "Default sniper detection, courtesy of bwstats! discord.gg/bwstats. This is just a JSON wrapper for his API.",
+        "description": "Hypixelstats data, such as reports, sniper-liklihood, times-seen, etc.",
         "timeout": 1000,
         "sends": 
         {
-          "userKey" : false,
-          "playerName" : true,
-          "playerUUID" : false
+          "userKey" : true,
+          "playerName" : false,
+          "playerUUID" : true
         }
       }
     }
@@ -684,54 +785,13 @@ function checkUndefineds()
   }
 }
 
-ipcMain.on('updateCheck', function(){ // Check update like this to make sure page is fully loaded before checking
-  log.info('Checking for update... (from render process)')
-  autoUpdater.checkForUpdates();
-});
 
-autoUpdater.on('update-available', (info) => {
-  mainWindow.webContents.send('updateAvailable');
-});
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+////////////////////// Main Player-Check Loop ////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 
-ipcMain.once('updateConfirmed', function()
-{
-  log.info("Downloading Update");
-  autoUpdater.downloadUpdate();
-});
-
-autoUpdater.on('update-downloaded', (info) => {
-  autoUpdater.quitAndInstall();
-})
-
-// Menu Template
-const mainMenuTemplate = 
-[
-  {
-    label:'Edit',
-    submenu:
-    [
-      {
-        label: 'Devtools',
-        accelerator: "Ctrl+Shift+I",
-        click(item, focusedwindow)
-        {
-          focusedwindow.webContents.toggleDevTools();
-        }
-      },
-      {
-        label: 'Quit',
-        accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q',
-        click()
-        {
-          app.quit();
-        }
-      },
-      {
-        role: "reload"
-      }
-    ]
-  }
-];
 
 var playerList = [];
 var outOfGame = [];
@@ -1087,36 +1147,6 @@ function updateFrontend()
 ipcMain.on('sendListAgain', function(){ // Re-sending player list on page load
   updateFrontend();
 });
-
-
-
-
-function javaversion(callback) {
-  var spawn = require('child_process').spawn('java', ['-version']);
-  spawn.on('error', function(err){
-    return callback(err, null);
-  })
-
-  var scriptOutput = "";
-
-  spawn.stderr.on('data', function(data) {
-    data=data.toString();
-    scriptOutput+=data;
-  });
-  
-  spawn.on('close', function(exitCode){
-    data = scriptOutput.split('\n')[0];
-    var javaVersion = new RegExp('(java|openjdk) version').test(data) ? data.split(' ')[2].replace(/"/g, '') : false;
-    if (javaVersion != false) {
-      // We have Java installed
-      return callback(null, javaVersion);
-    } 
-    else {
-      // We don't have Java installed. Sad.
-      return callback(null, null);
-    }
-  });
-}
 
 
 app.on('will-quit', () => {
