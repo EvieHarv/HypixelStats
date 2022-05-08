@@ -40,7 +40,7 @@ var fakeFullscreenOn = false;
 
 const store = new Store();
 
-// Enable transparency on linux systems
+// Enable transparency on linux systems. TODO: Look into performance impacts of this.
 if (process.platform !== "win32")
   app.commandLine.appendSwitch('disable-gpu');
 
@@ -832,15 +832,27 @@ function checkForPlayer(lines)// This function is so incredibly inefficent, but 
       new_api_key = line.split(' [CHAT] Your new API key is ')[1];
       // I would just set it here, but we do it after all lines are checked to ensure that someone who did `/api new` twice in a short spam wont cause bugs
     };
+    
+
+    // Reset player area after doing /w !reset --- No real need to make this known in the client, mainly for development purposes.
     if (line.includes(" [CHAT] Can't find a player by the name of '!reset'") && (line.indexOf(" [CHAT]") == line.lastIndexOf(" [CHAT]")))
     {
       playerList = [];
       outOfGame = [];
     }
+
+    // Add player by doing /w !PlayerName
     else if (line.includes(" [CHAT] Can't find a player by the name of '!") && (line.indexOf(" [CHAT]") == line.lastIndexOf(" [CHAT]")))
     {
       playerList.push(line.split("[CHAT] Can't find a player by the name of '!")[1].replace("'", ""));
     }
+
+    else if (line.includes(" [CHAT] Can't find a player by the name of '@") && (line.indexOf(" [CHAT]") == line.lastIndexOf(" [CHAT]")))
+    {
+      var name = line.split("[CHAT] Can't find a player by the name of '@")[1].replace("'", "");
+      mainWindow.webContents.send('reportPlayer', name);
+    }
+
     var nickDetect = false;
     // Detects if we join a new match through  [CHAT] Sending you to && [CHAT] (nicked_alias) has joined
     if (aliases !== undefined && Object.values(aliases).includes(key_owner))

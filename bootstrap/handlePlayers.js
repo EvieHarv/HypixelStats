@@ -16,6 +16,11 @@ ipcRenderer.on('partyList', function (event,partyList)
     partyUpdate(partyList);
 });
 
+ipcRenderer.on('reportPlayer', function (event,playerName) 
+{
+    sendPlayerReport(playerName);
+});
+
 function updatePlayerArea(playerList)
 {
     if (playerList.length > 0)
@@ -136,7 +141,8 @@ function updatePlayerArea(playerList)
         var worker = new Worker('./bootstrap/apis_worker.js'); // Seperate this from the main thread (I think that's how this works here, I'm too used to C#)
         if (store.get('hypixel_key') == undefined)
         {
-            $(".playerList").html("Please set your hypixel API key in Settings -> API Settings -> Hypixel Key");
+            $(".playerList").html("Please set your hypixel API key in Settings -> API Settings -> Hypixel Key, or by doing <code>/api new</code>");
+            return;
         };
         worker.postMessage([player, store.get('hypixel_key'), store.get('customAPIs')]);
         worker.onmessage = function (e) 
@@ -478,7 +484,32 @@ ipcRenderer.on('overlayRequest', function (event)
 });
 
 
+function sendPlayerReport(player) {
+    // Blacklist
+    blacklistPlayer(player)
+    // Send report, use a webworker (Note: the server will only accept 1 player report per client UUID, so any re-reporting is handled serverside)
+    var worker = new Worker('./bootstrap/report_worker.js');
 
+    if (store.get('hypixel_key') == undefined) {
+        $(".playerList").html("Please set your hypixel API key in Settings -> API Settings -> Hypixel Key, or by doing <code>/api new</code>");
+        return;
+    };
+
+    // Get UUID, if applicable
+    playerUUID = resolve('player.uuid', $("#" + player).data('data'));
+
+    worker.postMessage([player, playerUUID, store.get('hypixel_key')]);
+
+    worker.onmessage = function (e) {
+        e.target.terminate(); // Free system resources
+    }
+}
+
+
+
+/////////////////////////////////////////////////////
+///////////////// Helper Functions //////////////////
+/////////////////////////////////////////////////////
 
 $.fn.reverse = [].reverse;
 
