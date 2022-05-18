@@ -14,7 +14,13 @@ $(function()
     var sortableColor = Sortable.create(colorDiv, 
         {
             animation: 150
-        });    
+        });
+    var combinedStatsDiv = document.getElementById('combinedStatCardsDiv')
+    var sortableCombinedStats = Sortable.create(combinedStatsDiv, 
+        {
+            animation: 150
+        });
+
     
     $("#saveAllChanges").click(function(){ 
         saveAllChanges();
@@ -42,6 +48,10 @@ $(function()
 
     $("#addNewStat").click(function(){ 
         addNewStat();
+    });
+
+    $("#addNewCombinedStat").click(function(){ 
+        addNewCombinedStat();
     });
 
     $("#addNewColorRule").click(function(){ 
@@ -174,6 +184,34 @@ function profileLoad()
             $("#sortAscending").prop('checked', true);
         }
     };
+
+    $('#combinedStatCardsDiv').html('');
+    i = 0;
+    for (var p in profs[profile].combinedStats)
+    {
+        $('#combinedStatCardsDiv').append('\
+            <div class="mb-4 combinedStatCard" style="width: 100%">\
+                <div class="card border-left-primary shadow h-100 py-2">\
+                    <div class="card-body">\
+                        <div class="no-gutters align-items-center">\
+                            <div class="mr-2" style="width: 100%;">\
+                                <input type="text" class="form-control form-control-user mb-1 text-dark combinedStatName" id="combinedStatName' + i + '" placeholder="Display Name"></input>\
+                                <input type="text" class="form-control form-control-user mb-1 text-primary combinedStatData" id="combinedStatCode' + i + '" placeholder="Combined Stat Code"></input>\
+                                <button class="btn btn-danger mb-0 removeCombinedStatButton" type="button">Remove</button>\
+                            </div>\
+                        </div>\
+                    </div>\
+                </div>\
+            </div>'
+        );
+        $('#combinedStatName' + i).val(p);
+        $('#combinedStatCode' + i).val(profs[profile].combinedStats[p]);
+        i++;
+    }
+    $('.removeCombinedStatButton').click(function(card)
+    {
+        $(card.target).closest('.combinedStatCard').remove();
+    });
 };
 
 // Gets the current (edited) properties list. Will return null if a field is invalid.
@@ -230,10 +268,25 @@ function getCurrentProperties()
         profileSortOrder = 'ascending';
     };
 
+    profileCombinedStats = {};
+    $(".combinedStatCard").each(function(index, card)
+    {
+        if ($(card).find('.combinedStatName').val() == "" || $(card).find('.combinedStatData').val() == "")
+        {
+            halt = true;
+            return null;
+        } 
+        profileCombinedStats[$(card).find('.combinedStatName').val()] = $(card).find('.combinedStatData').val();
+    });
+    if (halt)
+    {
+        return null;
+    };
+
     // seems like a hack-y workaround, but works fine.
     prof = {};
     prof.name = profileName;
-    prof.properties = { "stats" : profileStats, "colorConditions" : profileColors, "sort" : profileSortRule, "sortOrder" : profileSortOrder };
+    prof.properties = { "stats" : profileStats, "colorConditions" : profileColors, "sort" : profileSortRule, "sortOrder" : profileSortOrder, "combinedStats" : profileCombinedStats };
 
     return prof;
 }
@@ -549,6 +602,30 @@ function addNewStat()
         $(card.target).closest('.statCard').remove();
     });
 };
+
+function addNewCombinedStat()
+{
+    $('#combinedStatCardsDiv').append('\
+        <div class="mb-4 combinedStatCard" style="width: 100%">\
+            <div class="card border-left-primary shadow h-100 py-2">\
+                <div class="card-body">\
+                    <div class="no-gutters align-items-center">\
+                        <div class="mr-2" style="width: 100%;">\
+                            <input type="text" class="form-control form-control-user mb-1 text-dark combinedStatName" id="combinedStatName' + i + '" placeholder="Display Name"></input>\
+                            <input type="text" class="form-control form-control-user mb-1 text-primary combinedStatData" id="combinedStatCode' + i + '" placeholder="Combined Stat Code"></input>\
+                            <button class="btn btn-danger mb-0 removeCombinedStatButton" type="button">Remove</button>\
+                        </div>\
+                    </div>\
+                </div>\
+            </div>\
+        </div>'
+    );
+    $('.removeCombinedStatButton').click(function(card)
+    {
+        $(card.target).closest('.combinedStatCard').remove();
+    });
+};
+
 
 function addNewColorRule()
 {

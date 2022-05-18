@@ -93,6 +93,7 @@ function updatePlayerArea(playerList)
         {
             card.remove(); // Remove a card for a player who doesn't exist anymore
             sendDataToOverlay();
+            processCombinedStats();
         }
     });
     playerList.forEach(function(player)
@@ -425,6 +426,105 @@ function resortCards()
     // Sorting (or lack thereof) is done
 
     sendDataToOverlay();
+    processCombinedStats();
+}
+
+
+var prevSortedPlayers = "";
+function processCombinedStats() {
+
+    // Reduce Flickering
+    var sortedPlayers = "";
+    $(".playerCard").each(function(index, card){
+        sortedPlayers = sortedPlayers + (resolve('internal.name'), $(card).data('data'));
+    });
+    if (prevSortedPlayers == sortedPlayers) {
+        return;
+    }
+    else {
+        prevSortedPlayers = sortedPlayers;
+    }
+
+    // $('#playerAverage').html('\
+    //     <div class="card shadow h-100 pb-2">\
+    //         <div class="card-body pb-0 mb-2">\
+    //             <div class="row no-gutters align-items-center">\
+    //                 <div class="col mr-2" id="playerAverageStatBox">\
+    //                 </div>\
+    //             </div>\
+    //         </div>\
+    //     </div> ');
+
+    // Get the active profile and all player data
+    profile = store.get('profiles')[store.get('active_profile')];
+    var allPlayerData = {};
+    allPlayerData.players = [];
+    $(".playerCard").each(function(index, card){
+        allPlayerData.players.push($(card).data('data'));
+    });
+
+    // This occurs if the playerCard is attempted to update before it's populated with information.
+    // This most commonly happens when partyUpdate() calls it, but can also happen from unexpected profile switches etc.
+    if (allPlayerData == undefined)
+    {
+        return false;
+    }
+    allPlayerData.internal = {};
+    allPlayerData.internal.blacklist = store.get('blacklist');
+    allPlayerData.internal.whitelist = store.get('whitelist');
+    if (partyMembers.length > 0)
+    {
+        allPlayerData.internal.whitelist = allPlayerData.internal.whitelist.concat(partyMembers);
+    }
+    allPlayerData.internal.whitelist.push(store.get('key_owner'));
+    allPlayerData.internal.seenPlayers = sessionStorage.getItem('seenPlayers').split(',').filter(function (el) {return el != "";}); // I hate how scuffed this is.
+
+    // Call a new worker and post a message
+    var worker = new Worker('./bootstrap/process_combined_data.js');
+    worker.postMessage([profile, allPlayerData]);
+    worker.onmessage = function (e) 
+    {
+        // Delete the worker to free system resources
+        e.target.terminate();
+
+        // Processed data
+        var pData = e.data;
+        // pData contains:
+        // pData.stats (object)
+
+        // Enter data
+        $('#playerAverage').find('#playerAverageStatBox').html('<div class="font-weight-bold text-success mb-1">Combined Stats</div>');
+
+        for (var entry in profile["combinedStats"])
+        {
+            value = pData.stats[entry];
+            hide = false;
+            if (value == undefined || Number.isNaN(value))
+            {
+                if (store.get('undefinedBehavior') == "blank")
+                {
+                    value = "";
+                }
+                else if (store.get('undefinedBehavior') == "na")
+                {
+                    value = "N/A";
+                }
+                else
+                {
+                    hide = true;
+                }
+            }
+            // Add the data to the player card
+            if (!hide)
+            {
+                $('#playerAverage').find('#playerAverageStatBox').append('<div class="h5 mb-0 font-weight-bold text-gray-800">' + entry + " <span class='data'>" + value + '</span></div>');
+            }
+            else // We still want it to *be* there, just hidden
+            {
+                $('#playerAverage').find('#playerAverageStatBox').append('<div class="h5 mb-0 font-weight-bold text-gray-800" style="display: none;"><span class="data">—</span></div>');
+            }
+        }
+    };    
 }
 
 
