@@ -493,7 +493,7 @@ function processCombinedStats() {
         // pData.stats (object)
 
         // Enter data
-        $('#playerAverage').find('#playerAverageStatBox').html('<div class="font-weight-bold text-success mb-1">Combined Stats</div>');
+        $('#playerAverage').find('#playerAverageStatBox').html('<div class="font-weight-bold text-success mb-1">Full/Avg Lobby Stats</div>');
 
         for (var entry in profile["combinedStats"])
         {

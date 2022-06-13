@@ -26,7 +26,7 @@ function handlePlayer(profile, data)
         // Wrap in a try/catch because idk what these people are gonna put
         try{ value = Function('"use strict"; var data = arguments[0]; ' + profile.combinedStats[entry] + ';')(data); }
             // NOTE: The User must define a return value within their function! 
-        catch(error){ console.error(error); console.warn('The error above was encountered while processing the stat "' + entry + '" for the combined stats.'); }
+        catch(error){ console.debug(error); console.debug('The error above was encountered while processing the stat "' + entry + '" for the combined stats.'); }
 
         // If it's numeric (it probably should be here, but w/e), fix it to 2 decimals.
         if (typeof value === 'number') {

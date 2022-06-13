@@ -499,8 +499,8 @@ function checkUndefineds()
     {
         if (e.includes('Bedwars'))
         {
-            profs[e].stats["Reports:"] = "rd0(\"c.hystats.report\", data)";
-            profs[e].stats["Sniper:"] = "rd0(\"c.hystats.sniper\", data)";
+            profs[e].stats["Reports:"] = "rd0(\"c.hypixelstats.report\", data)";
+            profs[e].stats["Sniper:"] = "rd0(\"c.hypixelstats.sniper\", data)";
         };
         oldColorC = profs[e].colorConditions;
         profs[e].colorConditions = {};
@@ -509,7 +509,7 @@ function checkUndefineds()
         {
             if (doNext)
             {
-                profs[e].colorConditions["(data.c.hystats.report > 0) || (data.c.hystats.sniper == true)"] = "#e228d2";
+                profs[e].colorConditions["(data.c.hypixelstats.report > 0) || (data.c.hypixelstats.sniper == true)"] = "#e228d2";
                 doNext = false;
             }
             profs[e].colorConditions[a] = oldColorC[a];
@@ -540,13 +540,13 @@ function checkUndefineds()
           "FKDR:": "r0(\"player.stats.Bedwars.final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.final_deaths_bedwars\", data)",
           "Winstreak:": "r0(\"player.stats.Bedwars.winstreak\", data)",
           "✫": "data.player.achievements.bedwars_level",
-          "Reports:": "rd0(\"c.hystats.report\", data)",
-          "Sniper:": "rd0(\"c.hystats.sniper\", data)"
+          "Reports:": "rd0(\"c.hypixelstats.report\", data)",
+          "Sniper:": "rd0(\"c.hypixelstats.sniper\", data)"
         },
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
-          "(data.c.hystats.report > 0) || (data.c.hystats.sniper == true)": "#e228d2",
+          "(data.c.hypixelstats.report > 0) || (data.c.hypixelstats.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "data.player.channel == 'PARTY'": "#36b9cc",
           "(r0(\"player.stats.Bedwars.final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.final_deaths_bedwars\", data)) > 5": "#e74a3b"
@@ -559,13 +559,13 @@ function checkUndefineds()
           "FKDR:": "r0(\"player.stats.Bedwars.eight_one_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.eight_one_final_deaths_bedwars\", data)",
           "Winstreak:": "r0(\"player.stats.Bedwars.winstreak\", data)",
           "✫": "data.player.achievements.bedwars_level",
-          "Reports:": "rd0(\"c.hystats.report\", data)",
-          "Sniper:": "rd0(\"c.hystats.sniper\", data)"
+          "Reports:": "rd0(\"c.hypixelstats.report\", data)",
+          "Sniper:": "rd0(\"c.hypixelstats.sniper\", data)"
         },
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
-          "(data.c.hystats.report > 0) || (data.c.hystats.sniper == true)": "#e228d2",
+          "(data.c.hypixelstats.report > 0) || (data.c.hypixelstats.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "data.player.channel == 'PARTY'": "#36b9cc",
           "(r0(\"player.stats.Bedwars.eight_one_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.eight_one_final_deaths_bedwars\", data)) > 5": "#e74a3b"
@@ -578,13 +578,13 @@ function checkUndefineds()
           "FKDR:": "r0(\"player.stats.Bedwars.eight_two_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.eight_two_final_deaths_bedwars\", data)",
           "Winstreak:": "r0(\"player.stats.Bedwars.winstreak\", data)",
           "✫": "data.player.achievements.bedwars_level",
-          "Reports:": "rd0(\"c.hystats.report\", data)",
-          "Sniper:": "rd0(\"c.hystats.sniper\", data)"
+          "Reports:": "rd0(\"c.hypixelstats.report\", data)",
+          "Sniper:": "rd0(\"c.hypixelstats.sniper\", data)"
         },
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
-          "(data.c.hystats.report > 0) || (data.c.hystats.sniper == true)": "#e228d2",
+          "(data.c.hypixelstats.report > 0) || (data.c.hypixelstats.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "data.player.channel == 'PARTY'": "#36b9cc",
           "(r0(\"player.stats.Bedwars.eight_two_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.eight_two_final_deaths_bedwars\", data)) > 5": "#e74a3b"
@@ -597,13 +597,13 @@ function checkUndefineds()
           "FKDR:": "r0(\"player.stats.Bedwars.four_three_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.four_three_final_deaths_bedwars\", data)",
           "Winstreak:": "r0(\"player.stats.Bedwars.winstreak\", data)",
           "✫": "data.player.achievements.bedwars_level",
-          "Reports:": "rd0(\"c.hystats.report\", data)",
-          "Sniper:": "rd0(\"c.hystats.sniper\", data)"
+          "Reports:": "rd0(\"c.hypixelstats.report\", data)",
+          "Sniper:": "rd0(\"c.hypixelstats.sniper\", data)"
         },
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
-          "(data.c.hystats.report > 0) || (data.c.hystats.sniper == true)": "#e228d2",
+          "(data.c.hypixelstats.report > 0) || (data.c.hypixelstats.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "data.player.channel == 'PARTY'": "#36b9cc",
           "(r0(\"player.stats.Bedwars.four_three_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.four_three_final_deaths_bedwars\", data)) > 5": "#e74a3b"
@@ -616,13 +616,13 @@ function checkUndefineds()
           "FKDR:": "r0(\"player.stats.Bedwars.four_four_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.four_four_final_deaths_bedwars\", data)",
           "Winstreak:": "r0(\"player.stats.Bedwars.winstreak\", data)",
           "✫": "data.player.achievements.bedwars_level",
-          "Reports:": "rd0(\"c.hystats.report\", data)",
-          "Sniper:": "rd0(\"c.hystats.sniper\", data)"
+          "Reports:": "rd0(\"c.hypixelstats.report\", data)",
+          "Sniper:": "rd0(\"c.hypixelstats.sniper\", data)"
         },
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
-          "(data.c.hystats.report > 0) || (data.c.hystats.sniper == true)": "#e228d2",
+          "(data.c.hypixelstats.report > 0) || (data.c.hypixelstats.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "data.player.channel == 'PARTY'": "#36b9cc",
           "(r0(\"player.stats.Bedwars.four_four_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.four_four_final_deaths_bedwars\", data)) > 5": "#e74a3b"
@@ -635,13 +635,13 @@ function checkUndefineds()
           "FKDR:": "r0(\"player.stats.Bedwars.two_four_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.two_four_final_deaths_bedwars\", data)",
           "Winstreak:": "r0(\"player.stats.Bedwars.winstreak\", data)",
           "✫": "data.player.achievements.bedwars_level",
-          "Reports:": "rd0(\"c.hystats.report\", data)",
-          "Sniper:": "rd0(\"c.hystats.sniper\", data)"
+          "Reports:": "rd0(\"c.hypixelstats.report\", data)",
+          "Sniper:": "rd0(\"c.hypixelstats.sniper\", data)"
         },
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
-          "(data.c.hystats.report > 0) || (data.c.hystats.sniper == true)": "#e228d2",
+          "(data.c.hypixelstats.report > 0) || (data.c.hypixelstats.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "data.player.channel == 'PARTY'": "#36b9cc",
           "(r0(\"player.stats.Bedwars.two_four_final_kills_bedwars\", data) / r1n0(\"player.stats.Bedwars.two_four_final_deaths_bedwars\", data)) > 5": "#e74a3b"
@@ -659,7 +659,7 @@ function checkUndefineds()
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
-          "(data.c.hystats.report > 0) || (data.c.hystats.sniper == true)": "#e228d2",
+          "(data.c.hypixelstats.report > 0) || (data.c.hypixelstats.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "(r0(\"player.stats.Duels.sumo_duel_wins\", data) / r1n0(\"player.stats.Duels.sumo_duel_losses\", data)) > 3 || (r0(\"player.stats.Duels.uhc_duel_wins\", data) / r1n0(\"player.stats.Duels.uhc_duel_losses\", data)) > 3": "#e74a3b"
         },
@@ -675,7 +675,7 @@ function checkUndefineds()
         "colorConditions": {
           "data.internal.blacklist.includes(data.internal.name)": "#e74a3b",
           "data.internal.whitelist.includes(data.internal.name)": "#1cc88a",
-          "(data.c.hystats.report > 0) || (data.c.hystats.sniper == true)": "#e228d2",
+          "(data.c.hypixelstats.report > 0) || (data.c.hypixelstats.sniper == true)": "#e228d2",
           "data.internal.isNick": "#f6c23e",
           "(r0(\"player.stats.Duels.bridge_duel_wins\", data) / r1n0(\"player.stats.Duels.bridge_duel_losses\", data)) > 3 || r0(\"player.stats.Duels.bridge_duel_kills\", data) / r1n0(\"player.stats.Duels.bridge_duel_deaths\", data) > 3": "#e74a3b"
         },
@@ -691,7 +691,7 @@ function checkUndefineds()
   {
     var APIs = 
     {
-      "htstats":
+      "hypixelstats":
       {
         "on": true,
         "url": "api.hypixelstats.com/sniper",
