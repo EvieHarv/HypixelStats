@@ -472,65 +472,15 @@ const mainMenuTemplate =
 
 function checkUndefineds()
 {
+  // For use in future updates
   if (store.get('updateMigrationStore') == undefined)
   {
     store.set('updateMigrationStore', {});
   }
-  if (store.get('updateMigrationStore').rfuncProfiles == undefined && store.get('profiles') != undefined)
-  {
-    // User has profiles, BUT they aren't the new ones.
-    // Honestly, I think about one person has used the tool by this point, so moving data around without a flashy screen isn't a huge concern, but this is horrible practice.
-    // Future updates should take that into concern.
-    fs.writeFile(path.join(__dirname, 'old_profiles.json'), 
-      JSON.stringify(store.get('profiles'), null, 2), function (err) {
-        if (err) throw err;
-        console.log('Saved Profiles');
-      }
-    );
-    store.delete('profiles');
-  }
-  if (store.get('updateMigrationStore').sniperDetectionProfiles == undefined && store.get('profiles') != undefined)
-  {
-    // User has profiles, BUT they dont have sniper detection yet.
-    // We're gonna append the data to each profile.
-    // this is SUPER jank, but its what we're working with here.
-    profs = store.get('profiles');
-    Object.keys(profs).forEach(function(e)
-    {
-        if (e.includes('Bedwars'))
-        {
-            profs[e].stats["Reports:"] = "rd0(\"c.hypixelstats.report\", data)";
-            profs[e].stats["Sniper:"] = "rd0(\"c.hypixelstats.sniper\", data)";
-        };
-        oldColorC = profs[e].colorConditions;
-        profs[e].colorConditions = {};
-        doNext = false;
-        Object.keys(oldColorC).forEach(function(a)
-        {
-            if (doNext)
-            {
-                profs[e].colorConditions["(data.c.hypixelstats.report > 0) || (data.c.hypixelstats.sniper == true)"] = "#e228d2";
-                doNext = false;
-            }
-            profs[e].colorConditions[a] = oldColorC[a];
-            if (a == "data.internal.whitelist.includes(data.internal.name)")
-            {
-                doNext = true;
-            }
-        });
-    });
-    store.set('profiles', profs);
-    u = store.get('updateMigrationStore');
-    u.sniperDetectionProfiles = true;
-    store.set('updateMigrationStore', u);
-
-  };
   // Set up default profile for a new user
   if (store.get('profiles') == undefined)
   {
     u = store.get('updateMigrationStore');
-    u.rfuncProfiles = true;
-    u.sniperDetectionProfiles = true;
     store.set('updateMigrationStore', u);
     // TODO: Should honestly move this out to a seperate file...
     profiles = 
@@ -786,6 +736,11 @@ function checkUndefineds()
   if (store.get('doPartyWhitelisting') == undefined)
   {
     store.set('doPartyWhitelisting', true);
+  }
+
+  if (store.get('enableDarkMode') == undefined)
+  {
+    store.set('enableDarkMode', false);
   }
 }
 

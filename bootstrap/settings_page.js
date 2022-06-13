@@ -66,6 +66,27 @@ $(function()
     $('#inputApiKey').val(store.get("hypixel_key"));
     $('#inputPath').val(store.get("logPath"));
 
+    if(store.get('enableDarkMode') == true)
+    {
+        
+        $('#enableDarkMode').prop('checked', true)
+    }
+    else
+    {
+        $('#enableDarkMode').prop('checked', false)
+    }
+
+    $("#enableDarkMode").change(function() {
+        if(this.checked) {
+            store.set('enableDarkMode', true)
+        }
+        else
+        {
+            store.set('enableDarkMode', false)
+        }
+        window.location.reload();
+    });
+
     if(store.get('disableAutoWho') != true) // We want it on by default
     {
         
